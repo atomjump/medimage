@@ -29,7 +29,10 @@
     	
     	<link rel="stylesheet" type="text/css" href="css/ionicons/css/ionicons.css">
     	<link rel="stylesheet" type="text/css" href="css/material-design-iconic-font/css/material-design-iconic-font.css">
+    	<link rel="stylesheet" type="text/css" href="css/jquery-ui.css">
     	<script src="js/onsenui.js"></script>
+    	<script src="js/jquery-3.3.1.js"></script>
+    	<script src="js/jquery-ui.js"></script>
 		<script>
 		
 	      // This event fires when the keyboard will hide
@@ -149,6 +152,105 @@
         
 			mySwitch.addEventListener('change', function(event) {
 				app.saveIdInput(document.getElementById("always-create-folder").checked);
+			});
+			
+			
+			
+			jQuery(document).ready(function(){
+
+					var structure = [
+				    [],
+				    [
+					  {
+						value: "abdomen",
+						label: "#Abdomen"
+					  },
+					  {
+						value: "bridgeofnose",
+						label: "#BridgeOfNose"
+					  },
+					  {
+						value: "earpinna",
+						label: "#EarPinna"
+					  }
+					],
+					[
+					  {
+						value: "above",
+						label: "#Above"
+					  },
+					  {
+						value: "below",
+						label: "#Below"
+					  },
+					  {
+						value: "bilateral",
+						label: "#Bilateral"
+					  }
+					]
+					];
+					
+					
+					  
+						
+					function split( val ) {
+					  return val.split(" ");	// /,\s*/ );
+					}
+					function extractLast( term ) {
+					  return split( term ).pop();
+					}
+
+
+				 jQuery( "#id-entered" ).autocomplete({
+						source: function( request, response ) {
+						  //Get the last word entered
+						  var words = split(request.term);
+						  var wordsCnt = words.length - 1;
+						  if(wordsCnt < structure.length) {					  
+						  
+						   		response( jQuery.ui.autocomplete.filter(
+						   			structure[wordsCnt], extractLast( request.term ) ) );
+						  } else {
+						  	 //No further subcats
+						  	 response("");
+						  }
+						},
+						minLength: 1,//search after one characters
+						select: function(event,ui){
+							//do something
+							
+							var chars = this.value.lastIndexOf(" ");
+							
+							if(chars > 0) {
+								//Append to the existing value, or at least back to the last space.
+								var chars = this.value.lastIndexOf(" ");
+								
+								var prev = this.value.substr(0, chars) + " ";
+								
+								this.value = prev + ui.item.label;
+							} else {
+								//First word.
+												
+								if(document.getElementById("always-create-folder").checked == true) {
+									//Remove initial hash
+									if(ui.item.label[0] == "#") {
+										this.value = ui.item.label.substr(1);	//Just get after the hash
+									} else {
+										this.value = ui.item.label;
+									}
+									
+								} else {
+									this.value = ui.item.label;
+								}
+								
+							}
+							
+							return false;
+						}
+					});
+					
+				
+		
 			});
 	      
 	    </script>
