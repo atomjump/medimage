@@ -460,10 +460,18 @@
 					  return split( term ).pop();
 					}
 					
+					var lastWord = false;
+					
 					function search(term, response) {
 						 //Get the last word entered
 						 var words = split(term);
 						  var wordsCnt = words.length - 1;
+						  if(wordsCnt == (structure.length - 1)) {
+						  	//If we are selecting from the last option then don't start a new one
+						  	lastWord = true;
+						  }	else {
+						  	lastWord = false;
+						  }
 						  
 						   if(structure[wordsCnt] && structure[wordsCnt].length <= 0) {
 						   
@@ -561,10 +569,14 @@
 								
 							this.value = prev + newValue;		//Enter a space at the end so that the next option pops up immediately
 							this.value = this.value.toUpperCase();		//Note: this line is Wound app specific at present.
-							var newValue = this.value + " ";			//Add a space to register a new selection
+							
+							if(lastWord == false) {
+								//If this is not going over the edge of the depth
+								var newValue = this.value + " ";			//Add a space to register a new selection
 								
-							//Now push a key to register this new selection
-							setTimeout(function(){ showAutoComplete("#id-entered", newValue); jQuery( "#id-entered" ).focus(); }, 500);
+								//Now push a key to register this new selection
+								setTimeout(function(){ showAutoComplete("#id-entered", newValue); jQuery( "#id-entered" ).focus(); }, 500);
+							}
 						
 							
 							return false;
