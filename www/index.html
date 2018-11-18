@@ -77,7 +77,7 @@
 	
  
         <p style="text-align:center;">
-             <span class="big-text" onclick="navigator.notification.alert('Enter a patient or image ID, which names the image folder. The second word names the image file.', function(){}, 'Optional');">Image ID <small >(e.g. NHI) <ons-icon icon="ion-ios-help" size="20px" fixed-width="true" onfocus="this.value = this.value;"></small><br/></span><input id="id-entered" type="text" size="9" class="resizedTextbox" value="">
+             <span class="big-text" onclick="navigator.notification.alert('Enter a patient or image ID, which names the image folder. The second word names the image file.', function(){}, 'Optional');">Image ID <small >(e.g. NHI) <ons-icon icon="ion-ios-help" size="20px" fixed-width="true" ></small><br/></span><input id="id-entered" type="text" size="9" class="resizedTextbox" value="">
         </p>
 
  		<div style="text-align:center;">
@@ -401,51 +401,51 @@
 					[
 					  {
 						value: "above",
-						label: "_Above"
+						label: ".Above"
 					  },
 					  {
 						value: "below",
-						label: "_Below"
+						label: ".Below"
 					  },
 					  {
 						value: "bilateral",
-						label: "_Bilateral"
+						label: ".Bilateral"
 					  },
 					  {
 						value: "inferior",
-						label: "_Inferior"
+						label: ".Inferior"
 					  },
 					  {
 						value: "lateral",
-						label: "_Lateral"
+						label: ".Lateral"
 					  },
 					  {
 						value: "lower",
-						label: "_Lower"
+						label: ".Lower"
 					  },
 					  {
 						value: "medial",
-						label: "_Medial"
+						label: ".Medial"
 					  },
 					  {
 						value: "posterior",
-						label: "_Posterior"
+						label: ".Posterior"
 					  },
 					  {
 						value: "superior",
-						label: "_Superior"
+						label: ".Superior"
 					  },
 					  {
 						value: "unilateralleft",
-						label: "_UnilateralLeft"
+						label: ".UnilateralLeft"
 					  },
 					  {
 						value: "unilateralright",
-						label: "_UnilateralRight"
+						label: ".UnilateralRight"
 					  },
 					  {
 						value: "upper",
-						label: "_Upper"
+						label: ".Upper"
 					  }
 					]
 					];
@@ -536,7 +536,7 @@
 							var chars = this.value.lastIndexOf(" ");
 							
 							if(chars > 0) {
-								if(ui.item.label[0] == "_") {
+								if((ui.item.label[0] == "_")||(ui.item.label[0] == ".")) {
 									//append to the last entry as a modifier
 									var prev = this.value.substr(0, chars);
 								} else {
