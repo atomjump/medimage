@@ -245,12 +245,14 @@ var app = {
 						var mydt = date.value.replace(/:/g,'-');
 						mydt = mydt.replace(/ /g,'-');
 						mydt = mydt.replace(/\//g,'-');
+						
 
 						var aDate = new Date();
 						var seconds = aDate.getSeconds();
 						mydt = mydt + "-" + seconds;
 
 						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
+						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
 						options.fileName = myoutFile + '-' + mydt + '.jpg';
 
