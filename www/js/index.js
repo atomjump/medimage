@@ -288,6 +288,9 @@ var app = {
 						};
 						retryIfNeeded.push(repeatIfNeeded);
 
+						//Keep the screen awake as we upload
+						window.plugins.insomnia.keepAwake();
+						
 						ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
 
 					  },
@@ -404,6 +407,8 @@ var app = {
 
     win: function(r) {
     	    
+    	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
+    	    
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
  
     	    //Check if this was a transfer to the remote server
@@ -461,6 +466,8 @@ var app = {
 
     fail: function(error) {
   
+  		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
+  		
   		document.querySelector('#status').innerHTML = "";	//Clear progress status
   
         switch(error.code)
