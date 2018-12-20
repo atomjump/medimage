@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.medimage"
-        version   = "1.5.9"
-        versionCode = "406">
+        version   = "1.7.0"
+        versionCode = "407">
 
 
 
