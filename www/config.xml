@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.medimage"
-        version   = "1.7.1"
-        versionCode = "408">
+        version   = "1.7.2"
+        versionCode = "409">
 
 
 
@@ -72,6 +72,7 @@
     
     <platform name="ios">
     
+    	<preference name='phonegap-version' value='cli-8.0.0' />
         <preference name="permissions" value="none" />
         <preference name="orientation" value="portrait" />
         <preference name="BackupWebStorage" value="none" />
