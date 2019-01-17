@@ -104,6 +104,8 @@ var app = {
 						errorThis.uploadPhoto(passedImageURI);
 					}, 10000);
 				} else {
+				
+				
 					//Now we are connected, upload the photo again
 					errorThis.uploadPhoto(thisImageURI);
 				}
@@ -192,6 +194,8 @@ var app = {
 			//No remove server already connected to, find the server now. And then call upload again
 			_this.findServer(function(err) {
 				if(err) {
+					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
+					
 					errorThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					setTimeout(function() {
@@ -245,12 +249,14 @@ var app = {
 						var mydt = date.value.replace(/:/g,'-');
 						mydt = mydt.replace(/ /g,'-');
 						mydt = mydt.replace(/\//g,'-');
+						
 
 						var aDate = new Date();
 						var seconds = aDate.getSeconds();
 						mydt = mydt + "-" + seconds;
 
 						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
+						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
 						options.fileName = myoutFile + '-' + mydt + '.jpg';
 
@@ -286,6 +292,9 @@ var app = {
 						};
 						retryIfNeeded.push(repeatIfNeeded);
 
+						//Keep the screen awake as we upload
+						window.plugins.insomnia.keepAwake();
+						
 						ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
 
 					  },
@@ -319,6 +328,8 @@ var app = {
 	},
 			
     retry: function(existingText) {
+    	    
+    	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
 	     	var repeatIfNeeded = retryIfNeeded.pop();
 	     	
@@ -362,6 +373,9 @@ var app = {
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
+						//Keep the screen awake as we upload
+						window.plugins.insomnia.keepAwake();
+						
 						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, errorThis.win, errorThis.fail, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
@@ -373,6 +387,7 @@ var app = {
 	  check: function(){
 			var nowChecking = checkComplete.pop();
 			nowChecking.loopCnt --;
+			
 		 
 			if(nowChecking.loopCnt <= 0) {
 				//Have finished - remove interval and report back
@@ -401,6 +416,8 @@ var app = {
 						
 
     win: function(r) {
+    	    
+    	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
  
@@ -459,6 +476,8 @@ var app = {
 
     fail: function(error) {
   
+  		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
+  		
   		document.querySelector('#status').innerHTML = "";	//Clear progress status
   
         switch(error.code)
