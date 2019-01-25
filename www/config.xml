@@ -11,10 +11,10 @@
 
 
         
-    <name>MedImage</name>
+    <name>Wound Mapp</name>
     
     <description>
-        Copy a camera image to your PC.
+        Photograph, analyze and track the size of wounds over time.
     </description>
 
     <author href="http://atomjump.com" email="webmaster@atomjump.com">
@@ -35,8 +35,8 @@
     <plugin name="cordova-plugin-insomnia" version="4.3.0" source="npm" />
 
 	<plugin name="cordova-plugin-camera" source="npm" spec="~2.4.1" >
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your camera, so that you can take patient photos." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="Wound Mapp would like to access your camera, so that you can take patient photos." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Wound Mapp would like to access your photo library, so that you can see any existing patient photos." />
 	</plugin>
    
     
@@ -89,11 +89,11 @@
 		</edit-config>-->
 		
 		<gap:config-file platform="ios" target="*-Info.plist" parent="NSCameraUsageDescription" overwrite="true">
-  			<string>AtomJump MedImage would like to access your camera, so that you can take patient photos.</string>
+  			<string>Wound Mapp would like to access your camera, so that you can take patient photos.</string>
 </gap:config-file>
 
 		<gap:config-file platform="ios" target="*-Info.plist" parent="NSPhotoLibraryUsageDescription" overwrite="true">
-					<string>AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos.</string>
+					<string>Wound Mapp would like to access your photo library, so that you can see any existing patient photos.</string>
 		</gap:config-file>
 		
 		
