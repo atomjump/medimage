@@ -70,6 +70,12 @@ body {
     color: #062B6E;
 }
 
+.big-text-settings {
+    font-size: 130%;
+    font-family: "Georgia", Times, serif;
+    color: #062B6E;
+}
+
 .pc-text {
 	font-size: 110%;
 	color: #5093BC;
@@ -94,7 +100,7 @@ body {
 	height: 100%;
 	padding:0px;
 	margin:0px 0px 0px 0px;
-	background-color: #EEE;
+	background-color: #FFF;
 	z-index: 1000;
 }
 
