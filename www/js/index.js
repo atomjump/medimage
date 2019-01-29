@@ -961,11 +961,17 @@ var app = {
     	
     	document.getElementById("settings-popup").style.display = "block";
     	
+    	jQuery('#logo-bar').show();
+    	
     },
     
     closeSettings: function() {
     	//Close the settings screen
     	document.getElementById("settings-popup").style.display = "none";
+    	
+    	//jQuery('#logo-bar').slideUp();
+    	document.getElementById("logo-bar").style.display = "none";
+    	
     },
 
     listServers: function() {

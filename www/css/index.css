@@ -52,7 +52,6 @@ body {
 
 
 
-
 /* Portrait layout (default) */
 .app {
     
@@ -68,12 +67,12 @@ body {
 
 .big-text {
     font-size: 130%;
-    color: #892f83;
+    color: #062B6E;
 }
 
 .pc-text {
 	font-size: 110%;
-	color:#a1459b;
+	color: #5093BC;
 }
 
 .small-text {

@@ -66,71 +66,82 @@
     </head>
     <body>
     	<style><item name="android:windowTranslucentStatus">true</item></style> <!-- Ensure clicking inside box scrolls down -->
-    	<ons-navigator>
+    	<!--<ons-navigator>-->
          <ons-page>
 	        
-		    <ons-fab style="z-index: 800;" position="bottom right" onclick="app.openSettings();">
-		      <ons-icon icon="md-menu" ></ons-icon>
-		    </ons-fab>
-		    
+	        
+	        
 		
-	
+  					
+  				
+		
+		 <ons-fab id="front-settings" style="z-index: 800;" position="bottom right" onclick="app.openSettings();">
+								<ons-icon icon="md-menu" ></ons-icon>
+			</ons-fab>    
+		
+		<div class="content">
  
-        <p style="text-align:center;">
-             <span class="big-text" onclick="navigator.notification.alert('Enter a patient or image ID, which names the image folder. The second word names the image file.', function(){}, 'Optional');">Image ID <small >(e.g. NHI) <ons-icon icon="ion-ios-help" size="20px" fixed-width="true" ></small><br/></span><input id="id-entered" type="text" size="9" class="resizedTextbox" value="">
-        </p>
+ 
+ 			
+ 
+			<p style="text-align:center;">
+				 <span class="big-text" onclick="navigator.notification.alert('Enter a patient or image ID, which names the image folder. The second word names the image file.', function(){}, 'Optional');">Image ID <small >(e.g. NHI) <ons-icon icon="ion-ios-help" size="20px" fixed-width="true" ></small><br/></span><input id="id-entered" type="text" size="9" class="resizedTextbox" value="">
+			</p>
 
- 		<div style="text-align:center;">
-            <span id="currentPC"  class="pc-text"></span>
-        </div>
-        <div class="logo" onclick="app.bigButton();">
-			<img  src="img/logo@2x.png" class="logo-img">
-        </div>
-
-        <div style="text-align:center;">
-            <span id="notify" class="notify-text"></span>
-            &nbsp;<span id="status" class="notify-text"></span>
-        </div>
-        
-        <br/>
-       
-        
-
-        
-        <div id="settings-popup" style="display:none;">
-        	<div id="inner-popup">
-        		
-        		<span class="big-text">Settings</span><br/><br/>
-        		
-        		<ons-fab position="top right" onclick="app.closeSettings();">
-		      		<ons-icon icon="md-close" ></ons-icon>
-		    	</ons-fab>
-        		
-        		
-        		<div id="settings"></div>
-        		<p>
-        			<ons-button style="background-color: #7c5599; color: white;" modifier="large" onclick="app.newServer();">Add a New PC</ons-button>
-	        	</p>
-	        	
-	        	 <ons-list>
-					<ons-list-item>
-					  <div class="center">
-						ID writes a folder
-					  </div>
-					  <div class="right">
-						<ons-switch style="color: #7c5599;" id="always-create-folder" checked></ons-switch>
-					  </div>
-					</ons-list-item>
-				  </ons-list>
-	        	
-	        	
-				<p>
-					<a class="small-text" href="javascript" onclick="return app.factoryReset();">Reset Factory Settings</a>
-				</p>
+			<div style="text-align:center;">
+				<span id="currentPC"  class="pc-text"></span>
 			</div>
-        </div>
-        
+			<div class="logo" onclick="app.bigButton();">
+				<img  src="img/logo@2x.png" class="logo-img">
+			</div>
 
+			<div style="text-align:center;">
+				<span id="notify" class="notify-text"></span>
+				&nbsp;<span id="status" class="notify-text"></span>
+			</div>
+		
+			<br/>
+	   
+		 
+		
+		 
+
+		
+			<div id="settings-popup" style="display:none;">
+				<div id="inner-popup">
+					<div style="width: 100%; background-color: white;"><img src="img/nursem_logo_800.jpg" style="margin-bottom:10px; width:200px; height: 40px"></div>
+					
+					<span class="big-text">Settings</span><br/><br/>
+				
+					<ons-fab id="settings-close" position="top right" onclick="app.closeSettings();">
+						<ons-icon icon="md-close" ></ons-icon>
+					</ons-fab>
+				
+				
+					<div id="settings"></div>
+					<p>
+						<ons-button style="background-color: #5093BC; color: white;" modifier="large" onclick="app.newServer();">Add a New PC</ons-button>
+					</p>
+				
+					 <ons-list>
+						<ons-list-item>
+						  <div class="center">
+							ID writes a folder
+						  </div>
+						  <div class="right">
+							<ons-switch style="color: #7c5599;" id="always-create-folder" checked></ons-switch>
+						  </div>
+						</ons-list-item>
+					  </ons-list>
+				
+				
+					<p>
+						<a class="small-text" href="javascript" onclick="return app.factoryReset();">Reset Factory Settings</a>
+					</p>
+				</div>
+			</div>
+		
+		</div><!-- End of content -->
         
         
         <script type="text/javascript" src="cordova.js"></script>
@@ -740,6 +751,6 @@
      </ons-page>
      
      
-    </ons-navigator>  
+   <!-- </ons-navigator>  -->
     </body>
 </html>
