@@ -21,7 +21,7 @@
 
 var deleteThisFile = {}; //Global object for image taken, to be deleted
 var centralPairingUrl = "https://atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
-var errorThis = {};  //Used as a global error handler
+var glbThis = {};  //Used as a global error handler
 var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
 var retryNum = 0;
@@ -38,7 +38,7 @@ var app = {
     // Application Constructor
     initialize: function() {
 
-		errorThis = this;
+		glbThis = this;
         this.bindEvents();  
         
         
@@ -82,7 +82,7 @@ var app = {
 
     takePicture: function() {
       var _this = this;
-      errorThis = this;
+      glbThis = this;
 
       navigator.camera.getPicture( function( imageURI ) {
       
@@ -91,29 +91,30 @@ var app = {
 	      localStorage.removeItem("defaultDir");
       	  
       	  var thisImageURI = imageURI;
+      	  var idEntered = document.getElementById("id-entered").value;
       	  
       	  _this.findServer(function(err) {
 				if(err) {
-					errorThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;
 					
 					setTimeout(function() {
 						localStorage.removeItem("usingServer");		//This will force a reconnection
 	    				localStorage.removeItem("defaultDir");
-						errorThis.uploadPhoto(passedImageURI);
+						glbThis.uploadPhoto(passedImageURI, idEntered);
 					}, 10000);
 				} else {
 				
 				
 					//Now we are connected, upload the photo again
-					errorThis.uploadPhoto(thisImageURI);
+					glbThis.uploadPhoto(thisImageURI, idEntered);
 				}
 			});
           
         },
        function( message ) {
-         errorThis.notify( message );
+         glbThis.notify( message );
        },
        {
         quality: 100,
@@ -184,11 +185,12 @@ var app = {
     },
 
 
-    uploadPhoto: function(imageURIin) {
+    uploadPhoto: function(imageURIin, idEntered) {
   
         var _this = this;
 	
 		var usingServer = localStorage.getItem("usingServer");
+		
 	
 		if((!usingServer)||(usingServer == null)) {
 			//No remove server already connected to, find the server now. And then call upload again
@@ -196,14 +198,14 @@ var app = {
 				if(err) {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
-					errorThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					setTimeout(function() {
-						errorThis.uploadPhoto(imageURIin)
+						glbThis.uploadPhoto(imageURIin, idEntered)
 						}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
-					errorThis.uploadPhoto(imageURIin);
+					glbThis.uploadPhoto(imageURIin, idEntered);
 				}
 			});
 			return;
@@ -218,7 +220,7 @@ var app = {
 				var options = new FileUploadOptions();
 				options.fileKey="file1";
 
-				var tempName = document.getElementById("id-entered").value;
+				var tempName = idEntered;
 				if((tempName == '')||(tempName == null)) {
 					tempName = 'image';
 				}
@@ -285,6 +287,7 @@ var app = {
 		
 						var repeatIfNeeded = {
 							"imageURI" : imageURI,
+							"idEntered" : idEntered,
 							"serverReq" : serverReq,
 							"options" :options,
 							"failureCount": 0,
@@ -342,7 +345,7 @@ var app = {
 	    	 	if(repeatIfNeeded.nextAttemptSec > 21600) repeatIfNeeded.nextAttemptSec = 21600;		//If longer than 6 hours gap, make 6 hours (that is 60x60x6)
 	    	 	var hrMin =  t.getHours() + ":" + t.getMinutes();
 	    	 	
-	    	 	errorThis.notify(existingText + " Retrying " + repeatIfNeeded.options.params.title + " at " + hrMin);
+	    	 	glbThis.notify(existingText + " Retrying " + repeatIfNeeded.options.params.title + " at " + hrMin);
 	    	
 	    		repeatIfNeeded.failureCount += 1;						//Increase this
 	    		if(repeatIfNeeded.failureCount > 2) {
@@ -351,7 +354,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			errorThis.uploadPhoto(repeatIfNeeded.imageURI);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.idEntered);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -367,16 +370,16 @@ var app = {
 					repeatIfNeeded.retryTimeout = setTimeout(function() {
 						repeatIfNeeded.ft = new FileTransfer();
 					
-						repeatIfNeeded.ft.onprogress = errorThis.progress;
+						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						errorThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
 						
-						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, errorThis.win, errorThis.fail, repeatIfNeeded.options);
+						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, glbThis.win, glbThis.fail, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
@@ -398,10 +401,10 @@ var app = {
 				//Get the current file data
 				checkComplete.push(nowChecking);
 			
-				errorThis.get(nowChecking.fullGet, function(url, resp) {
+				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					if((resp == 'true')||(resp === true)) {
 						//The file exists on the server still - try again in a few moments
-						setTimeout(errorThis.check, 2000);
+						setTimeout(glbThis.check, 2000);
 					} else {
 						//File no longer exists, success!
 						checkComplete.pop();
@@ -451,7 +454,7 @@ var app = {
 						checkComplete.push(nowChecking);
 						
 						setTimeout(function() {
-							errorThis.check();
+							glbThis.check();
 						}, 2000);
 					} else {
 						//Trying to check, but no file on stack	
@@ -460,14 +463,14 @@ var app = {
             	}
             	            	
             	//Save the current server settings for future reuse
-            	errorThis.saveServer();
+            	glbThis.saveServer();
 
 
             	//and delete phone version
             	deleteThisFile.remove();
             } else {
             	//Retry sending
-            	errorThis.retry("");
+            	glbThis.retry("");
             	
             }
 
@@ -483,25 +486,25 @@ var app = {
         switch(error.code)
         {
             case 1:
-                errorThis.notify("The photo was uploaded.");
+                glbThis.notify("The photo was uploaded.");
             break;
 
             case 2:
-                errorThis.notify("Sorry you have tried to send it to an invalid URL.");
+                glbThis.notify("Sorry you have tried to send it to an invalid URL.");
             break;
 
             case 3:
-                errorThis.notify("Waiting for better reception..");
-                errorThis.retry("Waiting for better reception...</br>");
+                glbThis.notify("Waiting for better reception..");
+                glbThis.retry("Waiting for better reception...</br>");
             break;
 
             case 4:
-                errorThis.notify("Sorry, your image transfer was aborted.");
-                errorThis.retry("Sorry, your image transfer was aborted.</br>");
+                glbThis.notify("Sorry, your image transfer was aborted.");
+                glbThis.retry("Sorry, your image transfer was aborted.</br>");
             break;
 
             default:
-                errorThis.notify("An error has occurred: Code = " + error.code);
+                glbThis.notify("An error has occurred: Code = " + error.code);
             break;
         }
     },
@@ -554,7 +557,7 @@ var app = {
     		
 						alert("Cleared all saved PCs.");
 		
-						errorThis.openSettings();
+						glbThis.openSettings();
 						
 					}
 	    		
@@ -597,13 +600,13 @@ var app = {
     			//Clicked on 'Ok'
     			//Start the pairing process
     			var pairUrl = centralPairingUrl + '?compare=' + results.input1;
-			   		errorThis.notify("Pairing..");
-			   		errorThis.get(pairUrl, function(url, resp) {
+			   		glbThis.notify("Pairing..");
+			   		glbThis.get(pairUrl, function(url, resp) {
 
 		           	resp = resp.replace('\n', '')
 
 			   		if(resp == 'nomatch') {
-						errorThis.notify("Sorry, there was no match for that code.");
+						glbThis.notify("Sorry, there was no match for that code.");
 						return;
 
 			   		} else {
@@ -611,7 +614,7 @@ var app = {
 						
 						var server = resp;
 						
-						errorThis.notify("Pairing success.");
+						glbThis.notify("Pairing success.");
 						
 			        	//And save this server
 						localStorage.setItem("currentRemoteServer",server);
@@ -625,21 +628,21 @@ var app = {
 							function(buttonIndex) {
 								if(buttonIndex == 1) {
 									//yes, we also want to connect via wifi
-									errorThis.checkWifi(function(err) {
+									glbThis.checkWifi(function(err) {
 										if(err) {
 											//An error finding wifi
-											errorThis.notify(err);
-											errorThis.bigButton();
+											glbThis.notify(err);
+											glbThis.bigButton();
 										} else {
 											//Ready to take a picture, rerun with this
 											//wifi server
-											errorThis.notify("WiFi paired successfully.");
-											errorThis.bigButton();
+											glbThis.notify("WiFi paired successfully.");
+											glbThis.bigButton();
 										}
 									});
 								} else {
-									errorThis.notify("Pairing success, without WiFi.");
-									errorThis.bigButton();
+									glbThis.notify("Pairing success, without WiFi.");
+									glbThis.bigButton();
 								}
 				
 							},                  			// callback to invoke
@@ -664,15 +667,15 @@ var app = {
 				localStorage.removeItem("usingServer");					//Init it
 				localStorage.removeItem("defaultDir");					//Init it
 				
-				errorThis.checkWifi(function(err) {
+				glbThis.checkWifi(function(err) {
 					if(err) {
 						//An error finding server - likely need to enter a pairing code. Warn the user
-						errorThis.notify(err);
+						glbThis.notify(err);
 					} else {
 						//Ready to take a picture, rerun
-						errorThis.notify("Wifi paired successfully.");
+						glbThis.notify("Wifi paired successfully.");
 						
-						errorThis.bigButton();
+						glbThis.bigButton();
 					}
 				});
 				
@@ -708,7 +711,7 @@ var app = {
 				//We have connected to a server OK
 				navigator.notification.prompt(
 					'Please enter the 4 letter pairing code from your PC.',  	// message
-					errorThis.connect,                  						// callback to invoke
+					glbThis.connect,                  						// callback to invoke
 					'New Connection',            								// title
 					['Ok','Use Wifi Only','Cancel'],             				// buttonLabels
 					''                 											// defaultText
@@ -726,7 +729,7 @@ var app = {
 
 
 	checkWifi: function(cb) {
-	    errorThis.notify("Checking Wifi connection");
+	    glbThis.notify("Checking Wifi connection");
 
        this.getip(function(ip, err) {
 
@@ -735,9 +738,9 @@ var app = {
              return;
           }
 
-          errorThis.notify("Scanning Wifi");
+          glbThis.notify("Scanning Wifi");
 
-          errorThis.scanlan('5566', function(url, err) {
+          glbThis.scanlan('5566', function(url, err) {
 
              if(err) {
                cb(err);
@@ -820,13 +823,13 @@ var app = {
 	   //Now try the wifi server as the first option to use if it exists:
 	   if((foundWifiServer)&&(foundWifiServer != null)&&(foundWifiServer != "null")) {
 	   	  //Ping the wifi server
-	   	  errorThis.notify('Trying to connect to the wifi server..');
+	   	  glbThis.notify('Trying to connect to the wifi server..');
 	   	  
 	   	  //Timeout after 5 secs for the following ping
        	  var scanning = setTimeout(function() {
                 
                 
-                errorThis.notify('Timeout finding your wifi server.</br>Trying remote server..');
+                glbThis.notify('Timeout finding your wifi server.</br>Trying remote server..');
                 
                 //Else can't communicate with the wifi server at this time.
 	   	  	    //Try the remote server
@@ -846,7 +849,7 @@ var app = {
 	   	  	  		
 	   	  	  		}, 6000);
 	   	  	  		
-	   	  	  		errorThis.get(foundRemoteServer, function(url, resp) {
+	   	  	  		glbThis.get(foundRemoteServer, function(url, resp) {
 	   	  	  		
 	   	  	  		    if(resp != "") {
 							//Success, got a connection to the remote server
@@ -884,7 +887,7 @@ var app = {
        	   }, 2000);
 	   	  
 	   	  //Ping the wifi server
-	   	  errorThis.get(foundWifiServer, function(url, resp) {
+	   	  glbThis.get(foundWifiServer, function(url, resp) {
 	   	  	  
 	   	  	  if(resp != "") {
 	   	  	  
@@ -905,7 +908,7 @@ var app = {
 	   } else {
 	   		//OK - no wifi option - go straight to the remote server
 	   		//Try the remote server
-	   		errorThis.notify('Trying to connect to the remote server....');
+	   		glbThis.notify('Trying to connect to the remote server....');
 	   		
 	   		var scanning = setTimeout(function() {
 	   	  	  			//Timed out connecting to the remote server - that was the
@@ -1064,14 +1067,14 @@ var app = {
 	    		'Are you sure? This PC will be removed from memory.',  // message
 	    		function(buttonIndex) {
 	    			if(buttonIndex == 1) {
-						var settings = errorThis.getArrayLocalStorage("settings");
+						var settings = glbThis.getArrayLocalStorage("settings");
     	
 						if((settings == null)|| (settings == '')) {
 							//Nothing to delete 
 						} else {
 						
 							//Check if it is deleting the current entry
-							var deleteName = settings[errorThis.myServerId].name;
+							var deleteName = settings[glbThis.myServerId].name;
 							var currentServerName = localStorage.getItem("currentServerName");
     	
     						if((currentServerName) && (deleteName) && (currentServerName == deleteName)) {
@@ -1083,12 +1086,12 @@ var app = {
     						}
 
 						
-							settings.splice(errorThis.myServerId, 1);  			//Remove the entry entirely from array
+							settings.splice(glbThis.myServerId, 1);  			//Remove the entry entirely from array
 			
-							errorThis.setArrayLocalStorage("settings", settings);
+							glbThis.setArrayLocalStorage("settings", settings);
 						} 
 		
-						errorThis.openSettings();			//refresh
+						glbThis.openSettings();			//refresh
 					}
 	    		
 	    		},                  						// callback to invoke
@@ -1113,7 +1116,7 @@ var app = {
     		//Now refresh the current server display
     		document.getElementById("currentPC").innerHTML = results.input1;
     		
-    		errorThis.closeSettings();
+    		glbThis.closeSettings();
     		return;
     	} else {
     		//Clicked on 'Exit'. Do nothing.
@@ -1184,7 +1187,7 @@ var app = {
    			if((!currentRemoteServer) ||(currentRemoteServer == null)) currentRemoteServer = "";
    			if((!currentWifiServer) ||(currentWifiServer == null)) currentWifiServer = "";	
    		
-   			var settings = errorThis.getArrayLocalStorage("settings");
+   			var settings = glbThis.getArrayLocalStorage("settings");
    			
    			//Create a new entry - which will be blank to being with
    			var newSetting = { 
@@ -1216,7 +1219,7 @@ var app = {
 
     		
     		//Save back to the persistent settings
-    		errorThis.setArrayLocalStorage("settings", settings);
+    		glbThis.setArrayLocalStorage("settings", settings);
     		
     		return;
     
