@@ -127,25 +127,25 @@ var app = {
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
    
+   		var getTimeout = setTimeout(function() {
+            cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
+        }, 5000);
+   			
+                	
+   
         request.onreadystatechange = function() {
             //alert("request.readyState=" + request.readyState + " request.status=" + request.status);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
-
+					clearTimeout(getTimeout);
                     cb(url, request.responseText);   // -> request.responseText <- is a result		
                     
-                } 
-                	
-                if (request.status == 404) {
-                	
-                	cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
-                	
                 }
-                
             }
         }
         request.onerror = function() {
+        	clearTimeout(getTimeout);
         	cb(url, null);			//Testing this
         }
         request.send();
