@@ -622,58 +622,63 @@ var app = {
 			   		glbThis.notify("Pairing..");
 			   		glbThis.get(pairUrl, function(url, resp) {
 
-		           	resp = resp.replace('\n', '')
+						if(resp) {		
+						   	resp = resp.replace('\n', '')
 
-			   		if(resp == 'nomatch') {
-						glbThis.notify("Sorry, there was no match for that code.");
-						return;
+					   		if(resp == 'nomatch') {
+								glbThis.notify("Sorry, there was no match for that code.");
+								return;
 
-			   		} else {
+					   		} else {
 
-						
-						var server = resp;
-						
-						glbThis.notify("Pairing success.");
-						
-			        	//And save this server
-						localStorage.setItem("currentRemoteServer",server);
-						localStorage.removeItem("currentWifiServer");  				//Clear the wifi
-						localStorage.removeItem("usingServer");						//Init it
-						localStorage.removeItem("defaultDir");						//Init it
+								
+								var server = resp;
+								
+								glbThis.notify("Pairing success.");
+								
+								//And save this server
+								localStorage.setItem("currentRemoteServer",server);
+								localStorage.removeItem("currentWifiServer");  				//Clear the wifi
+								localStorage.removeItem("usingServer");						//Init it
+								localStorage.removeItem("defaultDir");						//Init it
 
 
-						  navigator.notification.confirm(
-							'Do you want to connect via WiFi, if it is available, also?',  // message
-							function(buttonIndex) {
-								if(buttonIndex == 1) {
-									//yes, we also want to connect via wifi
-									glbThis.checkWifi(function(err) {
-										if(err) {
-											//An error finding wifi
-											glbThis.notify(err);
-											glbThis.bigButton();
+								  navigator.notification.confirm(
+									'Do you want to connect via WiFi, if it is available, also?',  // message
+									function(buttonIndex) {
+										if(buttonIndex == 1) {
+											//yes, we also want to connect via wifi
+											glbThis.checkWifi(function(err) {
+												if(err) {
+													//An error finding wifi
+													glbThis.notify(err);
+													glbThis.bigButton();
+												} else {
+													//Ready to take a picture, rerun with this
+													//wifi server
+													glbThis.notify("WiFi paired successfully.");
+													glbThis.bigButton();
+												}
+											});
 										} else {
-											//Ready to take a picture, rerun with this
-											//wifi server
-											glbThis.notify("WiFi paired successfully.");
+											glbThis.notify("Pairing success, without WiFi.");
 											glbThis.bigButton();
 										}
-									});
-								} else {
-									glbThis.notify("Pairing success, without WiFi.");
-									glbThis.bigButton();
-								}
-				
-							},                  			// callback to invoke
-							'Pairing Success!',            	// title
-							['Yes','No']             		// buttonLabels
-						);
-			        	
-      
-						return;
-			   		}
+						
+									},                  			// callback to invoke
+									'Pairing Success!',            	// title
+									['Yes','No']             		// buttonLabels
+								);
+								
+			  
+								return;
+					   		}
+					   	} else {
+					   		//A 404 response
+					   		glbThis.notify("Sorry, we could not connect to the pairing server. Please try again.");
+					   	}
 
-			   }); //end of get
+			   	}); //end of get
     			
     			return;
     		break;
