@@ -134,7 +134,6 @@ var app = {
                 	
    
         request.onreadystatechange = function() {
-            alert("request.readyState=" + request.readyState + " request.status=" + request.status + " request.responseText=" + request.responseText);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
