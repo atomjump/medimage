@@ -126,9 +126,7 @@ var app = {
    get: function(url, cb) {
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
-        
-        var noresponseCountdown = 10;
-
+   
         request.onreadystatechange = function() {
             //alert("request.readyState=" + request.readyState + " request.status=" + request.status);
             if (request.readyState == 4) {
@@ -140,10 +138,9 @@ var app = {
                 } 
                 	
                 if (request.status == 404) {
-                	noresponseCountdown --;
-                	if(noresponseCountdown == 0) {
-                		cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
-                	}
+                	
+                	cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
+                	
                 }
                 
             }
