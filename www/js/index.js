@@ -134,8 +134,14 @@ var app = {
 
                     cb(url, request.responseText);   // -> request.responseText <- is a result		
                     
-                }
+                } 
+                	
+                
+                
             }
+        }
+        request.onerror = function() {
+        	cb(url, null);			//Testing this
         }
         request.send();
     },
