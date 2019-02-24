@@ -138,7 +138,7 @@ var app = {
                 } 
                 	
                 if (request.status == 404) {
-                	cb(url, request.responseText);   // -> request.responseText <- is a result	
+                	cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
                 }
                 
             }
@@ -421,7 +421,7 @@ var app = {
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
 					navigator.notification.alert(resp);		//TESTING ONLY
-					if((resp == 'true')||(resp === true)) {
+					if((resp == 'true')||(resp === true)||(resp === null)) {
 						//The file exists on the server still - try again in a few moments
 						setTimeout(glbThis.check, 2000);
 					} else {
