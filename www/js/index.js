@@ -416,7 +416,7 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				//document.getElementById("notify").innerHTML = "Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
+				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; //"Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
