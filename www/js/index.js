@@ -407,7 +407,7 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				document.getElementById("notify").innerHTML = "Checking " + nowChecking.loopCnt + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>;		;//TEMP IN TESTING
+				document.getElementById("notify").innerHTML = "Checking " + nowChecking.loopCnt + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
