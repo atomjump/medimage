@@ -92,17 +92,18 @@ var app = {
       	  
       	  var thisImageURI = imageURI;
       	  var idEntered = document.getElementById("id-entered").value;
-      	  
+       	  
       	  _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;
+					var idEnteredB = idEntered;
 					
 					setTimeout(function() {
 						localStorage.removeItem("usingServer");		//This will force a reconnection
 	    				localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEntered);
+						glbThis.uploadPhoto(passedImageURI, idEnteredB);
 					}, 10000);
 				} else {
 				
@@ -125,16 +126,26 @@ var app = {
    get: function(url, cb) {
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
-
+   
+   		var getTimeout = setTimeout(function() {
+            cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
+        }, 5000);
+   			
+                	
+   
         request.onreadystatechange = function() {
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
-
+					clearTimeout(getTimeout);
                     cb(url, request.responseText);   // -> request.responseText <- is a result		
                     
                 }
             }
+        }
+        request.onerror = function() {
+        	clearTimeout(getTimeout);
+        	cb(url, null);			
         }
         request.send();
     },
@@ -210,6 +221,8 @@ var app = {
 			});
 			return;
 		} else {
+		
+			var idEnteredB = idEntered;
 
 			//Have connected OK to a server
             window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
@@ -244,6 +257,7 @@ var app = {
 				}
 
 				var myoutFile = tempName.replace(/ /g,'-');
+				var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
 
 				navigator.globalization.dateToString(
 					new Date(),
@@ -275,6 +289,8 @@ var app = {
 						options.headers = {
 							Connection: "close"
 						}
+						
+						options.idEntered = idEnteredC;
 
 
 						var ft = new FileTransfer();
@@ -287,7 +303,6 @@ var app = {
 		
 						var repeatIfNeeded = {
 							"imageURI" : imageURI,
-							"idEntered" : idEntered,
 							"serverReq" : serverReq,
 							"options" :options,
 							"failureCount": 0,
@@ -354,7 +369,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.idEntered);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -401,16 +416,19 @@ var app = {
 				//Get the current file data
 				checkComplete.push(nowChecking);
 			
+				
+				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; //"Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
+			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
-					if((resp == 'true')||(resp === true)) {
-						//The file exists on the server still - try again in a few moments
-						setTimeout(glbThis.check, 2000);
-					} else {
+					
+					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
-						
-					}
+					} else {
+						//The file exists on the server still - try again in a few moments
+						setTimeout(glbThis.check, 2000);
+					} 
 				});
 			}
 									
@@ -449,11 +467,11 @@ var app = {
 	     				
 	     				var nowChecking = {};
 						
-						nowChecking.loopCnt = 12; //Max timeout = 12*2 = 24 secs
+						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
 						nowChecking.fullGet = fullGet;
 						checkComplete.push(nowChecking);
 						
-						setTimeout(function() {
+						setTimeout(function() {	//Wait two seconds and then do a check
 							glbThis.check();
 						}, 2000);
 					} else {
@@ -603,58 +621,63 @@ var app = {
 			   		glbThis.notify("Pairing..");
 			   		glbThis.get(pairUrl, function(url, resp) {
 
-		           	resp = resp.replace('\n', '')
+						if(resp) {		
+						   	resp = resp.replace('\n', '')
 
-			   		if(resp == 'nomatch') {
-						glbThis.notify("Sorry, there was no match for that code.");
-						return;
+					   		if(resp == 'nomatch') {
+								glbThis.notify("Sorry, there was no match for that code.");
+								return;
 
-			   		} else {
+					   		} else {
 
-						
-						var server = resp;
-						
-						glbThis.notify("Pairing success.");
-						
-			        	//And save this server
-						localStorage.setItem("currentRemoteServer",server);
-						localStorage.removeItem("currentWifiServer");  				//Clear the wifi
-						localStorage.removeItem("usingServer");						//Init it
-						localStorage.removeItem("defaultDir");						//Init it
+								
+								var server = resp;
+								
+								glbThis.notify("Pairing success.");
+								
+								//And save this server
+								localStorage.setItem("currentRemoteServer",server);
+								localStorage.removeItem("currentWifiServer");  				//Clear the wifi
+								localStorage.removeItem("usingServer");						//Init it
+								localStorage.removeItem("defaultDir");						//Init it
 
 
-						  navigator.notification.confirm(
-							'Do you want to connect via WiFi, if it is available, also?',  // message
-							function(buttonIndex) {
-								if(buttonIndex == 1) {
-									//yes, we also want to connect via wifi
-									glbThis.checkWifi(function(err) {
-										if(err) {
-											//An error finding wifi
-											glbThis.notify(err);
-											glbThis.bigButton();
+								  navigator.notification.confirm(
+									'Do you want to connect via WiFi, if it is available, also?',  // message
+									function(buttonIndex) {
+										if(buttonIndex == 1) {
+											//yes, we also want to connect via wifi
+											glbThis.checkWifi(function(err) {
+												if(err) {
+													//An error finding wifi
+													glbThis.notify(err);
+													glbThis.bigButton();
+												} else {
+													//Ready to take a picture, rerun with this
+													//wifi server
+													glbThis.notify("WiFi paired successfully.");
+													glbThis.bigButton();
+												}
+											});
 										} else {
-											//Ready to take a picture, rerun with this
-											//wifi server
-											glbThis.notify("WiFi paired successfully.");
+											glbThis.notify("Pairing success, without WiFi.");
 											glbThis.bigButton();
 										}
-									});
-								} else {
-									glbThis.notify("Pairing success, without WiFi.");
-									glbThis.bigButton();
-								}
-				
-							},                  			// callback to invoke
-							'Pairing Success!',            	// title
-							['Yes','No']             		// buttonLabels
-						);
-			        	
-      
-						return;
-			   		}
+						
+									},                  			// callback to invoke
+									'Pairing Success!',            	// title
+									['Yes','No']             		// buttonLabels
+								);
+								
+			  
+								return;
+					   		}
+					   	} else {
+					   		//A 404 response
+					   		glbThis.notify("Sorry, we could not connect to the pairing server. Please try again.");
+					   	}
 
-			   }); //end of get
+			   	}); //end of get
     			
     			return;
     		break;
