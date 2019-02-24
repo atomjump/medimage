@@ -134,7 +134,7 @@ var app = {
                 	
    
         request.onreadystatechange = function() {
-            alert("request.readyState=" + request.readyState + " request.status=" + request.status);
+            alert("request.readyState=" + request.readyState + " request.status=" + request.status + " request.responseText=" + request.responseText);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
@@ -422,16 +422,14 @@ var app = {
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
-					//navigator.notification.alert(resp);		//TESTING ONLY
-					if((resp == 'true')||(resp === true)||(resp === null)) {
-						//The file exists on the server still - try again in a few moments
-						setTimeout(glbThis.check, 2000);
-					} else {
+					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
-						
-					}
+					} else {
+						//The file exists on the server still - try again in a few moments
+						setTimeout(glbThis.check, 2000);
+					} 
 				});
 			}
 									
