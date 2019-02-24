@@ -407,11 +407,11 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				document.getElementById("notify").innerHTML = "Checking " + nowChecking.loopCnt + ": " + nowChecking.fullGet;		;//TEMP IN TESTING
+				document.getElementById("notify").innerHTML = "Checking " + nowChecking.loopCnt + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>;		;//TEMP IN TESTING
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
-					document.getElementById("notify").innerHTML = "Checking " + nowChecking.loopCnt + ": " + nowChecking.fullGet + " Resp:" + resp;		;//TEMP IN TESTING
+					document.getElementById("notify").innerHTML = "Resp:" + resp;		;//TEMP IN TESTING
 					if((resp == 'true')||(resp === true)) {
 						//The file exists on the server still - try again in a few moments
 						setTimeout(glbThis.check, 2000);
