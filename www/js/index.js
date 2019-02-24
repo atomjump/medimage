@@ -134,7 +134,7 @@ var app = {
                 	
    
         request.onreadystatechange = function() {
-            //alert("request.readyState=" + request.readyState + " request.status=" + request.status);
+            alert("request.readyState=" + request.readyState + " request.status=" + request.status);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
@@ -146,7 +146,7 @@ var app = {
         }
         request.onerror = function() {
         	clearTimeout(getTimeout);
-        	cb(url, null);			//Testing this
+        	cb(url, null);			
         }
         request.send();
     },
