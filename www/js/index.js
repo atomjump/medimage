@@ -467,7 +467,7 @@ var app = {
 	     				
 	     				var nowChecking = {};
 						
-						nowChecking.loopCnt = 12; //Max timeout = 12*2 = 24 secs
+						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
 						nowChecking.fullGet = fullGet;
 						checkComplete.push(nowChecking);
 						
