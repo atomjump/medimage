@@ -128,6 +128,7 @@ var app = {
         request.open("GET", url, true);
 
         request.onreadystatechange = function() {
+            alert("request.readyState=" + request.readyState + " request.status=" + request.status);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
@@ -469,7 +470,7 @@ var app = {
 						nowChecking.fullGet = fullGet;
 						checkComplete.push(nowChecking);
 						
-						setTimeout(function() {
+						setTimeout(function() {	//Wait two seconds and then do a check
 							glbThis.check();
 						}, 2000);
 					} else {
