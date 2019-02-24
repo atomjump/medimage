@@ -92,17 +92,18 @@ var app = {
       	  
       	  var thisImageURI = imageURI;
       	  var idEntered = document.getElementById("id-entered").value;
-      	  
+       	  
       	  _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;
+					var idEnteredB = idEntered;
 					
 					setTimeout(function() {
 						localStorage.removeItem("usingServer");		//This will force a reconnection
 	    				localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEntered);
+						glbThis.uploadPhoto(passedImageURI, idEnteredB);
 					}, 10000);
 				} else {
 				
@@ -210,6 +211,8 @@ var app = {
 			});
 			return;
 		} else {
+		
+			var idEnteredB = idEntered;
 
 			//Have connected OK to a server
             window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
@@ -244,6 +247,7 @@ var app = {
 				}
 
 				var myoutFile = tempName.replace(/ /g,'-');
+				var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
 
 				navigator.globalization.dateToString(
 					new Date(),
@@ -275,6 +279,8 @@ var app = {
 						options.headers = {
 							Connection: "close"
 						}
+						
+						options.idEntered = idEnteredC;
 
 
 						var ft = new FileTransfer();
@@ -287,7 +293,6 @@ var app = {
 		
 						var repeatIfNeeded = {
 							"imageURI" : imageURI,
-							"idEntered" : idEntered,
 							"serverReq" : serverReq,
 							"options" :options,
 							"failureCount": 0,
@@ -354,7 +359,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.idEntered);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -400,6 +405,9 @@ var app = {
 				//Try a get request to the check
 				//Get the current file data
 				checkComplete.push(nowChecking);
+			
+				
+				document.getElementById("notify").innerHTML = "Checking: " + nowChecking.fullGet;		;//TEMP IN TESTING
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					if((resp == 'true')||(resp === true)) {
