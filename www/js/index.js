@@ -137,7 +137,9 @@ var app = {
                     
                 } 
                 	
-                
+                if (request.status == 404) {
+                	cb(url, request.responseText);   // -> request.responseText <- is a result	
+                }
                 
             }
         }
