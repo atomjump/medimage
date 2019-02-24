@@ -128,7 +128,7 @@ var app = {
         request.open("GET", url, true);
 
         request.onreadystatechange = function() {
-            alert("request.readyState=" + request.readyState + " request.status=" + request.status);
+            //alert("request.readyState=" + request.readyState + " request.status=" + request.status);
             if (request.readyState == 4) {
 
                 if (request.status == 200 || request.status == 0) {
@@ -416,11 +416,11 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				document.getElementById("notify").innerHTML = "Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
+				//document.getElementById("notify").innerHTML = "Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
-					navigator.notification.alert(resp);		//TESTING ONLY
+					//navigator.notification.alert(resp);		//TESTING ONLY
 					if((resp == 'true')||(resp === true)||(resp === null)) {
 						//The file exists on the server still - try again in a few moments
 						setTimeout(glbThis.check, 2000);
