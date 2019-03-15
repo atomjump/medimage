@@ -293,12 +293,16 @@ var app = {
 		var cancelled = "";
 		
 		for(var cnt = 0; cnt < retryIfNeeded.length; cnt++) {
+			
 			if(retryIfNeeded[cnt].imageURI === cancelURI) { 
+				alert("Trying to aborting " + cnt);
 				//Abort the upload
 				retryIfNeeded[cnt].fileTransferObj.abort();
 				cancelled = " " + cnt;
 			}
 		}
+		
+		alert("Aborted: " + cancelled);
 		
 		glbThis.notify("Cancelled and removed photo" + cancelled + ".");
 		
