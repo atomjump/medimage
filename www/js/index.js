@@ -27,7 +27,25 @@ var checkComplete = [];	//A global pushable list with the repeat checks to see i
 var retryNum = 0;
 
 
-
+//See: https://stackoverflow.com/questions/14787705/phonegap-cordova-filetransfer-abort-not-working-as-expected
+// basic implementation of hash map of FileTransfer objects
+// so that given a key, an abort function can find the right FileTransfer to abort
+function SimpleHashMap()
+{
+    this.items = {};
+    this.setItem = function(key, value) { this.items[key] = value; }
+    this.getItem = function(key)
+                   {
+                       if (this.hasItem(key)) { return this.items[key]; }
+                       return undefined;                    
+                   }
+    this.hasItem = function(key) { return this.items.hasOwnProperty(key); }
+    this.removeItem = function(key)
+                      {
+                          if (this.hasItem(key)) { delete this.items[key]; }
+                      }
+}
+var fileTransferMap = new SimpleHashMap(); 
 
 
 
@@ -47,6 +65,13 @@ var app = {
         
         //Initialise the id field
         this.displayIdInput();
+        
+        //Check if there are any residual photos that need to be sent again
+        while(newPhoto = glbThis.popOneLocalPhoto()) {
+        	if(newPhoto) {
+        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
+        	}
+        }
 
     },
     // Bind Event Listeners
@@ -92,6 +117,9 @@ var app = {
       	  
       	  var thisImageURI = imageURI;
       	  var idEntered = document.getElementById("id-entered").value;
+      	  
+      	   //Store in case the app quits unexpectably
+       	  _this.recordLocalPhoto( imageURI, idEntered );
        	  
       	  _this.findServer(function(err) {
 				if(err) {
@@ -122,6 +150,86 @@ var app = {
         destinationType: Camera.DestinationType.FILE_URI
        });
     },
+    
+    
+       recordLocalPhoto: function(imageURI, idEntered) {
+    	 //Save into our localPhotos array, in case the app quits
+    	 
+       	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+       	  if(!localPhotos) {
+       	  	localPhotos = [];
+       	  }
+       	  var newPhoto = {
+       	  					"imageURI" : imageURI,
+       	  					"idEntered" : idEntered,
+       	  					"status" : "send"
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  localPhotos.push(newPhoto);
+       	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    	  return true;
+    },
+    
+    changeLocalPhotoStatus: function(imageURI, newStatus) {
+    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	if(!localPhotos) {
+       	  	localPhotos = [];
+       	}
+    	
+    	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+    		if(localPhotos[cnt].imageURI === imageURI) {
+    			if(newStatus === "cancel") {
+    				//Delete the photo
+    				window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
+    					//TODO: check handle error case?
+    					
+    					//Remove the file from the phone
+    					fileEntry.remove();
+    					
+    					//Remove entry from the array
+    					localPhotos.splice(cnt,1);
+    					
+    					//Set back the storage of the array
+    					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    					
+    				});
+    			} else {
+    				localPhotos[cnt].status = newStatus;
+    				
+    				//Set back the storage of the array
+    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    			}
+    		}
+    	
+    	}
+    
+    },
+    
+     popOneLocalPhoto: function() {
+      	//Get a photo, one at a time, in the array format:
+      	/* {
+       	  					"imageURI" : imageURI,
+       	  					"idEntered" : idEntered,
+       	  					"status" : "send"
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' */
+      	var photoDetails = null;
+      	
+    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	if(!localPhotos) {
+       	  	localPhotos = [];
+       	}
+    	
+    	if(localPhotos.length >= 0) {
+    		var photoDetails = localPhotos.pop();
+    	}
+   	
+    	//Set back the storage 
+    	glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    	
+    	
+    	return photoDetails;
+    
+    }, 
+    
 
    get: function(url, cb) {
         var request = new XMLHttpRequest();
@@ -194,6 +302,26 @@ var app = {
         //Set the user message
         document.getElementById("notify").innerHTML = msg;
     },
+    
+    
+    cancelNotify: function(msg) {
+        //Set the user message
+        document.getElementById("cancel-trans").innerHTML = msg;
+    },
+
+
+	cancelUpload: function(cancelURI) {
+	
+		var ft = fileTransferMap.getItem(cancelURI);
+		if (ft)
+		{
+		    ft.abort(glbThis.win, glbThis.fail);
+		    
+		    //remove the photo
+		    glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		}		
+		
+	},
 
 
     uploadPhoto: function(imageURIin, idEntered) {
@@ -295,8 +423,11 @@ var app = {
 
 						var ft = new FileTransfer();
 						_this.notify("Uploading " + params.title);
+						
+						_this.cancelNotify("<ons-icon style=\"vertical-align: middle;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon>");
 			
 						ft.onprogress = _this.progress;
+						
 			
 					 
 						var serverReq = usingServer + '/api/photo';
@@ -309,6 +440,8 @@ var app = {
 							"nextAttemptSec": 15
 						};
 						retryIfNeeded.push(repeatIfNeeded);
+						
+						fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
 
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
@@ -388,6 +521,7 @@ var app = {
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
 						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
+						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
@@ -416,8 +550,11 @@ var app = {
 				//Get the current file data
 				checkComplete.push(nowChecking);
 			
+				glbThis.cancelNotify("");		//Remove any cancel icons
+		
 				
-				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; //"Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
+				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
+				glbThis.cancelNotify("");		//Remove any cancel icons
 			
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
@@ -425,6 +562,9 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						
+						//and delete phone version
+            			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
 					} else {
 						//The file exists on the server still - try again in a few moments
 						setTimeout(glbThis.check, 2000);
@@ -440,7 +580,10 @@ var app = {
     	    
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
-    	    document.querySelector('#status').innerHTML = "";	//Clear progress status
+     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
+    	    
+    	     glbThis.cancelNotify("");		//Remove any cancel icons
+ 
  
     	    //Check if this was a transfer to the remote server
             console.log("Code = " + r.responseCode);
@@ -450,8 +593,16 @@ var app = {
             
             	var remoteServer = localStorage.getItem("serverRemote");
             	if(remoteServer == 'false') {
-            
+            		//i.e. Wifi case
             		document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+            		
+            		//and delete phone version of file
+            		var repeatIfNeeded = retryIfNeeded.pop();
+            		if(repeatIfNeeded) {
+            			 glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
+            		} else {
+						//Trying to check, but no file on stack	
+					}
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
             		document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..';
@@ -469,6 +620,7 @@ var app = {
 						
 						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
 						nowChecking.fullGet = fullGet;
+						nowChecking.details = repeatIfNeeded;
 						checkComplete.push(nowChecking);
 						
 						setTimeout(function() {	//Wait two seconds and then do a check
@@ -484,8 +636,6 @@ var app = {
             	glbThis.saveServer();
 
 
-            	//and delete phone version
-            	deleteThisFile.remove();
             } else {
             	//Retry sending
             	glbThis.retry("");
@@ -500,6 +650,9 @@ var app = {
   		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
   		
   		document.querySelector('#status').innerHTML = "";	//Clear progress status
+  		
+  		glbThis.cancelNotify("");		//Remove any cancel icons
+
   
         switch(error.code)
         {
@@ -518,7 +671,6 @@ var app = {
 
             case 4:
                 glbThis.notify("Sorry, your image transfer was aborted.");
-                glbThis.retry("Sorry, your image transfer was aborted.</br>");
             break;
 
             default:
@@ -987,7 +1139,7 @@ var app = {
     	
     	document.getElementById("settings-popup").style.display = "block";
     	
-    	jQuery('#logo-bar').show();
+    	jQuery('#logo-bar').show();			//Wound Mapp-only line
     	
     },
     
@@ -996,7 +1148,7 @@ var app = {
     	document.getElementById("settings-popup").style.display = "none";
     	
     	//jQuery('#logo-bar').slideUp();
-    	document.getElementById("logo-bar").style.display = "none";
+    	document.getElementById("logo-bar").style.display = "none";			//Wound Mapp-only line
     	
     },
 
