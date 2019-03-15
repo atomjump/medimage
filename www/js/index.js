@@ -290,7 +290,7 @@ var app = {
 	cancelUploads: function(cancelURI) {
 		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		glbThis.notify("Cancelled and removed photo.");
-	}
+	},
 
     uploadPhoto: function(imageURIin, idEntered) {
   
