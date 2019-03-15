@@ -308,36 +308,15 @@ var app = {
 
 
 	cancelUpload: function(cancelURI) {
-		//alert("Attempting to cancel: " + cancelURI);
-		//var cancelled = "";
-		
+	
 		var ft = fileTransferMap.getItem(cancelURI);
 		if (ft)
 		{
-		    //alert('Aborting ' + JSON.stringify(ft));
 		    ft.abort(glbThis.win, glbThis.fail);
 		    
 		    //remove the photo
 		    glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
-
-
-			//alert("Aborted");
-		
-			glbThis.notify("Cancelled and removed photo.");
-
-		}
-		
-		/*
-		for(var cnt = 0; cnt < retryIfNeeded.length; cnt++) {
-			
-			if(retryIfNeeded[cnt].imageURI === cancelURI) { 
-				alert("Trying to aborting " + cnt + " " + JSON.stringify(retryIfNeeded[cnt]));
-				//Abort the upload
-				retryIfNeeded[cnt].fileTransferObj.abort(glbThis.win, glbThis.fail);
-				cancelled = " " + cnt;
-			}
-		}*/
-		
+		}		
 		
 	},
 
