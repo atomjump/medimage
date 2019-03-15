@@ -305,6 +305,11 @@ var app = {
         //Set the user message
         document.getElementById("notify").innerHTML = msg;
     },
+    
+    cancelNotify: function(msg) {
+        //Set the user message
+        document.getElementById("cancel-trans").innerHTML = msg;
+    },
 
 
 	cancelUpload: function(cancelURI) {
@@ -418,7 +423,8 @@ var app = {
 
 
 						var ft = new FileTransfer();
-						_this.notify("Uploading " + params.title + " <br/><ons-icon style=\"vertical-align: middle;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon>");
+						_this.notify("Uploading " + params.title);
+						_this.cancelNotify("<ons-icon style=\"vertical-align: middle;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon>");
 			
 						ft.onprogress = _this.progress;
 			
@@ -515,7 +521,8 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + "<br/><ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);	
+						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
@@ -538,6 +545,9 @@ var app = {
 			if(nowChecking.loopCnt <= 0) {
 				//Have finished - remove interval and report back
 				document.getElementById("notify").innerHTML = "Unable to reach your computer.  Please check it is connected to the internet.  Your image will be delivered when connection occurs.";
+				
+				glbThis.cancelNotify("");		//Remove any cancel icons
+ 
 			 
 			} else {
 				//Try a get request to the check
@@ -545,7 +555,9 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; 
+				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
+				glbThis.cancelNotify("");		//Remove any cancel icons
+  
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
 					if((resp === "false")||(resp === false)) {
@@ -572,6 +584,9 @@ var app = {
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
+    	    
+    	    glbThis.cancelNotify("");		//Remove any cancel icons
+ 
  
     	    //Check if this was a transfer to the remote server
             console.log("Code = " + r.responseCode);
@@ -643,6 +658,8 @@ var app = {
   		
   		document.querySelector('#status').innerHTML = "";	//Clear progress status
   
+  		glbThis.cancelNotify("");		//Remove any cancel icons
+  		
         switch(error.code)
         {
             case 1:
