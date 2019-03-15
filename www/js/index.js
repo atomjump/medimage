@@ -418,7 +418,7 @@ var app = {
 
 
 						var ft = new FileTransfer();
-						_this.notify("Uploading " + params.title + " <a href='#javascript' onclick=\"app.cancelUpload('" + imageURI + "');\">X</a>");
+						_this.notify("<ons-icon icon='md-clear' href='#javascript' onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon> Uploading " + params.title + " ");
 			
 						ft.onprogress = _this.progress;
 			
@@ -515,7 +515,7 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + " <a href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\">X</a>");
+						glbThis.notify("<ons-icon icon='md-clear' href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon> Trying to upload " + repeatIfNeeded.options.params.title);
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
