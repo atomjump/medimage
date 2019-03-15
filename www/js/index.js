@@ -288,8 +288,20 @@ var app = {
     },
 
 	cancelUploads: function(cancelURI) {
+		alert("Attempting to cancel: " + cancelURI);
 		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
-		glbThis.notify("Cancelled and removed photo.");
+		var cancelled = "";
+		
+		for(var cnt = 0; cnt < retryIfNeeded.length; cnt++) {
+			if(retryIfNeeded[cnt].imageURI === cancelURI) { 
+				//Abort the upload
+				retryIfNeeded[cnt].fileTransferObj.abort();
+				cancelled = " " + cnt;
+			}
+		}
+		
+		glbThis.notify("Cancelled and removed photo" + cancelled + ".");
+		
 	},
 
     uploadPhoto: function(imageURIin, idEntered) {
@@ -402,7 +414,8 @@ var app = {
 							"serverReq" : serverReq,
 							"options" :options,
 							"failureCount": 0,
-							"nextAttemptSec": 15
+							"nextAttemptSec": 15,
+							"fileTransferObj" : ft
 						};
 						retryIfNeeded.push(repeatIfNeeded);
 
