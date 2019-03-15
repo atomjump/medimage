@@ -287,6 +287,10 @@ var app = {
         document.getElementById("notify").innerHTML = msg;
     },
 
+	cancelUploads: function(cancelURI) {
+		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		glbThis.notify("Cancelled and removed photo.");
+	}
 
     uploadPhoto: function(imageURIin, idEntered) {
   
@@ -386,7 +390,7 @@ var app = {
 
 
 						var ft = new FileTransfer();
-						_this.notify("Uploading " + params.title);
+						_this.notify("Uploading " + params.title + " <a href='#javascript' onclick=\"app.cancelUpload('" + imageURI + "');\">X</a>");
 			
 						ft.onprogress = _this.progress;
 			
@@ -479,7 +483,7 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + " <a href='#javascript' onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\">X</a>");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
