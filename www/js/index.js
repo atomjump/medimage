@@ -287,7 +287,7 @@ var app = {
         document.getElementById("notify").innerHTML = msg;
     },
 
-	cancelUploads: function(cancelURI) {
+	cancelUpload: function(cancelURI) {
 		alert("Attempting to cancel: " + cancelURI);
 		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		var cancelled = "";
@@ -496,7 +496,7 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + " <a href='#javascript' onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\">X</a>");
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + " <a href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\">X</a>");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
