@@ -295,7 +295,7 @@ var app = {
 		for(var cnt = 0; cnt < retryIfNeeded.length; cnt++) {
 			
 			if(retryIfNeeded[cnt].imageURI === cancelURI) { 
-				alert("Trying to aborting " + cnt);
+				alert("Trying to aborting " + cnt + " " + JSON.stringify(retryIfNeeded[cnt]));
 				//Abort the upload
 				retryIfNeeded[cnt].fileTransferObj.abort();
 				cancelled = " " + cnt;
