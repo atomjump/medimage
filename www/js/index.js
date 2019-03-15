@@ -681,7 +681,7 @@ var app = {
 
             case 4:
                 glbThis.notify("Sorry, your image transfer was aborted.");
-                glbThis.retry("Sorry, your image transfer was aborted.</br>");
+                //No need to retry here: glbThis.retry("Sorry, your image transfer was aborted.</br>");
             break;
 
             default:
