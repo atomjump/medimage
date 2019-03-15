@@ -309,7 +309,6 @@ var app = {
 
 	cancelUpload: function(cancelURI) {
 		alert("Attempting to cancel: " + cancelURI);
-		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		//var cancelled = "";
 		
 		var ft = fileTransferMap.getItem(imageURI);
@@ -317,6 +316,15 @@ var app = {
 		{
 		    alert('Aborting');
 		    ft.abort(glbThis.win, glbThis.fail);
+		    
+		    //remove the photo
+		    glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+
+
+			alert("Aborted");
+		
+			glbThis.notify("Cancelled and removed photo" + cancelled + ".");
+
 		}
 		
 		/*
@@ -330,9 +338,6 @@ var app = {
 			}
 		}*/
 		
-		alert("Aborted");
-		
-		glbThis.notify("Cancelled and removed photo" + cancelled + ".");
 		
 	},
 
