@@ -308,22 +308,22 @@ var app = {
 
 
 	cancelUpload: function(cancelURI) {
-		alert("Attempting to cancel: " + cancelURI);
+		//alert("Attempting to cancel: " + cancelURI);
 		//var cancelled = "";
 		
 		var ft = fileTransferMap.getItem(cancelURI);
 		if (ft)
 		{
-		    alert('Aborting');
+		    //alert('Aborting ' + JSON.stringify(ft));
 		    ft.abort(glbThis.win, glbThis.fail);
 		    
 		    //remove the photo
 		    glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 
 
-			alert("Aborted");
+			//alert("Aborted");
 		
-			glbThis.notify("Cancelled and removed photo" + cancelled + ".");
+			glbThis.notify("Cancelled and removed photo.");
 
 		}
 		
