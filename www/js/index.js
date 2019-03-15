@@ -27,6 +27,25 @@ var checkComplete = [];	//A global pushable list with the repeat checks to see i
 var retryNum = 0;
 
 
+//See: https://stackoverflow.com/questions/14787705/phonegap-cordova-filetransfer-abort-not-working-as-expected
+// basic implementation of hash map of FileTransfer objects
+// so that given a key, an abort function can find the right FileTransfer to abort
+function SimpleHashMap()
+{
+    this.items = {};
+    this.setItem = function(key, value) { this.items[key] = value; }
+    this.getItem = function(key)
+                   {
+                       if (this.hasItem(key)) { return this.items[key]; }
+                       return undefined;                    
+                   }
+    this.hasItem = function(key) { return this.items.hasOwnProperty(key); }
+    this.removeItem = function(key)
+                      {
+                          if (this.hasItem(key)) { delete this.items[key]; }
+                      }
+}
+var fileTransferMap = new SimpleHashMap(); 
 
 
 
@@ -287,11 +306,20 @@ var app = {
         document.getElementById("notify").innerHTML = msg;
     },
 
+
 	cancelUpload: function(cancelURI) {
 		alert("Attempting to cancel: " + cancelURI);
 		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
-		var cancelled = "";
+		//var cancelled = "";
 		
+		var ft = fileTransferMap.getItem(imageURI);
+		if (ft)
+		{
+		    alert('Aborting');
+		    ft.abort(glbThis.win, glbThis.fail);
+		}
+		
+		/*
 		for(var cnt = 0; cnt < retryIfNeeded.length; cnt++) {
 			
 			if(retryIfNeeded[cnt].imageURI === cancelURI) { 
@@ -300,9 +328,9 @@ var app = {
 				retryIfNeeded[cnt].fileTransferObj.abort(glbThis.win, glbThis.fail);
 				cancelled = " " + cnt;
 			}
-		}
+		}*/
 		
-		alert("Aborted: " + cancelled);
+		alert("Aborted");
 		
 		glbThis.notify("Cancelled and removed photo" + cancelled + ".");
 		
@@ -418,10 +446,13 @@ var app = {
 							"serverReq" : serverReq,
 							"options" :options,
 							"failureCount": 0,
-							"nextAttemptSec": 15,
-							"fileTransferObj" : ft
+							"nextAttemptSec": 15
 						};
+						
 						retryIfNeeded.push(repeatIfNeeded);
+						
+						fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
+						
 
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
