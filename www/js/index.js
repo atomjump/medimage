@@ -515,7 +515,7 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title) + "<br/><ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title + "<br/><ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
