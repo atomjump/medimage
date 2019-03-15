@@ -311,7 +311,7 @@ var app = {
 		alert("Attempting to cancel: " + cancelURI);
 		//var cancelled = "";
 		
-		var ft = fileTransferMap.getItem(imageURI);
+		var ft = fileTransferMap.getItem(cancelURI);
 		if (ft)
 		{
 		    alert('Aborting');
