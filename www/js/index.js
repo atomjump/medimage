@@ -509,8 +509,7 @@ var app = {
 				checkComplete.push(nowChecking);
 			
 				
-				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; //"Checking at " + Date.now() + ": <a href=\"" + nowChecking.fullGet + "\">" + nowChecking.fullGet + "</a>";		;//TEMP IN TESTING
-			
+				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt; 
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
 					if((resp === "false")||(resp === false)) {
@@ -519,8 +518,8 @@ var app = {
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 						
 						//and delete phone version
-						alert("nowChecking:" + JSON.stringify(nowChecking));
-            			glbThis.changeLocalPhotoStatus(nowChecking.options.imageURI, 'cancel');
+						alert("nowChecking.details:" + JSON.stringify(nowChecking.details));
+            			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
@@ -550,8 +549,13 @@ var app = {
             		//i.e. Wifi case
             		document.getElementById("notify").innerHTML = 'Image transferred. Success!';
             		
-            		//and delete phone version
-            		glbThis.changeLocalPhotoStatus(repeatIfNeeded.options.imageURI, 'cancel');
+            		//and delete phone version of file
+            		var repeatIfNeeded = retryIfNeeded.pop();
+            		if(repeatIfNeeded) {
+            			 glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
+            		} else {
+						//Trying to check, but no file on stack	
+					}
             
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
@@ -570,6 +574,7 @@ var app = {
 						
 						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
 						nowChecking.fullGet = fullGet;
+						nowChecking.details = repeatIfNeeded;
 						checkComplete.push(nowChecking);
 						
 						setTimeout(function() {	//Wait two seconds and then do a check
