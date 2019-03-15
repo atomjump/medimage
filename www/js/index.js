@@ -518,7 +518,6 @@ var app = {
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 						
 						//and delete phone version
-						alert("nowChecking.details:" + JSON.stringify(nowChecking.details));
             			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
 						
 					} else {
