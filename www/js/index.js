@@ -137,7 +137,11 @@ var app = {
     
     recordLocalPhoto: function(imageURI, idEntered) {
     	 //Save into our localPhotos array, in case the app quits
+    	 
        	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+       	  if(!localPhotos) {
+       	  	localPhotos = [];
+       	  }
        	  var newPhoto = {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
@@ -150,6 +154,9 @@ var app = {
     
     changeLocalPhotoStatus: function(imageURI, newStatus) {
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	if(!localPhotos) {
+       	  	localPhotos = [];
+       	}
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -190,6 +197,9 @@ var app = {
       	var photoDetails = null;
       	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	if(!localPhotos) {
+       	  	localPhotos = [];
+       	}
     	
     	if(localPhotos.length >= 0) {
     		var photoDetails = localPhotos.pop();
