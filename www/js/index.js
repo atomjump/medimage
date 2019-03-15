@@ -47,6 +47,14 @@ var app = {
         
         //Initialise the id field
         this.displayIdInput();
+        
+        //Check if there are any residual photos that need to be sent again
+        while(newPhoto = glbThis.popOneLocalPhoto()) {
+        	if(newPhoto) {
+        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
+        	}
+        }
+        
 
     },
     // Bind Event Listeners
@@ -93,6 +101,9 @@ var app = {
       	  var thisImageURI = imageURI;
       	  var idEntered = document.getElementById("id-entered").value;
        	  
+       	  //Store in case the app quits unexpectably
+       	  _this.recordLocalPhoto( imageURI, idEntered );
+       	  
       	  _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
@@ -122,6 +133,77 @@ var app = {
         destinationType: Camera.DestinationType.FILE_URI
        });
     },
+    
+    
+    recordLocalPhoto: function(imageURI, idEntered) {
+    	 //Save into our localPhotos array, in case the app quits
+       	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+       	  var newPhoto = {
+       	  					"imageURI" : imageURI,
+       	  					"idEntered" : idEntered,
+       	  					"status" : "send"
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  localPhotos.push(newPhoto);
+       	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    	  return true;
+    },
+    
+    changeLocalPhotoStatus: function(imageURI, newStatus) {
+    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	
+    	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+    		if(localPhotos[cnt].imageURI === imageURI) {
+    			if(newStatus === "cancel") {
+    				//Delete the photo
+    				window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
+    					//TODO: check handle error case?
+    					
+    					//Remove the file from the phone
+    					fileEntry.remove();
+    					
+    					//Remove entry from the array
+    					localPhotos.splice(cnt,1);
+    					
+    					//Set back the storage of the array
+    					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    					
+    				});
+    			} else {
+    				localPhotos[cnt].status = newStatus;
+    				
+    				//Set back the storage of the array
+    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    			}
+    		}
+    	
+    	}
+    
+    },
+    
+     popOneLocalPhoto: function() {
+      	//Get a photo, one at a time, in the array format:
+      	/* {
+       	  					"imageURI" : imageURI,
+       	  					"idEntered" : idEntered,
+       	  					"status" : "send"
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' */
+      	var photoDetails = null;
+      	
+    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+    	
+    	if(localPhotos.length >= 0) {
+    		var photoDetails = localPhotos.pop();
+    	}
+   	
+    	//Set back the storage 
+    	glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    	
+    	
+    	return photoDetails;
+    
+    },
+    
+    
 
    get: function(url, cb) {
         var request = new XMLHttpRequest();
@@ -425,6 +507,11 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						
+						//and delete phone version
+						alert("nowChecking:" + JSON.stringify(nowChecking));
+            			glbThis.changeLocalPhotoStatus(nowChecking.options.imageURI, 'cancel');
+						
 					} else {
 						//The file exists on the server still - try again in a few moments
 						setTimeout(glbThis.check, 2000);
@@ -450,8 +537,12 @@ var app = {
             
             	var remoteServer = localStorage.getItem("serverRemote");
             	if(remoteServer == 'false') {
-            
+            		//i.e. Wifi case
             		document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+            		
+            		//and delete phone version
+            		glbThis.changeLocalPhotoStatus(repeatIfNeeded.options.imageURI, 'cancel');
+            
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
             		document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..';
@@ -485,7 +576,8 @@ var app = {
 
 
             	//and delete phone version
-            	deleteThisFile.remove();
+            	//OLD, WAS HERE: glbThis.changeLocalPhotoStatus(repeatIfNeeded.options.imageURI, 'cancel');
+            
             } else {
             	//Retry sending
             	glbThis.retry("");
