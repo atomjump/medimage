@@ -86,6 +86,11 @@ body {
     color: #888;
 }
 
+.cancel-text {
+    font-size: 100%;
+    color: #f77b81;
+}
+
 
 #settings-popup {
 	position: absolute;
