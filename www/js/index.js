@@ -202,14 +202,17 @@ var app = {
     
     },
     
-      loopLocalPhotos: function() {
+    loopLocalPhotos: function() {
      
       	//Get a photo, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' */
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	
+       	and attempt to upload them.
+       	*/
       	var photoDetails = null;
       	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
