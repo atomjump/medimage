@@ -67,11 +67,12 @@ var app = {
         this.displayIdInput();
         
         //Check if there are any residual photos that need to be sent again
-        while(newPhoto = glbThis.popOneLocalPhoto()) {
-        	if(newPhoto) {
-        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
-        	}
-        }
+        glbThis.loopLocalPhotos();
+        
+        
+      
+        
+
 
     },
     // Bind Event Listeners
@@ -204,7 +205,8 @@ var app = {
     
     },
     
-     popOneLocalPhoto: function() {
+     loopLocalPhotos: function() {
+     
       	//Get a photo, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
@@ -217,16 +219,14 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-    	
-    	if(localPhotos.length >= 0) {
-    		var photoDetails = localPhotos.pop();
+       	
+       	while(newPhoto = localPhotos.pop()) {
+      		if(newPhoto) {
+        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
+        	}    	
     	}
-   	
-    	//Set back the storage 
-    	glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     	
-    	
-    	return photoDetails;
+    	return;
     
     }, 
     
