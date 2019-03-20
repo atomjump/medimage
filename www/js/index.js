@@ -207,12 +207,14 @@ var app = {
     
      loopLocalPhotos: function() {
      
-      	//Get a photo, one at a time, in the array format:
+      	//Loop through the photos, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' */
+       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	and attempt to upload it.  					
+       	*/
       	var photoDetails = null;
       	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
@@ -424,7 +426,7 @@ var app = {
 						var ft = new FileTransfer();
 						_this.notify("Uploading " + params.title);
 						
-						_this.cancelNotify("<ons-icon style=\"vertical-align: middle;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon>");
+						_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
 			
 						ft.onprogress = _this.progress;
 						
@@ -521,7 +523,7 @@ var app = {
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
 						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
-						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon>");
+						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon><br/>Cancel");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
@@ -670,7 +672,7 @@ var app = {
             break;
 
             case 4:
-                glbThis.notify("Sorry, your image transfer was aborted.");
+                glbThis.notify("Your image transfer was aborted.");
             break;
 
             default:
