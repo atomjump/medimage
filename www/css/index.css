@@ -87,6 +87,7 @@ body {
 }
 
 .cancel-text {
+	padding-top: 10px;
     font-size: 100%;
     color: #f7afbb;
 }
