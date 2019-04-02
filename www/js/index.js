@@ -191,17 +191,23 @@ var app = {
     					//Set back the storage of the array
     					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     					
-    				}, function(err) {
+    				}, function(evt) {
     				
     				 	//Some form of error case. We likely couldn't find the file, but we still want to remove the entry from the array
     				 	//in this case
-    				 	glbThis.notify("Sorry, there was a problem accessing the photo, but we have removed the photo entry. Message: " + err);
-    				 	
-    				 	//Remove entry from the array
-    					localPhotos.splice(cnt,1);
+    				 	if(evt.target.error.code === 1) {
+    				 		//The photo is not there. Remove anyway
+    				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
+    				 		
+    				 		//Remove entry from the array
+    						localPhotos.splice(cnt,1);
     					
-    					//Set back the storage of the array
-    					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    						//Set back the storage of the array
+    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				 	} else {
+    				 	
+    				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
+    				 	}
     				 
     				});
     			} else {
@@ -471,8 +477,8 @@ var app = {
 
 
 
-          	}, function(err) {
-          		_this.notify("Sorry, there was a problem accessing the photo: " + err);
+          	}, function(evt) {
+          		_this.notify("Sorry, there was a problem accessing the photo: " + evt.target.error.code);
           	});		//End of resolveLocalFileSystemURI
        
          }		//End of connected to a server OK
