@@ -166,7 +166,7 @@ var app = {
 			 	  
 			 	   try {	
 					  //Move the file to permanent storage
-					  fileSys.root.getDirectory( myFolderApp,
+					  fileSys.root.getDirectory( cordova.file.dataDirectory,   //myFolderApp
                     	{create:true},
 		                function(directory) {
 		                  alert("Created folder");
