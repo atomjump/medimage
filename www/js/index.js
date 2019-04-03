@@ -536,7 +536,11 @@ var app = {
 
 
           	}, function(evt) {
-          		_this.notify("Sorry, there was a problem accessing the photo: " + evt.target.error.code);
+          		//An error accessing the file
+          		//and potentially delete phone version
+            	glbThis.changeLocalPhotoStatus(imageURIin, 'cancel');
+            	
+            	
           	});		//End of resolveLocalFileSystemURI
        
          }		//End of connected to a server OK
