@@ -176,7 +176,7 @@ var app = {
 						alert("Error occured moving file. Processing: " + imageURI);
 						globThis.processPicture(imageURI);
 					  });
-				  },
+
 			 	},
 			 	function(err) {
 			 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
