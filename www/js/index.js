@@ -157,7 +157,7 @@ var app = {
 		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 		 		
 		 	  alert("Got file system");	
-		 	  window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
+		 	  fileSystem.root.getFile(imageURI, null, function(fileEntry) {
 		 		
 				  //Move the file to permanent storage
 				  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
@@ -175,7 +175,7 @@ var app = {
 				  });
 			  },
 			  function(err) {
-			  	//Error resolving local file system URI
+			  	//Error resolving local file 
 			  	//an error occured detecting file - try send anyway
 				glbThis.notify("Sorry we could not find the photo on the phone.");
 			  
