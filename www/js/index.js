@@ -151,7 +151,7 @@ var app = {
 		  var d = new Date(),
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
-			  //var myFolderApp = "medimage";
+			  var myFolderApp = "medimage";
 		 
 		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "    NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
 		 
@@ -166,7 +166,7 @@ var app = {
 			 	  
 			 	   try {	
 					  //Move the file to permanent storage
-					  fileSys.root.getDirectory( cordova.file.dataDirectory,
+					  fileSys.root.getDirectory( myFolderApp,
                     	{create:true},
 		                function(directory) {
 		                  alert("Created folder");
@@ -177,22 +177,22 @@ var app = {
 						 	alert("Moved file. New success path:" + success.fullPath);	
 						 
 							//success.nativeURL contains the path to the photo in permanent storage
-							globThis.processPicture(success.fullPath);	//nativeURL
+							glbThis.processPicture(success.fullPath);	//nativeURL
 						 
 						  }, function(err){
 							//an error occured moving file - send anyway, even if it is in the temporary folder
 							alert("Error occured moving file. Processing: " + imageURI);
-							globThis.processPicture(imageURI);
+							glbThis.processPicture(imageURI);
 						  });
 					   }, function(err) {
 					   		//an error occured moving file - send anyway, even if it is in the temporary folder
 							alert("Error occured creating the folder. Processing: " + imageURI);
-							globThis.processPicture(imageURI);
+							glbThis.processPicture(imageURI);
 					   
 					   });
 				   } catch(err) {
 				   	  alert("A proble occured moving the photo file. Processing: " + imageURI);
-					  globThis.processPicture(imageURI);
+					  glbThis.processPicture(imageURI);
 				   
 				   }
 
@@ -200,7 +200,7 @@ var app = {
 			 	function(err) {
 			 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
 			 		alert("Error occured on file system. Processing: " + imageURI);
-			 		globThis.processPicture(imageURI);
+			 		glbThis.processPicture(imageURI);
 			 	});
 			},
 			function(err) {
