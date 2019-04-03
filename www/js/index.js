@@ -151,6 +151,7 @@ var app = {
 		  var d = new Date(),
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
+			  //var myFolderApp = "medimage";
 		 
 		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "    NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
 		 
@@ -160,23 +161,40 @@ var app = {
 			   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 			 		
 			 	 	
+			 	 	  
+			 	 	  
 			 	  
-			 		
+			 	   try {	
 					  //Move the file to permanent storage
-					  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
-					  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
-					 
-					 	alert("Move success");
-					 	alert("Moved file. New success path:" + success.fullPath);	
-					 
-						//success.nativeURL contains the path to the photo in permanent storage
-						globThis.processPicture(success.fullPath);	//nativeURL
-					 
-					  }, function(err){
-						//an error occured moving file - send anyway, even if it is in the temporary folder
-						alert("Error occured moving file. Processing: " + imageURI);
-						globThis.processPicture(imageURI);
-					  });
+					  fileSys.root.getDirectory( cordova.file.dataDirectory,
+                    	{create:true},
+		                function(directory) {
+		                  alert("Created folder");
+						  alert("About to move to " + directory.fullPath + "   with filename:" + newFileName);
+						  fileEntry.moveFile(directory, newFileName, function(success){
+						 
+						 	alert("Move success");
+						 	alert("Moved file. New success path:" + success.fullPath);	
+						 
+							//success.nativeURL contains the path to the photo in permanent storage
+							globThis.processPicture(success.fullPath);	//nativeURL
+						 
+						  }, function(err){
+							//an error occured moving file - send anyway, even if it is in the temporary folder
+							alert("Error occured moving file. Processing: " + imageURI);
+							globThis.processPicture(imageURI);
+						  });
+					   }, function(err) {
+					   		//an error occured moving file - send anyway, even if it is in the temporary folder
+							alert("Error occured creating the folder. Processing: " + imageURI);
+							globThis.processPicture(imageURI);
+					   
+					   });
+				   } catch(err) {
+				   	  alert("A proble occured moving the photo file. Processing: " + imageURI);
+					  globThis.processPicture(imageURI);
+				   
+				   }
 
 			 	},
 			 	function(err) {
