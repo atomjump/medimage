@@ -167,10 +167,10 @@ var app = {
 					  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
 					 
 					 	alert("Move success");
-					 	alert("Moved file. New success path:" + success.nativeURL));	
+					 	alert("Moved file. New success path:" + success.fullPath);	
 					 
 						//success.nativeURL contains the path to the photo in permanent storage
-						globThis.processPicture(success.nativeURL);
+						globThis.processPicture(success.fullPath);	//nativeURL
 					 
 					  }, function(err){
 						//an error occured moving file - send anyway, even if it is in the temporary folder
