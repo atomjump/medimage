@@ -160,9 +160,8 @@ var app = {
 		 
 		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
 		 
-		 	   alert("Got file Entry");
-			  // window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
-			 		
+		 	   	alert("Got file Entry");
+			  		
 			 	  var myFile = fileEntry;
 			 	 	
 			 	 	  
@@ -206,12 +205,6 @@ var app = {
 				   
 				   }
 
-			 	/*},
-			 	function(err) {
-			 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
-			 		alert("Error occured on file system. Processing: " + imageURI);
-			 		glbThis.processPicture(imageURI);
-			 	});*/
 			},
 			function(err) {
 				//Could not resolve local file

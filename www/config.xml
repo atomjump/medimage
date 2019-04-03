@@ -49,10 +49,9 @@
         <preference name="fullscreen" value="false" />
         
         <preference name="AndroidPersistentFileLocation" value="Internal" />
-		<preference name="AndroidExtraFilesystems" value="files" />
+		<!--<preference name="AndroidExtraFilesystems" value="files" />-->
 
-        <preference name="BackupWebStorage" value="none" />
-
+        
         <uses-permission android:name="android.permission.CAMERA" />
          <uses-feature android:name="android.hardware.camera" />
          <uses-feature android:name="android.hardware.camera.autofocus" />
