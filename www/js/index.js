@@ -143,7 +143,7 @@ var app = {
       glbThis = this;
 
       navigator.camera.getPicture( function( imageURI ) {
-      	//TODO: Move picture into persistent storage
+      	//Move picture into persistent storage
       	  //Grab the file name of the photo in the temporary directory
 		  var currentName = imageURI.replace(/^.*[\\\/]/, '');
 		 
@@ -152,21 +152,29 @@ var app = {
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
 		 
-		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
+		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "  TempDir:" + cordova.file.tempDirectory + "   NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
 		 
+		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
+		 		
+		 	  alert("Got file system");	
+		 		
 			  //Move the file to permanent storage
 			  fileSys.moveFile(cordova.file.tempDirectory, currentName, cordova.file.dataDirectory, newFileName, function(success){
+			 
+			 	alert("Moved file. New URI:" + success.nativeURL);	
 			 
 				//success.nativeURL contains the path to the photo in permanent storage
 				globThis.processPicture(success.nativeURL);
 			 
 			  }, function(err){
 				//an error occured moving file - send anyway, even if it is in the temporary folder
+				alert("Error occured moving file. Processing: " + imageURI);
 				globThis.processPicture(imageURI);
 			  });
 		 	},
 		 	function(err) {
 		 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
+		 		alert("Error occured on file system persistent. Processing: " + imageURI);
 		 		globThis.processPicture(imageURI);
 		 	});
     
