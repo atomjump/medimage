@@ -195,7 +195,7 @@ var app = {
 						   }
 					   }, function(err) {
 					   		//an error occured moving file - send anyway, even if it is in the temporary folder
-							alert("Error occured creating the folder. Processing: " + imageURI);
+							alert("Error occured locating the persistent folder. Processing: " + imageURI);
 							glbThis.processPicture(imageURI);
 					   
 					   });
