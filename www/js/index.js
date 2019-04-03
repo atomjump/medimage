@@ -161,8 +161,9 @@ var app = {
 		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
 		 
 		 	   alert("Got file Entry");
-			   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
+			  // window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 			 		
+			 	  var myFile = fileEntry;
 			 	 	
 			 	 	  
 			 	 	  
@@ -172,10 +173,10 @@ var app = {
 					  window.resolveLocalFileSystemURL( cordova.file.dataDirectory, 
 		                function(directory) {
 		                  alert("Got folder");
-						  alert("About to move to " + directory.fullPath + "   with filename:" + newFileName);
+						  alert("About to move to " + directory.toURL + "   with filename:" + newFileName);
 						  
 						  try {
-							  fileEntry.moveFile(directory, newFileName, function(success){
+							  myFile.moveFile(directory, newFileName, function(success){
 							 
 							 	alert("Move success");
 							 	alert("Moved file. New success path:" + success.fullPath);	
@@ -205,12 +206,12 @@ var app = {
 				   
 				   }
 
-			 	},
+			 	/*},
 			 	function(err) {
 			 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
 			 		alert("Error occured on file system. Processing: " + imageURI);
 			 		glbThis.processPicture(imageURI);
-			 	});
+			 	});*/
 			},
 			function(err) {
 				//Could not resolve local file

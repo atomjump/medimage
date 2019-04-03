@@ -49,6 +49,8 @@
         <preference name="fullscreen" value="false" />
         
         <preference name="AndroidPersistentFileLocation" value="Internal" />
+		<preference name="AndroidExtraFilesystems" value="files" />
+
         <preference name="BackupWebStorage" value="none" />
 
         <uses-permission android:name="android.permission.CAMERA" />
@@ -85,6 +87,7 @@
 		<preference name="exit-on-suspend" value="false" />
 	    
 	    <preference name="iosPersistentFileLocation" value="Library" />
+	    <preference name="iosExtraFilesystems" value="library" />
 
 	    <!--<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
     		<string>AtomJump MedImage would like to access your camera, so that you can take patient photos.</string>
