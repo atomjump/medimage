@@ -106,6 +106,9 @@ var app = {
     
     processPicture: function(imageURI)
     {
+        var _this = this;
+        glbThis = this;
+      
     	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
           //Reconnect once
       	  localStorage.removeItem("usingServer");		//This will force a reconnection
@@ -166,10 +169,9 @@ var app = {
 			 	  
 			 	   try {	
 					  //Move the file to permanent storage
-					  fileSys.root.getDirectory( cordova.file.dataDirectory,   //myFolderApp
-                    	{create:true},
+					  window.resolveLocalFileSystemURL( cordova.file.dataDirectory, 
 		                function(directory) {
-		                  alert("Created folder");
+		                  alert("Got folder");
 						  alert("About to move to " + directory.fullPath + "   with filename:" + newFileName);
 						  
 						  try {
