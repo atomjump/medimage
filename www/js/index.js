@@ -171,19 +171,26 @@ var app = {
 		                function(directory) {
 		                  alert("Created folder");
 						  alert("About to move to " + directory.fullPath + "   with filename:" + newFileName);
-						  fileEntry.moveFile(directory, newFileName, function(success){
-						 
-						 	alert("Move success");
-						 	alert("Moved file. New success path:" + success.fullPath);	
-						 
-							//success.nativeURL contains the path to the photo in permanent storage
-							glbThis.processPicture(success.fullPath);	//nativeURL
-						 
-						  }, function(err){
-							//an error occured moving file - send anyway, even if it is in the temporary folder
-							alert("Error occured moving file. Processing: " + imageURI);
-							glbThis.processPicture(imageURI);
-						  });
+						  
+						  try {
+							  fileEntry.moveFile(directory, newFileName, function(success){
+							 
+							 	alert("Move success");
+							 	alert("Moved file. New success path:" + success.fullPath);	
+							 
+								//success.nativeURL contains the path to the photo in permanent storage
+								glbThis.processPicture(success.fullPath);	//nativeURL
+							 
+							  }, function(err){
+								//an error occured moving file - send anyway, even if it is in the temporary folder
+								alert("Error occured moving file. Processing: " + imageURI);
+								glbThis.processPicture(imageURI);
+							  });
+						   } catch(err) {
+						   
+						   		alert("A proble occured moving the photo file. Processing: " + imageURI);
+					  			glbThis.processPicture(imageURI);
+						   }
 					   }, function(err) {
 					   		//an error occured moving file - send anyway, even if it is in the temporary folder
 							alert("Error occured creating the folder. Processing: " + imageURI);
@@ -191,7 +198,7 @@ var app = {
 					   
 					   });
 				   } catch(err) {
-				   	  alert("A proble occured moving the photo file. Processing: " + imageURI);
+				   	  alert("A proble occured creating the persistent folder. Processing: " + imageURI);
 					  glbThis.processPicture(imageURI);
 				   
 				   }
