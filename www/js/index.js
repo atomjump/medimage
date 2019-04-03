@@ -152,7 +152,7 @@ var app = {
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
 		 
-		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "  TempDir:" + cordova.file.tempDirectory + "   NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
+		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "    NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
 		 
 		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 		 		
@@ -163,7 +163,7 @@ var app = {
 				  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
 				  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
 				 
-				 	alert("Moved file. New URI:" + success.nativeURL);	
+				 	alert("Moved file. New success obj:" + JSON.stringify(success));	
 				 
 					//success.nativeURL contains the path to the photo in permanent storage
 					globThis.processPicture(success.nativeURL);
