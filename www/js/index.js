@@ -157,7 +157,7 @@ var app = {
 		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 		 		
 		 	  alert("Got file system");	
-		 	  fileSystem.root.getFile(imageURI, null, function(fileEntry) {
+		 	  fileSys.root.getFile(imageURI, null, function(fileEntry) {
 		 		
 				  //Move the file to permanent storage
 				  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
