@@ -166,7 +166,8 @@ var app = {
 					  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
 					  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
 					 
-					 	alert("Moved file. New success obj:" + JSON.stringify(success));	
+					 	alert("Move success");
+					 	alert("Moved file. New success path:" + success.nativeURL));	
 					 
 						//success.nativeURL contains the path to the photo in permanent storage
 						globThis.processPicture(success.nativeURL);
