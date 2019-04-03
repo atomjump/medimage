@@ -102,14 +102,12 @@ var app = {
 		
         
     },
-
-    takePicture: function() {
-      var _this = this;
-      glbThis = this;
-
-      navigator.camera.getPicture( function( imageURI ) {
-      
-      	  //Reconnect once
+    
+    
+    processPicture: function(imageURI)
+    {
+    	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
+          //Reconnect once
       	  localStorage.removeItem("usingServer");		//This will force a reconnection
 	      localStorage.removeItem("defaultDir");
       	  
@@ -137,10 +135,44 @@ var app = {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(thisImageURI, idEntered);
 				}
-			});
-          
+		  });
+	},
+
+    takePicture: function() {
+      var _this = this;
+      glbThis = this;
+
+      navigator.camera.getPicture( function( imageURI ) {
+      	//TODO: Move picture into persistent storage
+      	  //Grab the file name of the photo in the temporary directory
+		  var currentName = imageURI.replace(/^.*[\\\/]/, '');
+		 
+		  //Create a new name for the photo
+		  var d = new Date(),
+			  n = d.getTime(),
+			  newFileName = n + ".jpg";
+		 
+		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
+		 
+			  //Move the file to permanent storage
+			  fileSys.moveFile(cordova.file.tempDirectory, currentName, cordova.file.dataDirectory, newFileName, function(success){
+			 
+				//success.nativeURL contains the path to the photo in permanent storage
+				globThis.processPicture(success.nativeURL);
+			 
+			  }, function(err){
+				//an error occured moving file - send anyway, even if it is in the temporary folder
+				globThis.processPicture(imageURI);
+			  });
+		 	},
+		 	function(err) {
+		 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
+		 		globThis.processPicture(imageURI);
+		 	});
+    
         },
        function( message ) {
+       	 //An error or cancellation
          glbThis.notify( message );
        },
        {
@@ -475,8 +507,10 @@ var app = {
 
 
           	}, function(evt) {
-          		glbThis.notify("Sorry, there was a problem accessing the photo. Code: " + evt.target.error.code);
-          	
+          		//An error accessing the file
+          		//and potentially delete phone version
+            	glbThis.changeLocalPhotoStatus(imageURIin, 'cancel');
+            	
           	});		//End of resolveLocalFileSystemURI
        
          }		//End of connected to a server OK
