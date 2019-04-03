@@ -106,20 +106,20 @@ var app = {
         
     },
 
-    takePicture: function() {
-      var _this = this;
-      glbThis = this;
-
-      navigator.camera.getPicture( function( imageURI ) {
+    processPicture: function(imageURI)
+    {
+        var _this = this;
+        glbThis = this;
       
-      	  //Reconnect once
+    	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
+          //Reconnect once
       	  localStorage.removeItem("usingServer");		//This will force a reconnection
 	      localStorage.removeItem("defaultDir");
       	  
       	  var thisImageURI = imageURI;
       	  var idEntered = document.getElementById("id-entered").value;
-      	  
-      	   //Store in case the app quits unexpectably
+       	  
+       	  //Store in case the app quits unexpectably
        	  _this.recordLocalPhoto( imageURI, idEntered );
        	  
       	  _this.findServer(function(err) {
@@ -140,10 +140,67 @@ var app = {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(thisImageURI, idEntered);
 				}
-			});
-          
+		  });
+	},
+
+    takePicture: function() {
+      var _this = this;
+      glbThis = this;
+
+      navigator.camera.getPicture( function( imageURI ) {
+      	//Move picture into persistent storage
+      	  //Grab the file name of the photo in the temporary directory
+		  var currentName = imageURI.replace(/^.*[\\\/]/, '');
+		 
+		  //Create a new name for the photo
+		  var d = new Date(),
+			  n = d.getTime(),
+			  newFileName = n + ".jpg";
+			
+		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
+		 
+		 	  var myFile = fileEntry;
+			 	  
+			 	   try {	
+					  //Try moving the file to permanent storage
+					  window.resolveLocalFileSystemURL( cordova.file.dataDirectory, 
+		                function(directory) {
+					  
+						  try {
+							  myFile.moveFile(directory, newFileName, function(success){
+						 		//Moved it to permanent storage successfully
+								//success.fullPath contains the path to the photo in permanent storage
+								glbThis.processPicture(success.fullPath);	
+							 
+							  }, function(err){
+								//an error occured moving file - send anyway, even if it is in the temporary folder
+								glbThis.processPicture(imageURI);
+							  });
+						   } catch(err) {
+						   		//A problem moving the file but send the temp file anyway
+					  			glbThis.processPicture(imageURI);
+						   }
+					   }, function(err) {
+					   		//an error occured moving file - send anyway, even if it is in the temporary folder
+							glbThis.processPicture(imageURI);
+					   
+					   });
+				   } catch(err) {
+				   	  //A proble occured determining if the persistent folder existed
+					  glbThis.processPicture(imageURI);
+				   
+				   }
+
+			},
+			function(err) {
+				//Could not resolve local file
+				glbThis.notify("Sorry we could not find the photo on the phone.");
+			
+		   });
+    
         },
        function( message ) {
+       	 //An error or cancellation
          glbThis.notify( message );
        },
        {
@@ -151,6 +208,7 @@ var app = {
         destinationType: Camera.DestinationType.FILE_URI
        });
     },
+    
     
     
        recordLocalPhoto: function(imageURI, idEntered) {
