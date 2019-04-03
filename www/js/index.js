@@ -157,19 +157,28 @@ var app = {
 		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
 		 		
 		 	  alert("Got file system");	
+		 	  window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
 		 		
-			  //Move the file to permanent storage
-			  fileSys.moveFile(cordova.file.tempDirectory, currentName, cordova.file.dataDirectory, newFileName, function(success){
-			 
-			 	alert("Moved file. New URI:" + success.nativeURL);	
-			 
-				//success.nativeURL contains the path to the photo in permanent storage
-				globThis.processPicture(success.nativeURL);
-			 
-			  }, function(err){
-				//an error occured moving file - send anyway, even if it is in the temporary folder
-				alert("Error occured moving file. Processing: " + imageURI);
-				globThis.processPicture(imageURI);
+				  //Move the file to permanent storage
+				  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
+				  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
+				 
+				 	alert("Moved file. New URI:" + success.nativeURL);	
+				 
+					//success.nativeURL contains the path to the photo in permanent storage
+					globThis.processPicture(success.nativeURL);
+				 
+				  }, function(err){
+					//an error occured moving file - send anyway, even if it is in the temporary folder
+					alert("Error occured moving file. Processing: " + imageURI);
+					globThis.processPicture(imageURI);
+				  });
+			  },
+			  function(err) {
+			  	//Error resolving local file system URI
+			  	//an error occured detecting file - try send anyway
+				glbThis.notify("Sorry we could not find the photo on the phone.");
+			  
 			  });
 		 	},
 		 	function(err) {
