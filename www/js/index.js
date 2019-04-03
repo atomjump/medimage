@@ -154,38 +154,41 @@ var app = {
 		 
 		  alert("Image Temp:" + imageURI + "    CurrentName:" + currentName + "    NewFileName:" + newFileName + "   DataDirectory:" + cordova.file.dataDirectory);
 		 
-		   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
-		 		
-		 	  alert("Got file system");	
-		 	  fileSys.root.getFile(imageURI, null, function(fileEntry) {
-		 		
-				  //Move the file to permanent storage
-				  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
-				  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
-				 
-				 	alert("Moved file. New success obj:" + JSON.stringify(success));	
-				 
-					//success.nativeURL contains the path to the photo in permanent storage
-					globThis.processPicture(success.nativeURL);
-				 
-				  }, function(err){
-					//an error occured moving file - send anyway, even if it is in the temporary folder
-					alert("Error occured moving file. Processing: " + imageURI);
-					globThis.processPicture(imageURI);
-				  });
-			  },
-			  function(err) {
-			  	//Error resolving local file 
-			  	//an error occured detecting file - try send anyway
+		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
+		 
+		 	   alert("Got file Entry");
+			   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {
+			 		
+			 	 	
+			 	  
+			 		
+					  //Move the file to permanent storage
+					  alert("About to move to " + cordova.file.dataDirectory + "   with filename:" + newFileName);
+					  fileEntry.moveFile(cordova.file.dataDirectory, newFileName, function(success){
+					 
+					 	alert("Moved file. New success obj:" + JSON.stringify(success));	
+					 
+						//success.nativeURL contains the path to the photo in permanent storage
+						globThis.processPicture(success.nativeURL);
+					 
+					  }, function(err){
+						//an error occured moving file - send anyway, even if it is in the temporary folder
+						alert("Error occured moving file. Processing: " + imageURI);
+						globThis.processPicture(imageURI);
+					  });
+				  },
+			 	},
+			 	function(err) {
+			 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
+			 		alert("Error occured on file system. Processing: " + imageURI);
+			 		globThis.processPicture(imageURI);
+			 	});
+			},
+			function(err) {
+				//Could not resolve local file
 				glbThis.notify("Sorry we could not find the photo on the phone.");
-			  
-			  });
-		 	},
-		 	function(err) {
-		 		//An error requesting the file system as persistent - send anyway even if it is in the temporary folder
-		 		alert("Error occured on file system persistent. Processing: " + imageURI);
-		 		globThis.processPicture(imageURI);
-		 	});
+			
+		   });
     
         },
        function( message ) {
