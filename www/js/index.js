@@ -156,6 +156,7 @@ var app = {
 		  var d = new Date(),
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
+		  var newDirUri  = cordova.file.dataDirectory + "images/";
 			
 		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
 		 
@@ -163,14 +164,18 @@ var app = {
 			 	  
 			 	   try {	
 					  //Try moving the file to permanent storage
-					  window.resolveLocalFileSystemURL( cordova.file.dataDirectory, 
+					  window.resolveLocalFileSystemURL( newDirUri, 
 		                function(directory) {
 					  
 						  try {
-							  myFile.moveFile(directory, newFileName, function(success){
+							  myFile.moveTo(directory, newFileName, function(success){
 						 		//Moved it to permanent storage successfully
 								//success.fullPath contains the path to the photo in permanent storage
-								glbThis.processPicture(success.fullPath);	
+								if(success.nativeURL) {
+									glbThis.processPicture(success.nativeURL);
+								} else {
+									glbThis.notify("Sorry we could not find the moved photo on the phone. Please let medimage.co.nz know that a moveFile() has not worked correctly.");
+								}
 							 
 							  }, function(err){
 								//an error occured moving file - send anyway, even if it is in the temporary folder
