@@ -165,10 +165,22 @@ var app = {
 		                function(directory) {
 					  
 						  try {
-							  myFile.moveFile(directory, newFileName, function(success){
+							  myFile.moveTo(directory, newFileName, function(success){
 						 		//Moved it to permanent storage successfully
 								//success.fullPath contains the path to the photo in permanent storage
-								glbThis.processPicture(success.fullPath);	
+								
+								alert("Success!");
+								alert("Success vals: " + JSON.stringify(success));
+								if(success.fullPath) {
+									glbThis.processPicture(success.fullPath);
+								} else {
+									if(success.nativeURL) {
+										glbThis.processPicture(success.nativeURL);
+									} else {
+										glbThis.notify("Sorry we could not find the moved photo on the phone. Please let medimage.co.nz know that a moveFile() has not worked correctly.");
+									}
+								
+								}
 							 
 							  }, function(err){
 								//an error occured moving file - send anyway, even if it is in the temporary folder
