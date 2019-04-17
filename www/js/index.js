@@ -647,6 +647,8 @@ var app = {
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
 						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts.";
+						
+						glbThis.cancelNotify("");		//Remove any cancel icons
 					} else {
 						//Otherwise in the long count down
 						checkComplete.push(nowChecking);
