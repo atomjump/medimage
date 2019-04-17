@@ -627,10 +627,47 @@ var app = {
 			
 		 
 			if(nowChecking.loopCnt <= 0) {
-				//Have finished - remove interval and report back
-				document.getElementById("notify").innerHTML = "Unable to reach your computer.  Please check it is connected to the internet.  Your image will be delivered when connection occurs.";
 				
-				glbThis.cancelNotify("");		//Remove any cancel icons
+ 				//Have finished - remove interval and report back
+				if(!nowChecking.slowLoopCnt) {
+					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image should be delivered shortly.";
+					
+					//Now continue to check with this photo, but only once every 30 seconds, 30 times (i.e. for 15 minutes).
+					nowChecking.slowLoopCnt = 30;
+					checkComplete.push(nowChecking);
+					
+					//The file exists on the server still - try again in 30 seconds
+					setTimeout(glbThis.check, 30000);
+				} else {
+					//Count down
+					nowChecking.slowLoopCnt --;
+					
+					if(nowChecking.slowLoopCnt <= 0) {
+						//Have finished the long count down, and given up
+						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts.";
+						
+						glbThis.cancelNotify("");		//Remove any cancel icons
+					} else {
+						//Otherwise in the long count down
+						checkComplete.push(nowChecking);
+						
+						glbThis.get(nowChecking.fullGet, function(url, resp) {
+					
+							if((resp === "false")||(resp === false)) {
+								//File no longer exists, success!
+								checkComplete.pop();
+								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						
+								//and delete phone version
+								glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
+							} else {
+								//The file exists on the server still - try again in 30 seconds
+								setTimeout(glbThis.check, 30000);
+							} 
+						});
+					}
+				}
+ 
  
 			 
 			} else {
