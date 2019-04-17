@@ -632,6 +632,8 @@ var app = {
 				if(!nowChecking.slowLoopCnt) {
 					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image should be delivered shortly.";
 					
+					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
+					
 					//Now continue to check with this photo, but only once every 30 seconds, 30 times (i.e. for 15 minutes).
 					nowChecking.slowLoopCnt = 30;
 					checkComplete.push(nowChecking);
