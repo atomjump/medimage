@@ -247,7 +247,12 @@ var app = {
     					fileEntry.remove();
     					
     					//Remove entry from the array
+    					
+    					alert("Splicing " + cnt);		//TESTING
+    					
     					localPhotos.splice(cnt,1);
+    					
+    					alert("localPhotos array is now: " + JSON.stringify(localPhotos));		//TESTING
     					
     					//Set back the storage of the array
     					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
@@ -659,7 +664,8 @@ var app = {
 								//File no longer exists, success!
 								checkComplete.pop();
 								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
-						
+								
+								alert(JSON.stringify(nowChecking.details.imageURI));		//TESTING
 								//and delete phone version
 								glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
 							} else {
@@ -687,6 +693,8 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						
+						alert(JSON.stringify(nowChecking.details.imageURI));		//TESTING
 						
 						//and delete phone version
             			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
@@ -763,8 +771,6 @@ var app = {
             	glbThis.saveServer();
 
 
-            	//and delete phone version
-            	//OLD, WAS HERE: glbThis.changeLocalPhotoStatus(repeatIfNeeded.options.imageURI, 'cancel');
             
             } else {
             	//Retry sending
