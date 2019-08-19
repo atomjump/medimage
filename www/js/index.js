@@ -714,12 +714,16 @@ var app = {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
-						checkComplete.pop();
+						var nowChecking = checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 						
 						
 						//and delete phone version
-            			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
+						if(nowChecking.details) {
+            				glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
+            			} else {
+            				document.getElementById("notify").innerHTML = 'Image transferred. Success!  Note: The image will be resent on a restart.';
+            			}
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
