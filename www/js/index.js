@@ -248,11 +248,11 @@ var app = {
     					
     					//Remove entry from the array
     					
-    					
-    					alert("Splicing " + cnt);		//TESTING
+    					var splicing = cnt - 1;
+    					alert("Splicing " + splicing);		//TESTING
     					alert("localPhotos array before: " + JSON.stringify(localPhotos));		//TESTING
     					
-    					localPhotos.splice(cnt,1);
+    					localPhotos.splice(splicing,1);
     					
     					alert("localPhotos array is now: " + JSON.stringify(localPhotos));		//TESTING
     					
@@ -268,7 +268,8 @@ var app = {
     				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
     				 		
     				 		//Remove entry from the array
-    						localPhotos.splice(cnt,1);
+    				 		var splicing = cnt - 1;
+    						localPhotos.splice(splicing,1);
     					
     						//Set back the storage of the array
     						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
