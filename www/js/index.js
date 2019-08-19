@@ -418,6 +418,7 @@ var app = {
 	
 		var usingServer = localStorage.getItem("usingServer");
 		
+		var idEnteredB = idEntered;
 	
 		if((!usingServer)||(usingServer == null)) {
 			//No remove server already connected to, find the server now. And then call upload again
@@ -428,17 +429,17 @@ var app = {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
 					setTimeout(function() {
-						glbThis.uploadPhoto(imageURIin, idEntered)
+						glbThis.uploadPhoto(imageURIin, idEnteredB)
 						}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(imageURIin, idEntered);
+					glbThis.uploadPhoto(imageURIin, idEnteredB);
 				}
 			});
 			return;
 		} else {
 		
-			var idEnteredB = idEntered;
+			
 
 			//Have connected OK to a server
             window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
