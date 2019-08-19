@@ -270,7 +270,7 @@ var app = {
     				 	}
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway
-    				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
+    				 		glbThis.notify("Note: We have successfully forgotten the photo entry " + localPhotos[cnt].idEntered + " as the photo is no longer there.");
     				 		
     				 		//Remove entry from the array
     				 		var splicing = cnt - 1;
@@ -663,8 +663,8 @@ var app = {
 					
 					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
 					
-					//Now continue to check with this photo, but only once every 30 seconds, 30 times (i.e. for 15 minutes).
-					nowChecking.slowLoopCnt = 30;
+					//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
+					nowChecking.slowLoopCnt = 90;
 					checkComplete.push(nowChecking);
 					
 					//The file exists on the server still - try again in 30 seconds
@@ -681,6 +681,7 @@ var app = {
 					} else {
 						//Otherwise in the long count down
 						checkComplete.push(nowChecking);
+						var myNowChecking = nowChecking;
 						
 						glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
@@ -690,7 +691,11 @@ var app = {
 								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 								
 								//and delete phone version
-								glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
+								if(myNowChecking.details) {
+									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
+								} else {
+									document.getElementById("notify").innerHTML = 'Image transferred. Success!  Note: The image will be resent on a restart to verify.';
+								}
 							} else {
 								//The file exists on the server still - try again in 30 seconds
 								setTimeout(glbThis.check, 30000);
@@ -710,19 +715,20 @@ var app = {
 				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
 				glbThis.cancelNotify("");		//Remove any cancel icons
   
+  				var myNowChecking = nowChecking;
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
-						var nowChecking = checkComplete.pop();
+						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 						
 						
 						//and delete phone version
-						if(nowChecking.details) {
-            				glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
+						if(myNowChecking.details) {
+            				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
             			} else {
-            				document.getElementById("notify").innerHTML = 'Image transferred. Success!  Note: The image will be resent on a restart.';
+            				document.getElementById("notify").innerHTML = 'Image transferred. Success!  Note: The image will be resent on a restart to verify.';
             			}
 						
 					} else {
@@ -762,6 +768,7 @@ var app = {
             			 glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
+						document.getElementById("notify").innerHTML = 'Image transferred. Success!   Note: The image will be resent on a restart to verify.';
 					}
             
             	} else {
