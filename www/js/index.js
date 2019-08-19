@@ -265,8 +265,15 @@ var app = {
     				
     				 	//Some form of error case. We likely couldn't find the file, but we still want to remove the entry from the array
     				 	//in this case
-    				 	alert("Error code:" + evt.target.error.code);
-    				 	if(evt.target.error.code === 1) {
+    				 	var errorCode = null; 
+    				 	if(evt.code) {
+    				 		errorCode = evt.code;
+    				 	}
+    				 	if(evt.target && evt.target.error.code) {
+    				 		errorCode = evt.target.error.code;
+    				 	}
+    				 	alert("Error code:" + errorCode);
+    				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway
     				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
     				 		
