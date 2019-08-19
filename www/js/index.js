@@ -310,8 +310,7 @@ var app = {
        	
        	while(newPhoto = localPhotos.pop()) {
       		if(newPhoto) {
-      			alert("Uploading photo: " + newPhoto.imageURI + " with ID entered: " + newPhoto.idEntered);
-      		
+      			
         		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
         	}    	
     	}
@@ -450,7 +449,7 @@ var app = {
 				var options = new FileUploadOptions();
 				options.fileKey="file1";
 
-				var tempName = idEntered;
+				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
 					tempName = 'image';
 				}
