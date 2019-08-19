@@ -688,7 +688,15 @@ var app = {
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
 								checkComplete.pop();
-								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+								if(checkComplete.length == 0) {
+									document.getElementById("notify").innerHTML = 'All images transferred. Success!';
+								} else {
+									if(myNowChecking.details && myNowChecking.details.idEntered) {
+										document.getElementById("notify").innerHTML = 'Image ' + myNowChecking.details.idEntered + ' transferred. Success!';
+									} else {
+										document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+									}
+								}
 								
 								//and delete phone version
 								if(myNowChecking.details) {
@@ -721,7 +729,15 @@ var app = {
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
 						checkComplete.pop();
-						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						if(checkComplete.length == 0) {
+							document.getElementById("notify").innerHTML = 'All images transferred. Success!';
+						} else {
+							if(myNowChecking.details && myNowChecking.details.idEntered) {
+								document.getElementById("notify").innerHTML = 'Image ' + myNowChecking.details.idEntered + ' transferred. Success!';
+										} else {
+								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+							}
+						}
 						
 						
 						//and delete phone version
@@ -760,12 +776,20 @@ var app = {
             	var remoteServer = localStorage.getItem("serverRemote");
             	if(remoteServer == 'false') {
             		//i.e. Wifi case
-            		document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+            		
+            		
             		
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		if(repeatIfNeeded) {
-            			 glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
+            			
+						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered) {
+							document.getElementById("notify").innerHTML = 'Image ' + repeatIfNeeded.details.idEntered + ' transferred. Success!';
+						} else {
+							document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+						}
+            		
+            			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!   Note: The image will be resent on a restart to verify.';
