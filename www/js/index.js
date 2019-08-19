@@ -248,7 +248,9 @@ var app = {
     					
     					//Remove entry from the array
     					
+    					
     					alert("Splicing " + cnt);		//TESTING
+    					alert("localPhotos array before: " + JSON.stringify(localPhotos));		//TESTING
     					
     					localPhotos.splice(cnt,1);
     					
@@ -308,6 +310,8 @@ var app = {
        	
        	while(newPhoto = localPhotos.pop()) {
       		if(newPhoto) {
+      			alert("Uploading photo: " + newPhoto.imageURI + " with ID entered: " + newPhoto.idEntered);
+      		
         		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
         	}    	
     	}
