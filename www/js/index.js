@@ -445,7 +445,7 @@ var app = {
 			return;
 		} else {
 		
-			
+			var myImageURIin = imageURIin;
 
 			//Have connected OK to a server
             window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
@@ -561,7 +561,8 @@ var app = {
           	}, function(evt) {
           		//An error accessing the file
           		//and potentially delete phone version
-            	glbThis.changeLocalPhotoStatus(imageURIin, 'cancel');
+          		alert("Removing the file: " + myImageURIin);
+            	glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
             	
           	});		//End of resolveLocalFileSystemURI
        
