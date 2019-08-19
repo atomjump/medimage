@@ -270,9 +270,8 @@ var app = {
 							errorCode = evt.target.error.code;
 						}
 			     		if(errorCode === 1) {
-	    				 	//The photo is not there. Remove anyway		    				 		//The photo is not there. Remove anyway
-	    				 	glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");		    				 		glbThis.notify("Note: We have successfully forgotten the photo entry " + localPhotos[cnt].idEntered + " as the photo is no longer there.");
-	    				 				    				 		
+	    				 	//The photo is not there. Remove anyway		    				 		
+	    				 	 				 				    				 		
 	    				 	//Remove entry from the array
 							var splicing = cnt - 1;
 			    			localPhotos.splice(splicing,1);
