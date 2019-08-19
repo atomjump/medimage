@@ -263,6 +263,7 @@ var app = {
     				
     				 	//Some form of error case. We likely couldn't find the file, but we still want to remove the entry from the array
     				 	//in this case
+    				 	alert("Error code:" + evt.target.error.code);
     				 	if(evt.target.error.code === 1) {
     				 		//The photo is not there. Remove anyway
     				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
@@ -276,6 +277,12 @@ var app = {
     				 	} else {
     				 	
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
+    				 		//Remove entry from the array
+    				 		var splicing = cnt - 1;
+    						localPhotos.splice(splicing,1);
+    					
+    						//Set back the storage of the array
+    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     				 	}
     				 
     				});
