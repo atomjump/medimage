@@ -239,7 +239,6 @@ var app = {
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
-    			alert("Found a match " + imageURI + " new status: " + newStatus);
     	
     			if(newStatus === "cancel") {
     				//Delete the photo
@@ -251,12 +250,9 @@ var app = {
     					//Remove entry from the array
     					
     					var splicing = cnt - 1;
-    					alert("Splicing " + splicing);		//TESTING
-    					alert("localPhotos array before: " + JSON.stringify(localPhotos));		//TESTING
     					
     					localPhotos.splice(splicing,1);
     					
-    					alert("localPhotos array is now: " + JSON.stringify(localPhotos));		//TESTING
     					
     					//Set back the storage of the array
     					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
@@ -272,8 +268,7 @@ var app = {
     				 	if(evt.target && evt.target.error.code) {
     				 		errorCode = evt.target.error.code;
     				 	}
-    				 	alert("Error code:" + errorCode);
-    				 	if(errorCode === 1) {
+     				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway
     				 		glbThis.notify("Note: We have successfully forgotten the photo entry as the photo is no longer there.");
     				 		
@@ -325,12 +320,10 @@ var app = {
        	  	localPhotos = [];
        	}
        	
-       	alert("Local photos:" + JSON.stringify(localPhotos));
        	
        	//while(newPhoto = localPhotos.pop()) {
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
       		var newPhoto = localPhotos[cnt];
-      		alert("New photo:" + JSON.stringify(newPhoto));		//TESTING
       		if(newPhoto) {
       			
         		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
@@ -577,7 +570,6 @@ var app = {
           	}, function(evt) {
           		//An error accessing the file
           		//and potentially delete phone version
-          		alert("Removing the file: " + myImageURIin);
             	glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
             	
           	});		//End of resolveLocalFileSystemURI
@@ -697,7 +689,6 @@ var app = {
 								checkComplete.pop();
 								document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 								
-								alert(JSON.stringify(nowChecking.details.imageURI));		//TESTING
 								//and delete phone version
 								glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
 							} else {
@@ -726,7 +717,6 @@ var app = {
 						checkComplete.pop();
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!';
 						
-						alert(JSON.stringify(nowChecking.details.imageURI));		//TESTING
 						
 						//and delete phone version
             			glbThis.changeLocalPhotoStatus(nowChecking.details.imageURI, 'cancel');
