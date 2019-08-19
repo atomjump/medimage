@@ -309,7 +309,9 @@ var app = {
        	  	localPhotos = [];
        	}
        	
-       	while(newPhoto = localPhotos.pop()) {
+       	//while(newPhoto = localPhotos.pop()) {
+       	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+      		var newPhoto = localPhotos[cnt];
       		if(newPhoto) {
       			
         		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
