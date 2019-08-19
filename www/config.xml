@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.woundmapp"
-        version   = "1.8.5"
-        versionCode = "435">
+        version   = "1.8.6"
+        versionCode = "436">
 
 
 
