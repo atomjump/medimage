@@ -239,6 +239,8 @@ var app = {
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
+    			alert("Found a match " + imageURI + " new status: " + newStatus);
+    	
     			if(newStatus === "cancel") {
     				//Delete the photo
     				window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
