@@ -498,7 +498,12 @@ var app = {
 						var params = new Object();
 						params.title = document.getElementById("id-entered").value;
 						if((params.title == '')||(params.title == null)) {
-							params.title = 'image';
+							if((idEnteredC == '')||(idEnteredC == null)) {
+								params.title = 'image';
+							} else {
+								params.title = idEnteredC;
+							}
+							
 						}
 
 						options.params = params;
