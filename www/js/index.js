@@ -685,8 +685,10 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
+								alert("Before pop " + checkComplete.length);
 								checkComplete.pop();
 								var more = " " + checkComplete.length + " more.";			//Some more yet
+								alert("After pop " + checkComplete.length);
 								
 								if(checkComplete.length == 0) {
 									document.getElementById("notify").innerHTML = 'Image transferred. Success!';
