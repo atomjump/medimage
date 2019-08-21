@@ -731,9 +731,7 @@ var app = {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
-						alert("Before pop " + checkComplete.length);
 						checkComplete.pop();
-						alert("After pop " + checkComplete.length);
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
