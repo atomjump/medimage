@@ -716,10 +716,7 @@ var app = {
 									}
 								}
 								
-								//Show a trace wound button if we are MedImage Server connected
-								glbThis.traceWound(myNowChecking.details.imageURI);
 								
-
 								//and delete phone version
 								if(myNowChecking.details) {
 									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
@@ -727,6 +724,12 @@ var app = {
 
 									document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
 								}
+								
+								//Show a trace wound button if we are MedImage Server connected
+								glbThis.traceWound(myNowChecking.details.imageURI);
+								
+
+								
 							} else {
 								//The file exists on the server still - try again in 30 seconds
 								setTimeout(glbThis.check, 30000);
@@ -768,8 +771,7 @@ var app = {
 						}
 						
 						
-						//Show a trace wound button if we are MedImage Server connected
-						glbThis.traceWound(imageURI);
+						
 						
 						
 						//and delete phone version
@@ -778,6 +780,9 @@ var app = {
             			} else {
             				document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
             			}
+            			
+            			//Show a trace wound button if we are MedImage Server connected
+						glbThis.traceWound(myNowChecking.details.imageURI);
 						
 
 					} else {
@@ -796,7 +801,7 @@ var app = {
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
 		//TODO: turn into generic URL and folder version of imageURI
-		glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" \"></ons-icon><br/>Measure Wound");  //onclick=\"window.open(\"http:\/\/104.131.151.99:5567\/addon\/show-analysis?photo=" + imageURI + "\&style=mob\", \"_system\"); );
+		glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\"></ons-icon><br/>Measure Wound");  //onclick=\"window.open(\"http:\/\/104.131.151.99:5567\/addon\/show-analysis?photo=" + imageURI + "\&style=mob\", \"_system\"); );
 		//   fa-draw-polygon
 	},
 						
@@ -842,8 +847,8 @@ var app = {
 						document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
 					}
 					
-						//Show a trace wound button if we are MedImage Server connected
-						glbThis.traceWound(repeatIfNeeded.imageURI);
+					//Show a trace wound button if we are MedImage Server connected
+					glbThis.traceWound(repeatIfNeeded.imageURI);
             
 
             	} else {
