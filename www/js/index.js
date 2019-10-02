@@ -801,7 +801,8 @@ var app = {
 
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
     	    
-    	    glbThis.cancelNotify("");		//Remove any cancel icons
+    	    //TODO: keep this in if we have no linked MedImage Server
+    	    //glbThis.cancelNotify("");		//Remove any cancel icons
  
  
     	    //Check if this was a transfer to the remote server
