@@ -431,6 +431,7 @@ var app = {
 		}		
 		
 	},
+	
 
     uploadPhoto: function(imageURIin, idEntered) {
   
@@ -714,6 +715,11 @@ var app = {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 									}
 								}
+								
+								//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
+								//a button to 
+								//TODO: turn into generic URL and folder version of imageURI
+								glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-draw-polygon\" href=\"#javascript\" onclick=\"window.open(\"http:\/\/104.131.151.99:5567\/addon\/show-analysis?photo=" + imageURI + "\", \"_system\"); );\"></ons-icon><br/>Measure Wound");
 								
 
 								//and delete phone version
