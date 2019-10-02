@@ -706,13 +706,13 @@ var app = {
 								
 								
 								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+									document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST';
 								} else {
 									
 									if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
 										document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
 									} else {
-										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+										document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
 									}
 								}
 								
@@ -725,7 +725,7 @@ var app = {
 									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
 								} else {
 
-									document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+									document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
 								}
 							} else {
 								//The file exists on the server still - try again in 30 seconds
@@ -758,12 +758,12 @@ var app = {
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+							document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST';
 						} else {
 							if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
 								document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
 							} else {
-								document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+								document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
 							}
 						}
 						
@@ -776,7 +776,7 @@ var app = {
 						if(myNowChecking.details) {
             				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
             			} else {
-            				document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+            				document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
             			}
 						
 
@@ -831,15 +831,15 @@ var app = {
             		if(repeatIfNeeded) {
             			
 						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered && repeatIfNeeded.details.idEntered != "") {
-							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success!' + more;
+							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success! TEST' + more;
 						} else {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+							document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
-						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+						document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
 					}
 					
 						//Show a trace wound button if we are MedImage Server connected
