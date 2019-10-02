@@ -41,6 +41,8 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Wound Mapp would like to access your camera, so that you can take patient photos." />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Wound Mapp would like to access your photo library, so that you can see any existing patient photos." />
 	</plugin>
+	
+	<gap:plugin name="cordova-plugin-inappbrowser" source="npm"/>
    
     
     
