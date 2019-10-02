@@ -717,7 +717,7 @@ var app = {
 								}
 								
 								//Show a trace wound button if we are MedImage Server connected
-								glbThis.traceWound(imageURI);
+								glbThis.traceWound(myNowChecking.details.imageURI);
 								
 
 								//and delete phone version
@@ -796,7 +796,8 @@ var app = {
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
 		//TODO: turn into generic URL and folder version of imageURI
-		glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-draw-polygon\" href=\"#javascript\" onclick=\"window.open(\"http:\/\/104.131.151.99:5567\/addon\/show-analysis?photo=" + imageURI + "\&style=mob\", \"_system\"); );\"></ons-icon><br/>Measure Wound");
+		glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" \"></ons-icon><br/>Measure Wound");  //onclick=\"window.open(\"http:\/\/104.131.151.99:5567\/addon\/show-analysis?photo=" + imageURI + "\&style=mob\", \"_system\"); );
+		//   fa-draw-polygon
 	},
 						
 
@@ -842,7 +843,7 @@ var app = {
 					}
 					
 						//Show a trace wound button if we are MedImage Server connected
-						glbThis.traceWound(imageURI);
+						glbThis.traceWound(repeatIfNeeded.imageURI);
             
 
             	} else {
