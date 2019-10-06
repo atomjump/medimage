@@ -702,8 +702,8 @@ var app = {
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
 								var yTitle = "IMAGE";
-								if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
-									myTitle = myNowChecking.details.idEntered;
+								if(myNowChecking.options && myNowChecking.options.idEntered && myNowChecking.options.idEntered != "") {
+									myTitle = myNowChecking.options.idEntered;
 								}
 								
 								checkComplete.pop();
@@ -719,9 +719,9 @@ var app = {
 									
 								} else {
 									
-									if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
+									if(myNowChecking.options && myNowChecking.options.idEntered && myNowChecking.options.idEntered != "") {
 									
-										document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
+										document.getElementById("notify").innerHTML = myNowChecking.options.idEntered + ' transferred. Success!' + more;
 									} else {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 									}
@@ -878,9 +878,9 @@ var app = {
             		var myTitle = "";
             		if(repeatIfNeeded) {
             			
-						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered && repeatIfNeeded.details.idEntered != "") {
-							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success! ' + more;
-							myTitle = repeatIfNeeded.details.idEntered
+						if(repeatIfNeeded.options && repeatIfNeeded.options.idEntered && repeatIfNeeded.options.idEntered != "") {
+							document.getElementById("notify").innerHTML = repeatIfNeeded.options.idEntered + ' transferred. Success! ' + more;
+							myTitle = repeatIfNeeded.options.idEntered
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 							myTitle = "IMAGE";
