@@ -1275,7 +1275,7 @@ var app = {
 	
 	clearOptions: function() {
 		localStorage.removeItem("serverOptions");
-	}
+	},
 
     findServer: function(cb) {
 
