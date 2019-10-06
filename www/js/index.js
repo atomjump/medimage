@@ -819,8 +819,8 @@ var app = {
 		//Break up title into words
 		
 		//Break up title into words
-		if(title) {
-			var titleWords = title.split(' ');
+		if(myTitle) {
+			var titleWords = myTitle.split(' ');
 			var wordCnt = titleWords.length - 1;
 		}
 		
