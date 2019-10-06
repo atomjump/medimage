@@ -701,9 +701,9 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var yTitle = "IMAGE";
-								if(myNowChecking.options && myNowChecking.options.idEntered && myNowChecking.options.idEntered != "") {
-									myTitle = myNowChecking.options.idEntered;
+								var myTitle = "Image";
+								if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
+									myTitle = myNowChecking.options.params.title;
 								}
 								
 								checkComplete.pop();
@@ -713,15 +713,13 @@ var app = {
 								
 								
 								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
-									
-									
+									document.getElementById("notify").innerHTML = 'Image transferred. Success! ';									
 									
 								} else {
 									
-									if(myNowChecking.options && myNowChecking.options.idEntered && myNowChecking.options.idEntered != "") {
+									if(myTitle != "") {
 									
-										document.getElementById("notify").innerHTML = myNowChecking.options.idEntered + ' transferred. Success!' + more;
+										document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 									} else {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 									}
@@ -769,9 +767,9 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 	
-						var myTitle = "IMAGE";
-						if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
-							myTitle = myNowChecking.details.idEntered;
+						var myTitle = "Image";
+						if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
+							myTitle = myNowChecking.options.params.title;
 						}
 						
 						
@@ -779,8 +777,8 @@ var app = {
 						if(checkComplete.length == 0) {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
 						} else {
-							if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
-								document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
+							if(myTitle != "image") {
+								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							} else {
 								document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 							}
@@ -875,22 +873,20 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
-            		var myTitle = "";
+            		var myTitle = "Image";
             		if(repeatIfNeeded) {
             			
-						if(repeatIfNeeded.options && repeatIfNeeded.options.idEntered && repeatIfNeeded.options.idEntered != "") {
-							document.getElementById("notify").innerHTML = repeatIfNeeded.options.idEntered + ' transferred. Success! ' + more;
+						if(repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
 							myTitle = repeatIfNeeded.options.idEntered
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
-							myTitle = "IMAGE";
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
 						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
-						myTitle = "IMAGE";
 					}
 					
 					//Show a trace wound button if we are MedImage Server connected
