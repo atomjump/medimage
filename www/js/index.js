@@ -706,13 +706,13 @@ var app = {
 								
 								
 								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST';
+									document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
 								} else {
 									
 									if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
 										document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
 									} else {
-										document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
+										document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 									}
 								}
 								
@@ -722,7 +722,7 @@ var app = {
 									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
 								} else {
 
-									document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
+									document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 								}
 								
 								//Show a trace wound button if we are MedImage Server connected
@@ -761,12 +761,12 @@ var app = {
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST';
+							document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
 						} else {
 							if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
 								document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
 							} else {
-								document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
+								document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 							}
 						}
 						
@@ -778,7 +778,7 @@ var app = {
 						if(myNowChecking.details) {
             				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
             			} else {
-            				document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
+            				document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
             			}
             			
             			//Show a trace wound button if we are MedImage Server connected
@@ -796,13 +796,13 @@ var app = {
 	},
 	
 	
-	traceWound: function(title) {
+	traceWound: function(myTitle) {
 	
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
 		//Break up title into words
-		if(title) {
-			var titleWords = title.split(' ');
+		if(myTitle) {
+			var titleWords = myTitle.split(' ');
 			var wordCnt = titleWords.length - 2;
 		}
 		
@@ -819,7 +819,7 @@ var app = {
 
 		//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
 
-		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
+		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
 
 		glbThis.cancelNotify(fullHTML);
 		
@@ -858,13 +858,13 @@ var app = {
 						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered && repeatIfNeeded.details.idEntered != "") {
 							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success! TEST' + more;
 						} else {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more;
+							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
-						document.getElementById("notify").innerHTML = 'Image transferred. Success! TEST' + more + ' Note: The image will be resent on a restart to verify.';
+						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 					}
 					
 					//Show a trace wound button if we are MedImage Server connected
