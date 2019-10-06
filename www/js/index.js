@@ -802,23 +802,26 @@ var app = {
 		//a button to 
 		
 		//Break up title into words
-		titleWords = title.split(" ");
+		var titleWords = title.split(' ');
 		var wordCnt = titleWords.length - 1;
 		
+		var folder = "IMAGE";
 		if(titleWords[0]) {
 			var folder = titleWords[0];
+		
 			for(cnt = 0; cnt < wordCnt; cnt++) {
 				folder += "+" + titleWords[cnt + 1];
 			}
+		}
 		
-			var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
+		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
+
+		//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
+
+		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open " + url + "'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
+
+		glbThis.cancelNotify(fullHTML);
 		
-			//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
-		
-			var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open '" + url + "'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
-		
-			glbThis.cancelNotify(fullHTML);
-		}   
 	},
 						
 
