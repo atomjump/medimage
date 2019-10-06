@@ -701,7 +701,7 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var myTitle = "Image";
+								var myTitle = "Image" + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify;
 								if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
 									myTitle = myNowChecking.options.params.title;
 								}
@@ -713,7 +713,7 @@ var app = {
 								
 								
 								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = 'Image transferred. Success! ';									
+									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';	//TESTING REMOVE THE myTitle at the start!									
 									
 								} else {
 									
@@ -767,7 +767,7 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 	
-						var myTitle = "Image";
+						var myTitle = "Image" + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
 						if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
 							myTitle = myNowChecking.options.params.title;
 						}
@@ -775,9 +775,9 @@ var app = {
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
+							document.getElementById("notify").innerHTML = myTitle + ' Image transferred. Success! ';  //TESTING REMOVE THE myTitle at the start
 						} else {
-							if(myTitle != "image") {
+							if(myTitle != "") {
 								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							} else {
 								document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
@@ -873,12 +873,13 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
-            		var myTitle = "Image";
+            		var myTitle = "Image " + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
+            		
             		if(repeatIfNeeded) {
             			
 						if(repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							myTitle = repeatIfNeeded.options.idEntered
+							myTitle = repeatIfNeeded.options.params.title;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 						}
