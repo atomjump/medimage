@@ -695,21 +695,34 @@ var app = {
 						checkComplete.push(nowChecking);
 						var myNowChecking = nowChecking;
 						
+						
 						glbThis.get(nowChecking.fullGet, function(url, resp) {
+					
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-
+								var myTitle = "";
+								if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
+									myTitle = myNowChecking.details.idEntered;
+								} else {
+									myTitle = "IMAGE";
+								}
 								
 								checkComplete.pop();
 								var more = " " + checkComplete.length + " more.";			//Some more yet
 								
 								
+								
+								
 								if(checkComplete.length == 0) {
 									document.getElementById("notify").innerHTML = 'Image transferred. Success! ';
+									
+									
+									
 								} else {
 									
 									if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
+									
 										document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
 									} else {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
@@ -726,7 +739,7 @@ var app = {
 								}
 								
 								//Show a trace wound button if we are MedImage Server connected
-								glbThis.traceWound(myNowChecking.options.params.title);
+								glbThis.traceWound(myTitle);
 								
 
 								
@@ -757,7 +770,12 @@ var app = {
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
 						checkComplete.pop();
-
+	
+						var myTitle = "IMAGE";
+						if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
+							myTitle = myNowChecking.details.idEntered;
+						}
+						
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
@@ -782,7 +800,7 @@ var app = {
             			}
             			
             			//Show a trace wound button if we are MedImage Server connected
-						glbThis.traceWound(myNowChecking.options.params.title);
+						glbThis.traceWound(myTitle);
 						
 
 					} else {
@@ -865,22 +883,26 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
+            		var myTitle = "";
             		if(repeatIfNeeded) {
             			
 						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered && repeatIfNeeded.details.idEntered != "") {
-							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success! TEST' + more;
+							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success! ' + more;
+							myTitle = repeatIfNeeded.details.idEntered
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
+							myTitle = "IMAGE";
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
 						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+						myTitle = "IMAGE";
 					}
 					
 					//Show a trace wound button if we are MedImage Server connected
-					glbThis.traceWound(repeatIfNeeded.options.params.title);
+					glbThis.traceWound(myTitle);
             
 
             	} else {
