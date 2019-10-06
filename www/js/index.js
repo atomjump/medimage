@@ -818,18 +818,22 @@ var app = {
 		//a button to 
 		//Break up title into words
 		
-		if(myTitle) {
-			var titleWords = myTitle.split(' ');
-			var wordCnt = titleWords.length - 2;
+		//Break up title into words
+		if(title) {
+			var titleWords = title.split(' ');
+			var wordCnt = titleWords.length - 1;
 		}
-		
 		
 		var folder = "IMAGE";
 		if(titleWords && titleWords[0]) {
 			folder = titleWords[0];
 		
 			for(cnt = 0; cnt < wordCnt; cnt++) {
-				folder += "+" + titleWords[cnt + 1];
+				var word = titleWords[cnt + 1];
+				if(word[0] === '#') {
+					word = word.substr(1);
+					folder += "+" + word;
+				}
 			}
 		}
 		
