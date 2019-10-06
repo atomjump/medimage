@@ -838,13 +838,13 @@ var app = {
 		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
 
 
-		var fullHTML = "<ons-button><ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon></ons-button><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
+		var fullHTML = "<ons-button modifier=\"outline\" style=\"color: #4f6d9c;\"><ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon></ons-button><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
 
 
-		//Wait for a couple of seconds to give the server a chance to process this file
+		//Wait for a second to give the server a chance to process this file
 		setTimeout(function() {
 			glbThis.cancelNotify(fullHTML);
-		}, 2000);
+		}, 1000);
 		
 	},
 						
