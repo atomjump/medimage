@@ -701,11 +701,9 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var myTitle = "";
+								var yTitle = "IMAGE";
 								if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
 									myTitle = myNowChecking.details.idEntered;
-								} else {
-									myTitle = "IMAGE";
 								}
 								
 								checkComplete.pop();
@@ -820,13 +818,13 @@ var app = {
 		//a button to 
 		//Break up title into words
 		
-		/*glbThis.cancelNotify("dbg1");
+		//glbThis.cancelNotify("dbg1");
 		if(myTitle) {
 			var titleWords = myTitle.split(' ');
 			var wordCnt = titleWords.length - 2;
 		}
 		
-		glbThis.cancelNotify("dbg2");
+		//glbThis.cancelNotify("dbg2");
 		
 		var folder = "IMAGE";
 		if(titleWords && titleWords[0]) {
@@ -837,7 +835,7 @@ var app = {
 			}
 		}
 		
-		glbThis.cancelNotify("dbg3");*/
+		//glbThis.cancelNotify("dbg3");
 		
 		var folder = "IMAGE";
 		
