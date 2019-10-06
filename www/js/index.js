@@ -726,7 +726,7 @@ var app = {
 								}
 								
 								//Show a trace wound button if we are MedImage Server connected
-								glbThis.traceWound(myNowChecking.details.imageURI);
+								glbThis.traceWound(myNowChecking.options.params.title);
 								
 
 								
@@ -782,7 +782,7 @@ var app = {
             			}
             			
             			//Show a trace wound button if we are MedImage Server connected
-						glbThis.traceWound(myNowChecking.details.imageURI);
+						glbThis.traceWound(myNowChecking.options.params.title);
 						
 
 					} else {
@@ -796,19 +796,29 @@ var app = {
 	},
 	
 	
-	traceWound: function(imageURI) {
+	traceWound: function(title) {
 	
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
-		//TODO: turn into generic URL and folder version of imageURI
-		var url = encodeURI("http://104.131.151.99:5567/addon/show-analysis?photo=" + imageURI + "&style=mob");
 		
-		url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//TESTING
+		//Break up title into words
+		titleWords = title.split(" ");
+		var wordCnt = titleWords.length - 1;
 		
-		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
+		if(titleWords[0]) {
+			var folder = titleWords[0];
+			for(cnt = 0; cnt < wordCnt; cnt++) {
+				folder += "+" + titleWords[cnt + 1];
+			}
 		
-		glbThis.cancelNotify(fullHTML);  //window.open('" + url + "', \"_system\");
-		//   
+			var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
+		
+			//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
+		
+			var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open '" + url + "'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
+		
+			glbThis.cancelNotify(fullHTML);
+		}   
 	},
 						
 
@@ -854,7 +864,7 @@ var app = {
 					}
 					
 					//Show a trace wound button if we are MedImage Server connected
-					glbThis.traceWound(repeatIfNeeded.imageURI);
+					glbThis.traceWound(repeatIfNeeded.options.params.title);
             
 
             	} else {
