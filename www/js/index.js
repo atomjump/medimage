@@ -800,11 +800,10 @@ var app = {
 	
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
-		
 		//Break up title into words
 		if(title) {
 			var titleWords = title.split(' ');
-			var wordCnt = titleWords.length - 1;
+			var wordCnt = titleWords.length - 2;
 		}
 		
 		var folder = "IMAGE";
