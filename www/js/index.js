@@ -845,7 +845,7 @@ var app = {
 
 		//glbThis.cancelNotify("dbg4 " + url);
 
-		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-ruler\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span style=\"color: #4f6d9c;\">Measure Wound</span>";
+		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span style=\"color: #4f6d9c;\">Measure Wound</span>";
 
 
 		//glbThis.cancelNotify("dbg5");
