@@ -807,7 +807,7 @@ var app = {
 		
 		var folder = "IMAGE";
 		if(titleWords[0]) {
-			var folder = titleWords[0];
+			folder = titleWords[0];
 		
 			for(cnt = 0; cnt < wordCnt; cnt++) {
 				folder += "+" + titleWords[cnt + 1];
