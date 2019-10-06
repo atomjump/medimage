@@ -801,10 +801,14 @@ var app = {
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
 		//a button to 
 		//Break up title into words
+		
+		alert("dbg1");
 		if(myTitle) {
 			var titleWords = myTitle.split(' ');
 			var wordCnt = titleWords.length - 2;
 		}
+		
+		alert("dbg2");
 		
 		var folder = "IMAGE";
 		if(titleWords && titleWords[0]) {
@@ -815,12 +819,18 @@ var app = {
 			}
 		}
 		
+		alert("dbg3");
+		
 		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
 
 		//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
 
+		alert("dbg4" + url);
+
 		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
 
+
+		alert("dbg5");
 		glbThis.cancelNotify(fullHTML);
 		
 	},
