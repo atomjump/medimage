@@ -803,11 +803,9 @@ var app = {
 		//TODO: turn into generic URL and folder version of imageURI
 		var url = encodeURI("http://104.131.151.99:5567/addon/show-analysis?photo=" + imageURI + "&style=mob");
 		
-		url = "http://google.com";		//TESTING
+		url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//TESTING
 		
 		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
-		glbThis.notify("HTML: " + fullHTML);
-		
 		
 		glbThis.cancelNotify(fullHTML);  //window.open('" + url + "', \"_system\");
 		//   
