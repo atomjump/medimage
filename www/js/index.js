@@ -701,7 +701,7 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var myTitle = "Image" + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify;
+								var myTitle = "Image" + JSON.stringify(myNowChecking.options,6);	//TESTING IN stringify;
 								if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
 									myTitle = myNowChecking.options.params.title;
 								}
@@ -767,7 +767,7 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 	
-						var myTitle = "Image" + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
+						var myTitle = "Image" + JSON.stringify(myNowChecking.options,6);	//TESTING IN stringify
 						if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
 							myTitle = myNowChecking.options.params.title;
 						}
@@ -873,7 +873,7 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
-            		var myTitle = "Image " + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
+            		var myTitle = "Image " + JSON.stringify(repeatIfNeeded.options,6);	//TESTING IN stringify
             		
             		if(repeatIfNeeded) {
             			
