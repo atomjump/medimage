@@ -802,11 +802,13 @@ var app = {
 		//a button to 
 		
 		//Break up title into words
-		var titleWords = title.split(' ');
-		var wordCnt = titleWords.length - 1;
+		if(title) {
+			var titleWords = title.split(' ');
+			var wordCnt = titleWords.length - 1;
+		}
 		
 		var folder = "IMAGE";
-		if(titleWords[0]) {
+		if(titleWords && titleWords[0]) {
 			folder = titleWords[0];
 		
 			for(cnt = 0; cnt < wordCnt; cnt++) {
@@ -818,7 +820,7 @@ var app = {
 
 		//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
 
-		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open " + url + "'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
+		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"alert('Trying to open'); window.open('" + url + "', '_system');\"></ons-icon><br/>Measure Wound";
 
 		glbThis.cancelNotify(fullHTML);
 		
