@@ -701,9 +701,9 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var myTitle = "Image" + JSON.stringify(myNowChecking,6);	//TESTING IN stringify;
-								if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
-									myTitle = myNowChecking.options.params.title;
+								var myTitle = "Image";// + JSON.stringify(myNowChecking,6);	//TESTING IN stringify;
+								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+									myTitle = myNowChecking.details.options.params.title;
 								}
 								
 								checkComplete.pop();
@@ -767,9 +767,9 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 	
-						var myTitle = "Image" + JSON.stringify(myNowChecking,6);	//TESTING IN stringify
-						if(myNowChecking.options && myNowChecking.options.params && myNowChecking.options.params.title && myNowChecking.options.params.title != "") {
-							myTitle = myNowChecking.options.params.title;
+						var myTitle = "Image";// + JSON.stringify(myNowChecking,6);	//TESTING IN stringify
+						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+							myTitle = myNowChecking.details.options.params.title;
 						}
 						
 						
@@ -822,7 +822,7 @@ var app = {
 			var wordCnt = titleWords.length - 1;
 		}
 		
-		var folder = "IMAGE";
+		var folder = "Image";
 		if(titleWords && titleWords[0]) {
 			folder = titleWords[0];
 		
@@ -838,7 +838,7 @@ var app = {
 		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
 
 
-		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span style=\"color: #4f6d9c;\">Measure Wound</span>";
+		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
 
 
 		glbThis.cancelNotify(fullHTML);
@@ -873,13 +873,13 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
-            		var myTitle = "Image " + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
+            		var myTitle = "Image";// + JSON.stringify(repeatIfNeeded,6);	//TESTING IN stringify
             		
             		if(repeatIfNeeded) {
             			
-						if(repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+						if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							myTitle = repeatIfNeeded.options.params.title;
+							myTitle = repeatIfNeeded.detail.options.params.title;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 						}
