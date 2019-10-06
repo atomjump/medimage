@@ -1258,6 +1258,9 @@ var app = {
 		var pos = serverUrl.lastIndexOf(searchFor);
 		var guid = serverUrl.substr(pos + searchFor.length);
 		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
+		
+		glbThis.notifyCancel(serverUrl + " " + settingsUrl);			//TESTING
+		
 		glbThis.get(settingsUrl, function(url, resp) {
 			
 			if(resp != "") {
