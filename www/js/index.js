@@ -775,7 +775,7 @@ var app = {
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';  //TESTING REMOVE THE myTitle at the start
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
 						} else {
 							if(myTitle != "") {
 								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
@@ -819,46 +819,48 @@ var app = {
 		
 		var serverOptions = localStorage.getItem("serverOptions");
 		
+		if(serverOptions) {
 		
-		glbThis.cancelNotify(serverOptions);		//TESTING 
+			glbThis.cancelNotify(serverOptions);		//TESTING 
 		
 		
-		var options = JSON.parse(serverOptions);
-		if(options.woundTracingURL && options.woundTracingURL != "") {
-			//Yes, we have a wound tracing URL for this server
+			var options = JSON.parse(serverOptions);
+			if(options.woundTracingURL && options.woundTracingURL != "") {
+				//Yes, we have a wound tracing URL for this server
 					
 		
-			//Break up title into words
-			if(myTitle) {
-				var titleWords = myTitle.split(' ');
-				var wordCnt = titleWords.length - 1;
-			}
+				//Break up title into words
+				if(myTitle) {
+					var titleWords = myTitle.split(' ');
+					var wordCnt = titleWords.length - 1;
+				}
 		
-			var folder = "Image";
-			if(titleWords && titleWords[0]) {
-				folder = titleWords[0];
+				var folder = "Image";
+				if(titleWords && titleWords[0]) {
+					folder = titleWords[0];
 		
-				for(cnt = 0; cnt < wordCnt; cnt++) {
-					var word = titleWords[cnt + 1];
-					if(word[0] === '#') {
-						word = word.substr(1);
-						folder += "+" + word;
+					for(cnt = 0; cnt < wordCnt; cnt++) {
+						var word = titleWords[cnt + 1];
+						if(word[0] === '#') {
+							word = word.substr(1);
+							folder += "+" + word;
+						}
 					}
 				}
+		
+				//E.g. http://104.131.151.99:5567
+		
+				var url = options.woundTracingURL + "/addon/show-analysis?photo=" + folder + "&style=mob";
+
+
+				var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
+
+
+				//Wait for a second to give the server a chance to process this file
+				setTimeout(function() {
+					glbThis.cancelNotify(fullHTML);
+				}, 1000);
 			}
-		
-			//E.g. http://104.131.151.99:5567
-		
-			var url = options.woundTracingURL + "/addon/show-analysis?photo=" + folder + "&style=mob";
-
-
-			var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
-
-
-			//Wait for a second to give the server a chance to process this file
-			setTimeout(function() {
-				glbThis.cancelNotify(fullHTML);
-			}, 1000);
 		}
 		
 	},
@@ -1242,7 +1244,7 @@ var app = {
 	},
 	
 	
-	getSettings: function(serverUrl, cb) {
+	getOptions: function(serverUrl, cb) {
 		//Input a server URL e.g. https://medimage-nz1.atomjump.com/write/uPSE4UWHmJ8XqFUqvf
 		//   where the last part is the guid. Extract the guid.
 		
@@ -1267,11 +1269,11 @@ var app = {
 					localStorage.setItem("serverOptions", options);
 				}
 			}
-		}
+		});
 	
 	},
 	
-	clearSettings: function() {
+	clearOptions: function() {
 		localStorage.removeItem("serverOptions");
 	}
 
@@ -1292,7 +1294,7 @@ var app = {
        var foundWifiDir = null;
        var usingServer = null;
        
-       glbThis.clearSettings();
+       this.clearOptions();
        
        //Early out
        usingServer = localStorage.getItem("usingServer");
@@ -1388,7 +1390,7 @@ var app = {
 								 alreadyReturned = true;
 						 
 						 		 //Get any global options
-        						 glbThis.getSettings(foundRemoteServer);
+        						 glbThis.getOptions(foundRemoteServer);
 						 
 								 cb(null);	
 					
@@ -1469,7 +1471,7 @@ var app = {
 						alreadyReturned = true;
 						
 						//Get any global options
-        				glbThis.getSettings(foundRemoteServer);
+        				glbThis.getOptions(foundRemoteServer);
         				
 						cb(null);	
 					
