@@ -802,7 +802,7 @@ var app = {
 		//a button to 
 		//Break up title into words
 		
-		glbThis.cancelNotify("dbg1");
+		/*glbThis.cancelNotify("dbg1");
 		if(myTitle) {
 			var titleWords = myTitle.split(' ');
 			var wordCnt = titleWords.length - 2;
@@ -819,18 +819,20 @@ var app = {
 			}
 		}
 		
-		glbThis.cancelNotify("dbg3");
+		glbThis.cancelNotify("dbg3");*/
+		
+		var folder = "IMAGE";
 		
 		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
 
 		//url = "http://104.131.151.99:5567/addon/show-analysis?photo=IMAGE&style=mob";		//WORKS!
 
-		glbThis.cancelNotify("dbg4 " + url);
+		//glbThis.cancelNotify("dbg4 " + url);
 
 		var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-ruler\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span style=\"color: #4f6d9c;\">Measure Wound</span>";
 
 
-		glbThis.cancelNotify("dbg5");
+		//glbThis.cancelNotify("dbg5");
 		glbThis.cancelNotify(fullHTML);
 		
 	},
