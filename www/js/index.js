@@ -701,7 +701,7 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
-								var myTitle = "Image";// + JSON.stringify(myNowChecking,6);	//TESTING IN stringify;
+								var myTitle = "Image";
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
 								}
@@ -775,7 +775,7 @@ var app = {
 						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' Image transferred. Success! ';  //TESTING REMOVE THE myTitle at the start
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';  //TESTING REMOVE THE myTitle at the start
 						} else {
 							if(myTitle != "") {
 								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
