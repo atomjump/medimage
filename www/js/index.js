@@ -813,38 +813,53 @@ var app = {
 	traceWound: function(myTitle) {
 	
 		//If there is a link to a MedImage Server Wound Mapp add-on saved (TODO), show 
-		//a button to 
-		//Break up title into words
+		//a button to bring up the web tracing facility
+
 		
-		//Break up title into words
-		if(myTitle) {
-			var titleWords = myTitle.split(' ');
-			var wordCnt = titleWords.length - 1;
-		}
 		
-		var folder = "Image";
-		if(titleWords && titleWords[0]) {
-			folder = titleWords[0];
+		var serverOptions = localStorage.getItem("serverOptions");
 		
-			for(cnt = 0; cnt < wordCnt; cnt++) {
-				var word = titleWords[cnt + 1];
-				if(word[0] === '#') {
-					word = word.substr(1);
-					folder += "+" + word;
+		
+		glbThis.cancelNotify(serverOptions);		//TESTING 
+		
+		
+		var options = JSON.parse(serverOptions);
+		if(options.woundTracingURL && options.woundTracingURL != "") {
+			//Yes, we have a wound tracing URL for this server
+					
+		
+			//Break up title into words
+			if(myTitle) {
+				var titleWords = myTitle.split(' ');
+				var wordCnt = titleWords.length - 1;
+			}
+		
+			var folder = "Image";
+			if(titleWords && titleWords[0]) {
+				folder = titleWords[0];
+		
+				for(cnt = 0; cnt < wordCnt; cnt++) {
+					var word = titleWords[cnt + 1];
+					if(word[0] === '#') {
+						word = word.substr(1);
+						folder += "+" + word;
+					}
 				}
 			}
-		}
 		
-		var url = "http://104.131.151.99:5567/addon/show-analysis?photo=" + folder + "&style=mob";
+			//E.g. http://104.131.151.99:5567
+		
+			var url = options.woundTracingURL + "/addon/show-analysis?photo=" + folder + "&style=mob";
 
 
-		var fullHTML = "<ons-button modifier=\"outline\" style=\"color: #4f6d9c;\"><ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon></ons-button><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
+			var fullHTML = "<ons-icon style=\"vertical-align: middle; color:#4f6d9c;\" size=\"30px\" icon=\"fa-magic\" href=\"#javascript\" onclick=\"window.open('" + url + "', '_system');\"></ons-icon><br/><span href=\"" + url + "\" style=\"color: #4f6d9c;\">Measure Wound</span>";
 
 
-		//Wait for a second to give the server a chance to process this file
-		setTimeout(function() {
-			glbThis.cancelNotify(fullHTML);
-		}, 1000);
+			//Wait for a second to give the server a chance to process this file
+			setTimeout(function() {
+				glbThis.cancelNotify(fullHTML);
+			}, 1000);
+		}
 		
 	},
 						
@@ -1225,6 +1240,40 @@ var app = {
        });
 	
 	},
+	
+	
+	getSettings: function(serverUrl, cb) {
+		//Input a server URL e.g. https://medimage-nz1.atomjump.com/write/uPSE4UWHmJ8XqFUqvf
+		//   where the last part is the guid. Extract the guid.
+		
+		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
+		//to get a .json array of options.
+		
+		//TODO cb()
+		
+		var searchFor = "/write/";
+		
+		var pos = serverUrl.lastIndexOf(searchFor);
+		var guid = serverUrl.substr(pos + searchFor.length);
+		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
+		glbThis.get(settingsUrl, function(url, resp) {
+			
+			if(resp != "") {
+				
+				var options = JSON.stringify(resp);		//Or is it without the json parsing?
+				
+				if(options) {
+					//Set local storage
+					localStorage.setItem("serverOptions", options);
+				}
+			}
+		}
+	
+	},
+	
+	clearSettings: function() {
+		localStorage.removeItem("serverOptions");
+	}
 
     findServer: function(cb) {
 
@@ -1242,6 +1291,8 @@ var app = {
        var foundRemoteDir = null;
        var foundWifiDir = null;
        var usingServer = null;
+       
+       glbThis.clearSettings();
        
        //Early out
        usingServer = localStorage.getItem("usingServer");
@@ -1336,6 +1387,9 @@ var app = {
 							 if(alreadyReturned == false) {
 								 alreadyReturned = true;
 						 
+						 		 //Get any global options
+        						 glbThis.getSettings(foundRemoteServer);
+						 
 								 cb(null);	
 					
 							 }	
@@ -1368,10 +1422,13 @@ var app = {
 				  clearTimeout(scanning);		//Ensure we don't error out
 				  localStorage.setItem("usingServer", foundWifiServer);
 				  localStorage.setItem("defaultDir", foundWifiDir);	
-				  localStorage.setItem("serverRemote", 'false');				
+				  localStorage.setItem("serverRemote", 'false');	
+				  
+				   	
 		  
 				  if(alreadyReturned == false) {
 					  alreadyReturned = true;
+					  					  
 					  cb(null);					//Success found server
 				  }
 			  }
@@ -1404,9 +1461,16 @@ var app = {
 					localStorage.setItem("usingServer", foundRemoteServer);
 					localStorage.setItem("defaultDir", foundRemoteDir);
 				    localStorage.setItem("serverRemote", 'true');
+				    
+				    
+        			
 				
 					if(alreadyReturned == false) {
 						alreadyReturned = true;
+						
+						//Get any global options
+        				glbThis.getSettings(foundRemoteServer);
+        				
 						cb(null);	
 					
 					}
@@ -1657,6 +1721,7 @@ var app = {
     
     saveServer: function() {
         	//Run this after a successful upload
+        	
         	
         	var currentServerName = localStorage.getItem("currentServerName");        	
         	var currentRemoteServer = localStorage.getItem("currentRemoteServer");
