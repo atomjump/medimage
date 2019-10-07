@@ -821,7 +821,7 @@ var app = {
 		
 		if(serverOptions) {
 		
-		
+			serverOptions = serverOptions.trim();			//Remove any newlines
 		
 			var options = JSON.parse(serverOptions);
 			
