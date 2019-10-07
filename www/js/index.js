@@ -848,6 +848,8 @@ var app = {
 						}
 					}
 				}
+				
+				folder = folder.toUpperCase();		//Note: on case sensitive Linux servers this may not work.
 		
 				//E.g. http://yoururl:5566
 		
