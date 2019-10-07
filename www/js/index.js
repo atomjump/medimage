@@ -821,11 +821,14 @@ var app = {
 		
 		if(serverOptions) {
 		
-			serverOptions = serverOptions.trim();			//Remove any newlines
+			
 			serverOptions = serverOptions.replace(/(^")|("$)/g, '');		//Remove leading and trailing speechmarks
+			serverOptions = serverOptions.trim();			//Remove any newlines
+			
+			glbThis.cancelNotify(serverOptions);		//TESTING 
 			var options = JSON.parse(serverOptions);
 			
-			glbThis.cancelNotify(JSON.stringify(options));		//TESTING 
+			//glbThis.cancelNotify(JSON.stringify(options));		//TESTING 
 	
 			
 			if(options.woundTracingURL && options.woundTracingURL != "") {
