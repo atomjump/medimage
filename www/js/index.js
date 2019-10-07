@@ -1244,21 +1244,16 @@ var app = {
 	},
 	
 	
-	getOptions: function(serverUrl, cb) {
-		//Input a server URL e.g. https://medimage-nz1.atomjump.com/write/uPSE4UWHmJ8XqFUqvf
-		//   where the last part is the guid. Extract the guid.
+	getOptions: function(serverDir, cb) {
+		//Input a server dir e.g. uPSE4UWHmJ8XqFUqvf
+		//   where the last part is the guid.
 		
 		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
 		//to get a .json array of options.
 		
-		
-		var searchFor = "/write/";
-		
-		var pos = serverUrl.lastIndexOf(searchFor);
-		var guid = serverUrl.substr(pos + searchFor.length);
 		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
 		
-		alert(serverUrl + " " + settingsUrl);			//TESTING
+		//alert(serverUrl + " " + settingsUrl);			//TESTING
 		
 		glbThis.get(settingsUrl, function(url, resp) {
 			
@@ -1398,7 +1393,7 @@ var app = {
 								 alreadyReturned = true;
 						 
 						 		 //Get any global options
-        						 glbThis.getOptions(foundRemoteServer);
+        						 glbThis.getOptions(foundRemoteDir);
 						 
 								 cb(null);	
 					
@@ -1479,7 +1474,7 @@ var app = {
 						alreadyReturned = true;
 						
 						//Get any global options
-        				glbThis.getOptions(foundRemoteServer);
+        				glbThis.getOptions(foundRemoteDir);
         				
 						cb(null);	
 					
