@@ -821,13 +821,17 @@ var app = {
 		
 		if(serverOptions) {
 		
-			glbThis.cancelNotify(serverOptions);		//TESTING 
 		
 		
 			var options = JSON.parse(serverOptions);
+			
+			glbThis.cancelNotify(options.woundTracingURL);		//TESTING 
+	
+			
 			if(options.woundTracingURL && options.woundTracingURL != "") {
 				//Yes, we have a wound tracing URL for this server
-					
+				
+				
 		
 				//Break up title into words
 				if(myTitle) {
