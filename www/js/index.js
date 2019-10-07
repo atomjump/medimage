@@ -821,13 +821,14 @@ var app = {
 		
 		if(serverOptions) {
 		
-			glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" icon=\"fa-hourglass\"></ons-icon><br/><span style=\"color: #DDD;\">Processing Image</span>");
+			
 			
 			var options = JSON.parse(JSON.parse(serverOptions));
 			
 			if(options.woundTracingURL && options.woundTracingURL != "") {
 				//Yes, we have a wound tracing URL for this server
 				
+				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" icon=\"fa-hourglass\"></ons-icon><br/><span style=\"color: #DDD;\">Processing Image</span>");
 				
 		
 				//Break up title into words
