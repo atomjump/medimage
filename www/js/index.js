@@ -1244,7 +1244,7 @@ var app = {
 	},
 	
 	
-	getOptions: function(serverDir, cb) {
+	getOptions: function(guid, cb) {
 		//Input a server dir e.g. uPSE4UWHmJ8XqFUqvf
 		//   where the last part is the guid.
 		
