@@ -821,15 +821,9 @@ var app = {
 		
 		if(serverOptions) {
 		
-			glbThis.cancelNotify(serverOptions);		//TESTING 
-			//serverOptions = serverOptions.replace(/(^")|("$)/g, '');		//Remove leading and trailing speechmarks
-			//serverOptions = serverOptions.trim();			//Remove any newlines
-			
+			glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"30px\" icon=\"fa-hourglass\"></ons-icon><br/><span style=\"color: #DDD;\">Processing Image</span>");
 			
 			var options = JSON.parse(JSON.parse(serverOptions));
-			
-			//glbThis.cancelNotify(JSON.stringify(options));		//TESTING 
-	
 			
 			if(options.woundTracingURL && options.woundTracingURL != "") {
 				//Yes, we have a wound tracing URL for this server
@@ -855,7 +849,7 @@ var app = {
 					}
 				}
 		
-				//E.g. http://104.131.151.99:5567
+				//E.g. http://yoururl:5566
 		
 				var url = options.woundTracingURL + "/addon/show-analysis?photo=" + folder + "&style=mob";
 
@@ -1259,8 +1253,6 @@ var app = {
 		//to get a .json array of options.
 		
 		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
-		
-		//alert(serverUrl + " " + settingsUrl);			//TESTING
 		
 		glbThis.get(settingsUrl, function(url, resp) {
 			
