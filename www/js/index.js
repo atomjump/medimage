@@ -822,10 +822,10 @@ var app = {
 		if(serverOptions) {
 		
 			serverOptions = serverOptions.trim();			//Remove any newlines
-		
+			serverOptions = serverOptions.replace(/(^")|("$)/g, '');		//Remove leading and trailing speechmarks
 			var options = JSON.parse(serverOptions);
 			
-			glbThis.cancelNotify(options.woundTracingURL);		//TESTING 
+			glbThis.cancelNotify(JSON.stringify(options));		//TESTING 
 	
 			
 			if(options.woundTracingURL && options.woundTracingURL != "") {
