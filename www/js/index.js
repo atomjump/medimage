@@ -1251,7 +1251,6 @@ var app = {
 		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
 		//to get a .json array of options.
 		
-		//TODO cb()
 		
 		var searchFor = "/write/";
 		
@@ -1259,7 +1258,7 @@ var app = {
 		var guid = serverUrl.substr(pos + searchFor.length);
 		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
 		
-		glbThis.notifyCancel(serverUrl + " " + settingsUrl);			//TESTING
+		alert(serverUrl + " " + settingsUrl);			//TESTING
 		
 		glbThis.get(settingsUrl, function(url, resp) {
 			
@@ -1269,8 +1268,14 @@ var app = {
 				
 				if(options) {
 					//Set local storage
+					localStorage.removeItem("serverOptions");
 					localStorage.setItem("serverOptions", options);
+					cb(null);
+				} else {
+					cb("No options");
 				}
+			} else {
+				cb("No options");
 			}
 		});
 	
