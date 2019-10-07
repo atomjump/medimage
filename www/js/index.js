@@ -821,7 +821,7 @@ var app = {
 		
 		if(serverOptions) {
 		
-			glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"30px\" icon=\"fa-hourglass\"></ons-icon><br/><span style=\"color: #DDD;\">Processing Image</span>");
+			glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" icon=\"fa-hourglass\"></ons-icon><br/><span style=\"color: #DDD;\">Processing Image</span>");
 			
 			var options = JSON.parse(JSON.parse(serverOptions));
 			
@@ -860,7 +860,7 @@ var app = {
 				//Wait for a second to give the server a chance to process this file
 				setTimeout(function() {
 					glbThis.cancelNotify(fullHTML);
-				}, 1000);
+				}, 1500);
 			}
 		}
 		
