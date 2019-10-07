@@ -1263,7 +1263,7 @@ var app = {
 				
 				if(options) {
 					//Set local storage
-					localStorage.removeItem("serverOptions");
+					//localStorage.removeItem("serverOptions");
 					localStorage.setItem("serverOptions", options);
 					cb(null);
 				} else {
