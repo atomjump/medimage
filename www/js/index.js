@@ -821,12 +821,12 @@ var app = {
 		
 		if(serverOptions) {
 		
-			
-			serverOptions = serverOptions.replace(/(^")|("$)/g, '');		//Remove leading and trailing speechmarks
-			serverOptions = serverOptions.trim();			//Remove any newlines
-			
 			glbThis.cancelNotify(serverOptions);		//TESTING 
-			var options = JSON.parse(serverOptions);
+			//serverOptions = serverOptions.replace(/(^")|("$)/g, '');		//Remove leading and trailing speechmarks
+			//serverOptions = serverOptions.trim();			//Remove any newlines
+			
+			
+			var options = JSON.parse(JSON.parse(serverOptions));
 			
 			//glbThis.cancelNotify(JSON.stringify(options));		//TESTING 
 	
