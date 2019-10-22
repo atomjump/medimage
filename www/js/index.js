@@ -524,7 +524,7 @@ var app = {
 	
 		
 	
-	}
+	},
 
     uploadPhoto: function(imageURIin, idEntered, newFilename) {
   
