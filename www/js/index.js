@@ -103,7 +103,7 @@ var app = {
         
     },
     
-    processPicture: function(imageURI)
+    processPicture: function(imageURIin)
     {
         var _this = this;
         glbThis = this;
@@ -113,11 +113,11 @@ var app = {
       	  localStorage.removeItem("usingServer");		//This will force a reconnection
 	      localStorage.removeItem("defaultDir");
       	  
-      	  var thisImageURI = imageURI;
+      	  var thisImageURI = imageURIin;
       	  var idEntered = document.getElementById("id-entered").value;
        	  
        	  //Store in case the app quits unexpectably
-       	  _this.determineFilename(imageURI, idEntered, function(err, newFilename) {
+       	  _this.determineFilename(imageURI, idEntered, function(err, newFilename, imageURI) {
        	  	
        	  	   
        	  	   if(err) {
@@ -132,7 +132,7 @@ var app = {
 						if(err) {
 							glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 							//Search again in 10 seconds:
-							var passedImageURI = thisImageURI;
+							var passedImageURI = imageURI;   //OLD: thisImageURI;
 							var idEnteredB = idEntered;
 					
 							setTimeout(function() {
@@ -144,7 +144,7 @@ var app = {
 				
 				
 							//Now we are connected, upload the photo again
-							glbThis.uploadPhoto(thisImageURI, idEntered, newFilename);
+							glbThis.uploadPhoto(imageURI, idEntered, newFilename);		//OLD: thisImageURI
 						}
 				  });
 			  }
@@ -483,9 +483,10 @@ var app = {
 	determineFilename: function(imageURIin, idEntered, cb) {
 		//Determines the filename to use based on the imageURI of the photo, 
 		//and the id entered into the text field.
-		//Calls back with: cb(err, newFilename)
+		//Calls back with: cb(err, newFilename, imageURI)
 		//    where err is null for no error, or text of the error,
-		//    and the newFilename as a text string which includes the .jpg at the end.
+		//    and the newFilename as a text string which includes the .jpg at the end
+		//    imageURI is the local filesystem resolved URI
 		//It will use the current date / time from the phone, thought this format varies slightly
 		//phone to phone.
 
@@ -540,7 +541,7 @@ var app = {
 						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
 						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
-						cb(null, myNewFileName);
+						cb(null, myNewFileName, imageURI);
 					},
 					function () { 
 						navigator.notification.alert('Sorry, there was an error getting the current date\n');
