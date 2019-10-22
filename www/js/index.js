@@ -117,27 +117,43 @@ var app = {
       	  var idEntered = document.getElementById("id-entered").value;
        	  
        	  //Store in case the app quits unexpectably
-       	  _this.recordLocalPhoto( imageURI, idEntered );
-       	  
-      	  _this.findServer(function(err) {
-				if(err) {
-					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					//Search again in 10 seconds:
-					var passedImageURI = thisImageURI;
-					var idEnteredB = idEntered;
+       	  _this.determineFilename(imageURI, idEntered, function(err, newFilename) {
+       	  	
+       	  	   
+       	  	   if(err) {
+       	  	   		//There was a problem getting the filename from the disk file
+       	  	   		glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
+       	  	   
+       	  	   } else {
+       	  	   	 
+       	  	   	   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
+       	  	   	 
+				   _this.findServer(function(err) {
+						if(err) {
+							glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+							//Search again in 10 seconds:
+							var passedImageURI = thisImageURI;
+							var idEnteredB = idEntered;
 					
-					setTimeout(function() {
-						localStorage.removeItem("usingServer");		//This will force a reconnection
-	    				localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEnteredB);
-					}, 10000);
-				} else {
+							setTimeout(function() {
+								localStorage.removeItem("usingServer");		//This will force a reconnection
+								localStorage.removeItem("defaultDir");
+								glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+							}, 10000);
+						} else {
 				
 				
-					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(thisImageURI, idEntered);
-				}
-		  });
+							//Now we are connected, upload the photo again
+							glbThis.uploadPhoto(thisImageURI, idEntered, newFilename);
+						}
+				  });
+			  }
+       	  
+       	  
+       	  });
+       	  
+       	  
+      	 
 	},
 
     takePicture: function() {
@@ -213,7 +229,7 @@ var app = {
     },
     
     
-    recordLocalPhoto: function(imageURI, idEntered) {
+    recordLocalPhoto: function(imageURI, idEntered, fileName) {
     	 //Save into our localPhotos array, in case the app quits
     	 
        	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
@@ -223,6 +239,7 @@ var app = {
        	  var newPhoto = {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
+       	  					"fileName" : fileName,
        	  					"status" : "send"
        	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
        	  localPhotos.push(newPhoto);
@@ -305,7 +322,8 @@ var app = {
       	//Get a photo, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
-       	  					"idEntered" : idEntered,
+       	  					"idEntered" : idEntered
+       	  					"fileName" : fileName
        	  					"status" : "send"
        	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
        	
@@ -322,7 +340,7 @@ var app = {
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
       		var newPhoto = localPhotos[cnt];
       		if(newPhoto) {
-        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
+        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
         	}    	
     	}
     	
@@ -423,46 +441,25 @@ var app = {
 		}		
 		
 	},
-
-    uploadPhoto: function(imageURIin, idEntered) {
-  
-        var _this = this;
 	
-		var usingServer = localStorage.getItem("usingServer");
-		
+	determineFilename: function(imageURIin, idEntered, cb) {
+		//Determines the filename to use based on the imageURI of the photo, 
+		//and the id entered into the text field.
+		//Calls back with: cb(err, newFilename)
+		//    where err is null for no error, or text of the error,
+		//    and the newFilename as a text string which includes the .jpg at the end.
+		//It will use the current date / time from the phone, thought this format varies slightly
+		//phone to phone.
+
+		//Have connected OK to a server
 		var idEnteredB = idEntered;
-	
-	
-		if((!usingServer)||(usingServer == null)) {
-			//No remove server already connected to, find the server now. And then call upload again
-			_this.findServer(function(err) {
-				if(err) {
-					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
-					
-					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					//Search again in 10 seconds:
-					setTimeout(function() {
-						glbThis.uploadPhoto(imageURIin, idEnteredB)
-						}, 10000);
-				} else {
-					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(imageURIin, idEnteredB);
-				}
-			});
-			return;
-		} else {
 		
-			var myImageURIin = imageURIin;
-
-			//Have connected OK to a server
-            window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
+        window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
 
 				deleteThisFile = fileEntry; //Store globally
 			
 				var imageURI = fileEntry.toURL();
-				var options = new FileUploadOptions();
-				options.fileKey="file1";
-
+				
 				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
 					tempName = 'image';
@@ -504,61 +501,12 @@ var app = {
 						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
 						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
-						options.fileName = myoutFile + '-' + mydt + '.jpg';
-
-						options.mimeType="image/jpeg";
-
-						var params = new Object();
-						params.title = document.getElementById("id-entered").value;
-						if((params.title == '')||(params.title == null)) {
-							if((idEnteredC == '')||(idEnteredC == null)) {
-								params.title = 'image';
-							} else {
-								params.title = idEnteredC;
-							}
-							
-						}
-
-						options.params = params;
-						options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
-						options.headers = {
-							Connection: "close"
-						}
-						
-						options.idEntered = idEnteredC;
-
-
-						var ft = new FileTransfer();
-						_this.notify("Uploading " + params.title);
-						_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
-			
-						ft.onprogress = _this.progress;
-			
-					 
-					 
-						var serverReq = usingServer + '/api/photo';
-		
-						var repeatIfNeeded = {
-							"imageURI" : imageURI,
-							"serverReq" : serverReq,
-							"options" :options,
-							"failureCount": 0,
-							"nextAttemptSec": 15
-						};
-						
-						retryIfNeeded.push(repeatIfNeeded);
-						
-						fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
-						
-
-						//Keep the screen awake as we upload
-						window.plugins.insomnia.keepAwake();
-						
-						ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
-
-					  },
+						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
+						cb(null, myNewFileName);
+					},
 					function () { 
-						navigator.notification.alert('Error getting dateString\n');
+						navigator.notification.alert('Sorry, there was an error getting the current date\n');
+						cb("Sorry, there was an error getting the current date");
 					},
 					{ formatLength:'medium', selector:'date and time'}
 				); //End of function in globalization date to string
@@ -566,13 +514,101 @@ var app = {
 
 
 
-          	}, function(evt) {
-          		//An error accessing the file
-          		//and potentially delete phone version
-            	glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
-            	
-          	});		//End of resolveLocalFileSystemURI
-       
+		}, function(evt) {
+			//An error accessing the file
+			//and potentially delete phone version
+			glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
+			cb("Sorry, we could not access the photo file");
+			
+		});		//End of resolveLocalFileSystemURI
+	
+		
+	
+	}
+
+    uploadPhoto: function(imageURIin, idEntered, newFilename) {
+  
+        var _this = this;
+	
+		var usingServer = localStorage.getItem("usingServer");
+		
+		var idEnteredB = idEntered;
+	
+	
+		if((!usingServer)||(usingServer == null)) {
+			//No remove server already connected to, find the server now. And then call upload again
+			_this.findServer(function(err) {
+				if(err) {
+					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
+					
+					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					//Search again in 10 seconds:
+					setTimeout(function() {
+						glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename)
+						}, 10000);
+				} else {
+					//Now we are connected, upload the photo again
+					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
+				}
+			});
+			return;
+		} else {
+			//Have connected OK to a server
+			var myImageURIin = imageURIin;
+
+			var options = new FileUploadOptions();
+			options.fileKey="file1";
+			options.mimeType="image/jpeg";
+
+			var params = new Object();
+			params.title = idEntered; //OLD: document.getElementById("id-entered").value;
+			if((params.title == '')||(params.title == null)) {
+				if((idEnteredB == '')||(idEnteredB == null)) {
+					params.title = 'image';
+				} else {
+					params.title = idEnteredB;
+				}
+				
+			}
+
+			options.fileName = newFilename;
+			options.params = params;
+			options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
+			options.headers = {
+				Connection: "close"
+			}
+			
+			options.idEntered = idEnteredB;
+
+
+			var ft = new FileTransfer();
+			_this.notify("Uploading " + params.title);
+			_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
+
+			ft.onprogress = _this.progress;
+
+		 
+		 
+			var serverReq = usingServer + '/api/photo';
+
+			var repeatIfNeeded = {
+				"imageURI" : imageURI,
+				"serverReq" : serverReq,
+				"options" :options,
+				"failureCount": 0,
+				"nextAttemptSec": 15
+			};
+			
+			retryIfNeeded.push(repeatIfNeeded);
+			
+			fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
+			
+
+			//Keep the screen awake as we upload
+			window.plugins.insomnia.keepAwake();
+			
+			ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
+	     
          }		//End of connected to a server OK
     },
 	
@@ -615,7 +651,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
