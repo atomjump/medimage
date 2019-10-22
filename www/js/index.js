@@ -241,13 +241,19 @@ var app = {
        	  					"idEntered" : idEntered,
        	  					"fileName" : fileName,
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	  localPhotos.push(newPhoto);
        	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     	  return true;
     },
     
-    changeLocalPhotoStatus: function(imageURI, newStatus) {
+    changeLocalPhotoStatus: function(imageURI, newStatus, fullData) {
+    	//Input:
+    	//imageURI  - unique image address on phone filesystem 
+    	//newStatus can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
+    	//If onserver, the optional parameter 'fullGet', is the URL to call to check if the file is back on the server
+    	
+    	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
        	  	localPhotos = [];
@@ -308,6 +314,11 @@ var app = {
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
+    				if((newStatus == "onserver")&&(fullData)) {
+    					localPhotos[cnt].fullData = JSON.stringify(fullData);		//Create a copy of the JSON data array in string format
+    				
+    				}
+    				
     				//Set back the storage of the array
     				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     			}
@@ -322,10 +333,11 @@ var app = {
       	//Get a photo, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
-       	  					"idEntered" : idEntered
-       	  					"fileName" : fileName
+       	  					"idEntered" : idEntered,
+       	  					"fileName" : fileName,
+       	  					"fullData" : fullDataObject stringified - optional
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	
        	and attempt to upload them.
        	*/
@@ -340,7 +352,33 @@ var app = {
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
       		var newPhoto = localPhotos[cnt];
       		if(newPhoto) {
-        		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      		
+      			if(newPhoto.status == 'onserver') {
+      				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
+      				if(newPhoto.fullData) {
+      					
+      					try {
+      						var fullData = JSON.parse(newPhoto);
+      						
+      						checkComplete.push(nowChecking);
+      						glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
+      												//server
+      					} catch(err) {
+      						//There was a problem parsing the data. Resends the whole photo, just in case
+      						glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      						
+      					}
+      				} else {
+      					//No fullData was added - resend anyway
+      					glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      				
+      				}
+      					
+      			
+      			} else {
+        			//Needs to be resent
+        			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+        		}
         	}    	
     	}
     	
@@ -561,7 +599,7 @@ var app = {
 			options.mimeType="image/jpeg";
 
 			var params = new Object();
-			params.title = idEntered; //OLD: document.getElementById("id-entered").value;
+			params.title = idEntered; 
 			if((params.title == '')||(params.title == null)) {
 				if((idEnteredB == '')||(idEnteredB == null)) {
 					params.title = 'image';
@@ -686,6 +724,8 @@ var app = {
 
 
 	  check: function(){
+	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
+	  		
 			var nowChecking = checkComplete.pop();
 			nowChecking.loopCnt --;
 			
@@ -825,6 +865,7 @@ var app = {
 
     win: function(r) {
     	    
+    	    //Have finished transferring the file to the server
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
@@ -870,7 +911,10 @@ var app = {
             		//Onto remote server - now do some pings to check we have got to the PC
             		document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..';
             		
+            		
             		var repeatIfNeeded = retryIfNeeded.pop();
+            		
+            		
 	     			
 	     	
 	     			if(repeatIfNeeded) {
@@ -885,6 +929,9 @@ var app = {
 						nowChecking.fullGet = fullGet;
 						nowChecking.details = repeatIfNeeded;
 						checkComplete.push(nowChecking);
+						
+						//Set an 'onserver' status
+	     				glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
 						
 						setTimeout(function() {	//Wait two seconds and then do a check
 							glbThis.check();
