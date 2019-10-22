@@ -117,7 +117,7 @@ var app = {
       	  var idEntered = document.getElementById("id-entered").value;
        	  
        	  //Store in case the app quits unexpectably
-       	  _this.determineFilename(imageURI, idEntered, function(err, newFilename, imageURI) {
+       	  _this.determineFilename(imageURIin, idEntered, function(err, newFilename, imageURI) {
        	  	
        	  	   
        	  	   if(err) {
@@ -314,7 +314,7 @@ var app = {
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
-    				alert("Testing: Full Data: " + JSON.stringify(fullData));
+    				//TESTING: alert("Testing: Full Data: " + JSON.stringify(fullData));
     				if((newStatus == "onserver")&&(fullData)) {
     					localPhotos[cnt].fullData = JSON.stringify(fullData);		//Create a copy of the JSON data array in string format
     				
@@ -500,6 +500,8 @@ var app = {
 			
 				var imageURI = fileEntry.toURL();
 				
+				alert("TESTING: resolved file: " + imageURI);		//TESTING
+				
 				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
 					tempName = 'image';
@@ -542,6 +544,7 @@ var app = {
 						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
 						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
+						alert("TESTING: myNewFileName: " + myNewFileName);		//TESTING
 						cb(null, myNewFileName, imageURI);
 					},
 					function () { 
