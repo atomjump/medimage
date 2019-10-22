@@ -314,6 +314,7 @@ var app = {
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
+    				alert("Testing: Full Data: " + JSON.stringify(fullData));
     				if((newStatus == "onserver")&&(fullData)) {
     					localPhotos[cnt].fullData = JSON.stringify(fullData);		//Create a copy of the JSON data array in string format
     				
@@ -594,6 +595,7 @@ var app = {
 		} else {
 			//Have connected OK to a server
 			var myImageURIin = imageURIin;
+			var imageURI = imageURIin;
 
 			var options = new FileUploadOptions();
 			options.fileKey="file1";
