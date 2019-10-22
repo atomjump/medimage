@@ -651,7 +651,7 @@ var app = {
 			//Keep the screen awake as we upload
 			window.plugins.insomnia.keepAwake();
 			
-			alert("TESTING: Uploading: " + imageURI + " to server: " + serverReq + "   With options:" + JSON.stringify(options));
+			alert("TESTING: Uploading: " + imageURI + " to server: " + serverReq);
 			
 			ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
 	     
