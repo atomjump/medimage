@@ -103,7 +103,6 @@ var app = {
         
     },
     
-    
     processPicture: function(imageURI)
     {
         var _this = this;
@@ -155,6 +154,7 @@ var app = {
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
 			
+			
 		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
 		 
 		 	  var myFile = fileEntry;
@@ -175,7 +175,6 @@ var app = {
 								}
 								
 								
-							 
 							  }, function(err){
 								//an error occured moving file - send anyway, even if it is in the temporary folder
 								glbThis.processPicture(imageURI);
@@ -249,6 +248,7 @@ var app = {
     					
     					//Remove entry from the array
     					
+    					
     					var splicing = cnt - 1;
     					
     					localPhotos.splice(splicing,1);
@@ -319,14 +319,13 @@ var app = {
        	}
        	
        	
-       	//while(newPhoto = localPhotos.pop()) {
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
       		var newPhoto = localPhotos[cnt];
       		if(newPhoto) {
-      			
         		glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);
         	}    	
     	}
+    	
     	
     	return;
     
@@ -433,6 +432,7 @@ var app = {
 		
 		var idEnteredB = idEntered;
 	
+	
 		if((!usingServer)||(usingServer == null)) {
 			//No remove server already connected to, find the server now. And then call upload again
 			_this.findServer(function(err) {
@@ -534,6 +534,7 @@ var app = {
 			
 						ft.onprogress = _this.progress;
 			
+					 
 					 
 						var serverReq = usingServer + '/api/photo';
 		
@@ -655,6 +656,7 @@ var app = {
 		 
 			if(nowChecking.loopCnt <= 0) {
 				
+				
  				//Have finished - remove interval and report back
 				if(!nowChecking.slowLoopCnt) {
 					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image should be delivered shortly.";
@@ -681,25 +683,36 @@ var app = {
 						checkComplete.push(nowChecking);
 						var myNowChecking = nowChecking;
 						
+						
 						glbThis.get(nowChecking.fullGet, function(url, resp) {
+					
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
+								var myTitle = "Image";
+								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+									myTitle = myNowChecking.details.options.params.title;
+								}
 								
 								checkComplete.pop();
 								var more = " " + checkComplete.length + " more.";			//Some more yet
 								
 								
+								
+								
 								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
+									
 								} else {
 									
-									if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
-										document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
+									if(myTitle != "") {
+									
+										document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 									} else {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 									}
 								}
+								
 								
 								//and delete phone version
 								if(myNowChecking.details) {
@@ -716,15 +729,17 @@ var app = {
 				}
  
  
-			 
 			} else {
 				//Try a get request to the check
 				//Get the current file data
 				checkComplete.push(nowChecking);
 			
+				glbThis.cancelNotify("");		//Remove any cancel icons
+				var myNowChecking = nowChecking;
 				
 				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
 				glbThis.cancelNotify("");		//Remove any cancel icons
+  
   
   				var myNowChecking = nowChecking;
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
@@ -733,16 +748,25 @@ var app = {
 						//File no longer exists, success!
 						checkComplete.pop();
 						
+						var myTitle = "Image";
+						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+							myTitle = myNowChecking.details.options.params.title;
+						}
+						
+						
 						var more = " " + checkComplete.length + " more.";			//Some more yet
 						if(checkComplete.length == 0) {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success!';
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
 						} else {
-							if(myNowChecking.details && myNowChecking.details.idEntered && myNowChecking.details.idEntered != "") {
-								document.getElementById("notify").innerHTML = myNowChecking.details.idEntered + ' transferred. Success!' + more;
+							if(myTitle != "") {
+								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							} else {
 								document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 							}
 						}
+						
+						
+						
 						
 						
 						//and delete phone version
@@ -769,6 +793,7 @@ var app = {
     	    
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
     	    
+    	   
     	    glbThis.cancelNotify("");		//Remove any cancel icons
  
  
@@ -784,13 +809,17 @@ var app = {
             		
             		
             		
+            		
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
+            		var myTitle = "Image";
+            		
             		if(repeatIfNeeded) {
             			
-						if(repeatIfNeeded.details && repeatIfNeeded.details.idEntered && repeatIfNeeded.details.idEntered != "") {
-							document.getElementById("notify").innerHTML = repeatIfNeeded.details.idEntered + ' transferred. Success!' + more;
+						if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
+							myTitle = repeatIfNeeded.detail.options.params.title;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 						}
@@ -1127,6 +1156,41 @@ var app = {
 	
 	},
 
+	
+	getOptions: function(guid, cb) {
+		//Input a server dir e.g. uPSE4UWHmJ8XqFUqvf
+		//   where the last part is the guid.
+		
+		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
+		//to get a .json array of options.
+		
+		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
+		
+		glbThis.get(settingsUrl, function(url, resp) {
+			
+			if(resp != "") {
+				
+				var options = JSON.stringify(resp);		//Or is it without the json parsing?
+				
+				if(options) {
+					//Set local storage
+					//localStorage.removeItem("serverOptions");
+					localStorage.setItem("serverOptions", options);
+					cb(null);
+				} else {
+					cb("No options");
+				}
+			} else {
+				cb("No options");
+			}
+		});
+	
+	},
+	
+	clearOptions: function() {
+		localStorage.removeItem("serverOptions");
+	},
+
     findServer: function(cb) {
 
 	   //Check storage for any saved current servers, and set the remote and wifi servers
@@ -1143,6 +1207,8 @@ var app = {
        var foundRemoteDir = null;
        var foundWifiDir = null;
        var usingServer = null;
+       
+       this.clearOptions();
        
        //Early out
        usingServer = localStorage.getItem("usingServer");
@@ -1237,6 +1303,9 @@ var app = {
 							 if(alreadyReturned == false) {
 								 alreadyReturned = true;
 						 
+						 		 //Get any global options
+        						 glbThis.getOptions(foundRemoteDir);
+						 
 								 cb(null);	
 					
 							 }	
@@ -1271,8 +1340,11 @@ var app = {
 				  localStorage.setItem("defaultDir", foundWifiDir);	
 				  localStorage.setItem("serverRemote", 'false');				
 		  
+				   	
+		  
 				  if(alreadyReturned == false) {
 					  alreadyReturned = true;
+					  					  
 					  cb(null);					//Success found server
 				  }
 			  }
@@ -1306,8 +1378,15 @@ var app = {
 					localStorage.setItem("defaultDir", foundRemoteDir);
 				    localStorage.setItem("serverRemote", 'true');
 				
+				    
+        			
+				
 					if(alreadyReturned == false) {
 						alreadyReturned = true;
+						
+						//Get any global options
+        				glbThis.getOptions(foundRemoteDir);
+        				
 						cb(null);	
 					
 					}
@@ -1552,6 +1631,7 @@ var app = {
     
     saveServer: function() {
         	//Run this after a successful upload
+        	
         	
         	var currentServerName = localStorage.getItem("currentServerName");        	
         	var currentRemoteServer = localStorage.getItem("currentRemoteServer");
