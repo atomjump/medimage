@@ -364,8 +364,10 @@ var app = {
       						var fullData = newPhoto.fullData;
       						
       						checkComplete.push(fullData);
-      						glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
-      												//server
+      						setTimeout(function() {
+      							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
+      													//server
+      						}, 1);					//Split this off in parallel, after 1 millisecond
       					} catch(err) {
       						//There was a problem parsing the data. Resends the whole photo, just in case
       						glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
