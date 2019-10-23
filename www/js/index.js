@@ -362,7 +362,7 @@ var app = {
       					
       					try {
       						var fullData = newPhoto.fullData;
-      						if(fullData.details.imageURI) {
+      						if(fullData.details && fullData.details.imageURI) {
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
 		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
@@ -370,16 +370,18 @@ var app = {
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
 		  						//This is an error case
-		  						alert("Cancelling " + newPhoto.idEntered);
+		  						document.getElementById("notify").innerHTML = "Cancelling " + newPhoto.idEntered;
 		  						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
       					} catch(err) {
       						//There was a problem parsing the data. Resends the whole photo, just in case
+      						document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ", so reuploading";
       						glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       						
       					}
       				} else {
       					//No fullData was added - resend anyway
+      					document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ", so reuploading";
       					glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       				
       				}
