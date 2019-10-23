@@ -319,7 +319,8 @@ var app = {
     				
     				//TESTING: alert("Testing: Full Data: " + JSON.stringify(fullData));
     				if((newStatus == "onserver")&&(fullData)) {
-    					localPhotos[cnt].fullData = JSON.stringify(fullData);		//Create a copy of the JSON data array in string format
+    					alert("Status is now 'On server'");
+    					localPhotos[cnt].fullData = fullData;		
     				
     				}
     				
@@ -358,13 +359,16 @@ var app = {
       		if(newPhoto) {
       		
       			if(newPhoto.status == 'onserver') {
+      				
+      				alert("Photo was on the server ");		//TESTING
       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
       				if(newPhoto.fullData) {
       					
       					try {
-      						var fullData = JSON.parse(newPhoto);
+      						var fullData = newPhoto;
       						
-      						checkComplete.push(nowChecking);
+      						checkComplete.push(fullData);
+      						alert("Doing a check to see if it has transferred"); 		//TESTING
       						glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
       												//server
       					} catch(err) {
@@ -381,6 +385,7 @@ var app = {
       			
       			} else {
         			//Needs to be resent
+        			alert("Photo was not on the server");		//TESTING
         			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
         		}
         	}    	
@@ -503,7 +508,6 @@ var app = {
 			
 				var imageURI = fileEntry.toURL();
 				
-				alert("TESTING: resolved file: " + imageURI);		//TESTING
 				
 				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
@@ -547,7 +551,6 @@ var app = {
 						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
 						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
-						alert("TESTING: myNewFileName: " + myNewFileName);		//TESTING
 						cb(null, myNewFileName, imageURI);
 					},
 					function () { 
@@ -653,9 +656,7 @@ var app = {
 
 			//Keep the screen awake as we upload
 			window.plugins.insomnia.keepAwake();
-			
-			alert("TESTING: Uploading: " + imageURI + " to server: " + serverReq);
-			
+						
 			ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
 	     
          }		//End of connected to a server OK
