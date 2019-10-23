@@ -375,7 +375,7 @@ var app = {
 		  					}
       					} catch(err) {
       						//There was a problem parsing the data.
-      						document.getElementById("notify").innerHTML = "Sorry, there was a problem with the memory of " + newPhoto.idEntered + ". Cancelled.";
+      						document.getElementById("notify").innerHTML = "Sorry, memory of " + newPhoto.idEntered + " ID: " newPhoto.imageURI + ". Cancelled error: " + err;
       						//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       					}
