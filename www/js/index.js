@@ -317,11 +317,8 @@ var app = {
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
-    				//TESTING: alert("Testing: Full Data: " + JSON.stringify(fullData));
     				if((newStatus == "onserver")&&(fullData)) {
-    					alert("Status is now 'On server'");
     					localPhotos[cnt].fullData = fullData;		
-    				
     				}
     				
     				//Set back the storage of the array
@@ -360,15 +357,13 @@ var app = {
       		
       			if(newPhoto.status == 'onserver') {
       				
-      				alert("Photo was on the server ");		//TESTING
-      				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
+       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
       				if(newPhoto.fullData) {
       					
       					try {
       						var fullData = newPhoto.fullData;
       						
       						checkComplete.push(fullData);
-      						alert("Doing a check to see if it has transferred"); 		//TESTING
       						glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
       												//server
       					} catch(err) {
@@ -385,7 +380,6 @@ var app = {
       			
       			} else {
         			//Needs to be resent
-        			alert("Photo was not on the server");		//TESTING
         			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
         		}
         	}    	
