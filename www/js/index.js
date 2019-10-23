@@ -250,6 +250,14 @@ var app = {
     	  return true;
     },
     
+    arrayRemove: function(arr, value) {
+
+   		return arr.filter(function(ele){
+       		return ele != value;
+   		});
+
+	},
+    
     changeLocalPhotoStatus: function(imageURI, newStatus, fullData) {
     	//Input:
     	//imageURI  - unique image address on phone filesystem 
@@ -277,7 +285,8 @@ var app = {
     					
     					var splicing = cnt - 1;
     					
-    					localPhotos.splice(splicing,1);
+    					delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
+    					
     					
     					
     					//Set back the storage of the array
@@ -298,8 +307,9 @@ var app = {
     				 		//The photo is not there. Remove anyway    				 		
     				 		//Remove entry from the array
     				 		var splicing = cnt - 1;
-    						localPhotos.splice(splicing,1);
-    					
+    				 		
+    				 		delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
+    						
     						//Set back the storage of the array
     						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     				 	} else {
@@ -307,7 +317,7 @@ var app = {
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
     				 		//Remove entry from the array
     				 		var splicing = cnt - 1;
-    						localPhotos.splice(splicing,1);
+    						delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
     					
     						//Set back the storage of the array
     						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
@@ -321,12 +331,20 @@ var app = {
     					localPhotos[cnt].fullData = Array.from(fullData);		
     				}
     				
-    				//Set back the storage of the array
-    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				
     			}
     		}
     	
     	}
+    	
+    	
+    	//Now actually remove all of the null photos, and write back the array
+    	glbThis.arrayRemove(localPhotos, null);
+    	
+    	//Set back the storage of the array
+		glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    	
+    	
     
     },
     
@@ -369,7 +387,7 @@ var app = {
 		  													//server
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
-		  						//This is an error case
+		  						//This is a case where full details are not available. Do nothing.
 		  						document.getElementById("notify").innerHTML = "Cancelling " + newPhoto.idEntered;
 		  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
