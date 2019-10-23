@@ -310,8 +310,7 @@ var app = {
     				 		
     				 		delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
     						
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    						
     				 	} else {
     				 	
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
@@ -319,8 +318,7 @@ var app = {
     				 		var splicing = cnt - 1;
     						delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
     					
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    						
     				 	}
     				 
     				});
