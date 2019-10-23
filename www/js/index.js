@@ -250,11 +250,16 @@ var app = {
     	  return true;
     },
     
-    arrayRemove: function(arr, value) {
+    arrayRemoveNulls: function(arr) {
+		var newArray = [];
 
-   		return arr.filter(function(ele){
-       		return ele != value;
-   		});
+		for(var cnt = 0; cnt < arr.length; cnt++) {
+			if(arr[cnt]) {
+				newArray.push(arr[cnt]);
+			}
+   		}
+   		
+   		return newArray;
 
 	},
     
@@ -286,7 +291,7 @@ var app = {
     					
     					//var splicing = cnt - 1;
     					alert("Deleting " + cnt);	//TESTING
-    					delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
+    					localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     					
     					
     					
@@ -311,7 +316,7 @@ var app = {
     				 		
     				 		alert("Deleting " + cnt);	//TESTING
     				 		
-    				 		delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
+    				 		localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     						
     						
     				 	} else {
@@ -321,7 +326,7 @@ var app = {
     				 		//var splicing = cnt - 1;
     				 		alert("Deleting " + cnt);	//TESTING
     				 		
-    						delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
+    						localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     					
     						
     				 	}
@@ -343,7 +348,7 @@ var app = {
     	alert("Before arrayRemove:" + JSON.stringify(localPhotos));		//TESTING
     	
     	//Now actually remove all of the null photos, and write back the array
-    	localPhotos = glbThis.arrayRemove(localPhotos, null);
+    	localPhotos = glbThis.arrayRemoveNulls(localPhotos);
     	
     	alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     	
