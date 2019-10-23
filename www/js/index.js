@@ -363,7 +363,7 @@ var app = {
       					try {
       						var fullData = newPhoto.fullData;
       						alert("Full data:" + JSON.stringify(fullData);	//TESTING
-      						if(fullData.imageURI) {
+      						if(fullData.details.imageURI) {
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
 		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
