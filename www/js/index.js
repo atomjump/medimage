@@ -318,7 +318,7 @@ var app = {
     				localPhotos[cnt].status = newStatus;
     				
     				if((newStatus == "onserver")&&(fullData)) {
-    					localPhotos[cnt].fullData = fullData;		
+    					localPhotos[cnt].fullData = Array.from(fullData);		
     				}
     				
     				//Set back the storage of the array
@@ -363,13 +363,14 @@ var app = {
       					try {
       						var fullData = newPhoto.fullData;
       						
-      						if(fullData.serverReq) {
+      						if(fullData.imageURI) {
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
 		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
 		  													//server
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
+		  						//This is an error case
 		  						alert("Cancelling " + newPhoto.idEntered);
 		  						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
