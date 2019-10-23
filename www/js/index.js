@@ -269,6 +269,7 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
+       	alert(JSON.stringify(localPhotos));		//TESTING
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -283,9 +284,9 @@ var app = {
     					//Remove entry from the array
     					
     					
-    					var splicing = cnt - 1;
+    					//var splicing = cnt - 1;
     					
-    					delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
+    					delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
     					
     					
     					
@@ -306,17 +307,17 @@ var app = {
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway    				 		
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
+    				 		//var splicing = cnt - 1;
     				 		
-    				 		delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
+    				 		delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
     						
     						
     				 	} else {
     				 	
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
-    						delete localPhotos[splicing];		//Need the delete first to get rid of subobjects
+    				 		//var splicing = cnt - 1;
+    						delete localPhotos[cnt];		//Need the delete first to get rid of subobjects
     					
     						
     				 	}
