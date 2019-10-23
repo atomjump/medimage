@@ -374,15 +374,16 @@ var app = {
 		  						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
       					} catch(err) {
-      						//There was a problem parsing the data. Resends the whole photo, just in case
-      						document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ", so reuploading";
-      						glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
-      						
+      						//There was a problem parsing the data.
+      						document.getElementById("notify").innerHTML = "Sorry, there was a problem with the memory of " + newPhoto.idEntered + ". Cancelled.";
+      						//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       					}
       				} else {
       					//No fullData was added - resend anyway
-      					document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ", so reuploading";
-      					glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      					document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ".";
+      					//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+      					changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       				
       				}
       					
