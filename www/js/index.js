@@ -115,42 +115,45 @@ var app = {
       	  
       	  var thisImageURI = imageURIin;
       	  var idEntered = document.getElementById("id-entered").value;
-       	  
-       	  //Store in case the app quits unexpectably
-       	  _this.determineFilename(imageURIin, idEntered, function(err, newFilename, imageURI) {
-       	  	
-       	  	   
-       	  	   if(err) {
-       	  	   		//There was a problem getting the filename from the disk file
-       	  	   		glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
-       	  	   
-       	  	   } else {
+       	 
        	  	   	 
-       	  	   	   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
-       	  	   	 
-				   _this.findServer(function(err) {
-						if(err) {
-							glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-							//Search again in 10 seconds:
-							var passedImageURI = imageURI;   //OLD: thisImageURI;
-							var idEnteredB = idEntered;
+		   _this.findServer(function(err) {
+				if(err) {
+					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					//Search again in 10 seconds:
+					var passedImageURI = thisImageURI;  
+					var idEnteredB = idEntered;
+			
+					setTimeout(function() {
+						localStorage.removeItem("usingServer");		//This will force a reconnection
+						localStorage.removeItem("defaultDir");
+						glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+					}, 10000);
+				} else {
+					//Now we are connected - so we can get the filename
+			
+			
 					
-							setTimeout(function() {
-								localStorage.removeItem("usingServer");		//This will force a reconnection
-								localStorage.removeItem("defaultDir");
-								glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
-							}, 10000);
-						} else {
-				
-				
+					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
+	
+	   
+					   if(err) {
+							//There was a problem getting the filename from the disk file
+							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
+	   
+					   } else {
+		 					
+		 				  //Store in case the app quits unexpectably
+						   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
+		
+		
 							//Now we are connected, upload the photo again
 							glbThis.uploadPhoto(imageURI, idEntered, newFilename);		//OLD: thisImageURI
 						}
-				  });
-			  }
-       	  
-       	  
-       	  });
+					});
+				}
+		  });
+			  
        	  
        	  
       	 
