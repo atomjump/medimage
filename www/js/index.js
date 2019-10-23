@@ -365,7 +365,7 @@ var app = {
       				if(newPhoto.fullData) {
       					
       					try {
-      						var fullData = newPhoto;
+      						var fullData = newPhoto.fullData;
       						
       						checkComplete.push(fullData);
       						alert("Doing a check to see if it has transferred"); 		//TESTING
