@@ -337,7 +337,7 @@ var app = {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
        	  					"fileName" : fileName,
-       	  					"fullData" : fullDataObject stringified - optional
+       	  					"fullData" : fullDataObject - optional
        	  					"status" : "send"
        	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	
@@ -362,7 +362,7 @@ var app = {
       					
       					try {
       						var fullData = newPhoto.fullData;
-      						
+      						alert("Full data:" + JSON.stringify(fullData);	//TESTING
       						if(fullData.imageURI) {
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
@@ -371,7 +371,7 @@ var app = {
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
 		  						//This is an error case
-		  						alert("Cancelling " + newPhoto.idEntered);
+		  						alert("Cancelling " + newPhoto.idEntered);		//TESTING
 		  						changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
       					} catch(err) {
