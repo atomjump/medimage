@@ -338,7 +338,7 @@ var app = {
     	
     	
     	//Now actually remove all of the null photos, and write back the array
-    	glbThis.arrayRemove(localPhotos, null);
+    	localPhotos = glbThis.arrayRemove(localPhotos, null);
     	
     	//Set back the storage of the array
 		glbThis.setArrayLocalStorage("localPhotos", localPhotos);
