@@ -275,7 +275,7 @@ var app = {
     				
     				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    				glbThis.notify("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
+    				//TESTINGglbThis.notify("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     					
     					
     				//Set back the storage of the array
@@ -299,7 +299,7 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-       	glbThis.notify("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
+       	//TESTINGglbThis.notify("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -381,7 +381,7 @@ var app = {
        	  	localPhotos = [];
        	}
        	
-       	alert("LocalPhotos: " + JSON.stringify(localPhotos));	//TESTING
+       	//TESTINGalert("LocalPhotos: " + JSON.stringify(localPhotos));	//TESTING
        	
        	
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
@@ -403,18 +403,18 @@ var app = {
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
 		  						//This is a case where full details are not available. Do nothing.
-		  						document.getElementById("notify").innerHTML = "Cancelling " + newPhoto.idEntered;
+		  						//TESTINGdocument.getElementById("notify").innerHTML = "Cancelling " + newPhoto.idEntered;
 		  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
       					} catch(err) {
       						//There was a problem parsing the data.
-      						document.getElementById("notify").innerHTML = "Sorry, memory of " + newPhoto.idEntered + " ID: " + newPhoto.imageURI + ". Cancelled error: " + err;
+      						//TESTINGdocument.getElementById("notify").innerHTML = "Sorry, memory of " + newPhoto.idEntered + " ID: " + newPhoto.imageURI + ". Cancelled error: " + err;
       						//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       					}
       				} else {
       					//No fullData was added - resend anyway
-      					document.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ".";
+      					//TESTINGdocument.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ".";
       					//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       				
