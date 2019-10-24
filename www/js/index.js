@@ -938,7 +938,8 @@ var app = {
             		
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
-            		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
+            		           		
+            		var more = " " + checkComplete.length + " more.";			//Some more yet . OLD: retryIfNeeded.length
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
