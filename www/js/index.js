@@ -275,7 +275,6 @@ var app = {
     				
     				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    				//TESTINGglbThis.notify("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     					
     					
     				//Set back the storage of the array
@@ -783,12 +782,17 @@ var app = {
 	  check: function(imageURI){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
+	  		var nowChecking = null;
 	  		for(var cnt = 0; cnt< checkComplete; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
 	  				var nowChecking = checkComplete[cnt];
 	  			}
 	  		}
-			//OLDvar nowChecking = checkComplete.pop();
+	  		if(!nowChecking) {
+	  			//This check is complete.
+	  			document.getElementById("notify").innerHTML = "";
+	  			return;
+	  		}
 			nowChecking.loopCnt --;
 			
 		 
