@@ -289,9 +289,9 @@ var app = {
     					//Remove entry from the array
     					
     					
-    					var splicing = cnt - 1;
-    					alert("Deleting " + splicing);	//TESTING
-    					localPhotos[splicing] = null;		//Need the delete first to get rid of subobjects
+    				
+    					alert("Deleting " + cnt);	//TESTING
+    					localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     					localPhotos = glbThis.arrayRemoveNulls(localPhotos);
     					alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     					
@@ -313,11 +313,11 @@ var app = {
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway    				 		
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
     				 		
-    				 		alert("Deleting " + splicing);	//TESTING
     				 		
-    				 		localPhotos[splicing] = null;		//Need the delete first to get rid of subobjects
+    				 		alert("Deleting " + cnt);	//TESTING
+    				 		
+    				 		localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     						localPhotos = glbThis.arrayRemoveNulls(localPhotos);
     						alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     						
@@ -327,10 +327,10 @@ var app = {
     				 	
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
-    				 		alert("Deleting " + splicing);	//TESTING
     				 		
-    						localPhotos[splicing] = null;		//Need the delete first to get rid of subobjects
+    				 		alert("Deleting " + cnt);	//TESTING
+    				 		
+    						localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     						localPhotos = glbThis.arrayRemoveNulls(localPhotos);
     						alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     					
