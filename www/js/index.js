@@ -776,7 +776,7 @@ var app = {
 			//Loop through the current array and remove the entries
 	
 			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
-				if(checkComplete[cnt].imageURI === imageURI) {
+				if(checkComplete[cnt].details.imageURI === imageURI) {
 						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
 				}
 			}
