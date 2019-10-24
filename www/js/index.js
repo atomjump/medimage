@@ -783,7 +783,7 @@ var app = {
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
 	  		var nowChecking = null;
-	  		for(var cnt = 0; cnt< checkComplete; cnt++) {
+	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
 	  				nowChecking = checkComplete[cnt];
 	  			}
