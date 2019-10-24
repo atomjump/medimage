@@ -812,6 +812,7 @@ var app = {
 	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
 	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
+					checkComplete[cnt].loopCnt --;		//Decrement the original
 	  			}
 	  		}
 	  		if(!nowChecking) {
