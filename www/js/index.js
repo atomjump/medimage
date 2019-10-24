@@ -690,8 +690,12 @@ var app = {
 
 			//Keep the screen awake as we upload
 			window.plugins.insomnia.keepAwake();
-						
-			ft.upload(imageURI, serverReq, _this.win(r, imageURI), _this.fail, options);
+			
+			var myImageURI = repeatIfNeeded.imageURI;
+			
+			ft.upload(imageURI, serverReq, function(result) {
+				  				glbThis.win(result, myImageURI);
+				  }, _this.fail, options);
 	     
          }		//End of connected to a server OK
     },
@@ -760,8 +764,12 @@ var app = {
 					
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
+						var myImageURI = repeatIfNeeded.imageURI;
 						
-						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, glbThis.win(r, repeatIfNeeded.imageURI), glbThis.fail, repeatIfNeeded.options);
+						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
+									 function(result) {
+										glbThis.win(result, myImageURI);
+						}, glbThis.fail, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
