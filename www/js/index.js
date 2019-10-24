@@ -785,11 +785,20 @@ var app = {
 	  		var nowChecking = null;
 	  		for(var cnt = 0; cnt< checkComplete; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
-	  				var nowChecking = checkComplete[cnt];
+	  				nowChecking = checkComplete[cnt];
 	  			}
 	  		}
 	  		if(!nowChecking) {
 	  			//This check is complete.
+	  			var moreLength = checkComplete.length + retryIfNeeded.length;
+				var more = " " + moreLength + " more.";			//Some more yet
+				
+				if(moreLength == 0) {
+					document.getElementById("notify").innerHTML = 'Image transferred. Success! ';								
+				} else {
+					document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+					
+				}
 	  			return;
 	  		}
 			nowChecking.loopCnt --;
