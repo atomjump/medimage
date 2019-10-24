@@ -922,6 +922,9 @@ var app = {
 				var myNowChecking = nowChecking;
 				
 				var myTitle = "Image";
+				if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+							myTitle = myNowChecking.details.options.params.title;
+				}
 				var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = ". " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
