@@ -262,12 +262,37 @@ var app = {
    		return newArray;
 
 	},
+	
+	removeLocalPhoto: function(imageURI) {
+		//Loop through the current array and remove
+		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+		if(!localPhotos) {
+			localPhotos = [];
+		}
+		for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+    		if(localPhotos[cnt].imageURI === imageURI) {
+    		
+    				
+    				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
+    				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
+    				alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
+    					
+    					
+    				//Set back the storage of the array
+    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				return;
+    		}
+    	}
+	},
     
     changeLocalPhotoStatus: function(imageURI, newStatus, fullData) {
     	//Input:
     	//imageURI  - unique image address on phone filesystem 
     	//newStatus can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
     	//If onserver, the optional parameter 'fullGet', is the URL to call to check if the file is back on the server
+    	
+    	//Note: during the cancel, each removeLocalPhoto could occur at any time (async) depending on the filesystem speed,
+    	//so the removeLocalPhoto does a sync load, delete from array, and write back.
     	
     	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
@@ -287,17 +312,7 @@ var app = {
     					fileEntry.remove();
     					
     					//Remove entry from the array
-    					
-    					
-    				
-    					alert("Deleting " + cnt);	//TESTING
-    					localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
-    					localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    					alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
-    					
-    					
-    					//Set back the storage of the array
-    					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    					glbThis.removeLocalPhoto(imageURI);
     					
     				}, function(evt) {
     				
@@ -312,30 +327,13 @@ var app = {
     				 	}
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway    				 		
-    				 		//Remove entry from the array
-    				 		
-    				 		
-    				 		alert("Deleting " + cnt);	//TESTING
-    				 		
-    				 		localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
-    						localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    						alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
-    						
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				 		//Remove entry from the array    				 		
+    				 		glbThis.removeLocalPhoto(imageURI);
     				 	} else {
     				 	
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
     				 		//Remove entry from the array
-    				 		
-    				 		alert("Deleting " + cnt);	//TESTING
-    				 		
-    						localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
-    						localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    						alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
-    					
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				 		glbThis.removeLocalPhoto(imageURI);
     				 	}
     				 
     				});
