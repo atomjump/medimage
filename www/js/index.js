@@ -299,7 +299,6 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-       	//TESTINGglbThis.notify("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -396,6 +395,8 @@ var app = {
       					try {
       						var fullData = newPhoto.fullData;
       						if(fullData.details && fullData.details.imageURI) {
+      							fullData.loopCnt = 11;
+      							nowChecking.slowLoopCnt = null;		//Start again with a quick loop
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
 		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
@@ -403,19 +404,14 @@ var app = {
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
 		  						//This is a case where full details are not available. Do nothing.
-		  						//TESTINGdocument.getElementById("notify").innerHTML = "Cancelling " + newPhoto.idEntered;
-		  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+			  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
 		  					}
       					} catch(err) {
       						//There was a problem parsing the data.
-      						//TESTINGdocument.getElementById("notify").innerHTML = "Sorry, memory of " + newPhoto.idEntered + " ID: " + newPhoto.imageURI + ". Cancelled error: " + err;
-      						//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
-      						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+       						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       					}
       				} else {
       					//No fullData was added - resend anyway
-      					//TESTINGdocument.getElementById("notify").innerHTML = "Sorry, there was a problem checking " + newPhoto.idEntered + ".";
-      					//glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
       					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
       				
       				}
@@ -798,16 +794,26 @@ var app = {
 				
  				//Have finished - remove interval and report back
 				if(!nowChecking.slowLoopCnt) {
-					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image should be delivered shortly.";
+					checkComplete.push(nowChecking);
+					
+					var myTitle = "Image";
+					if(nowChecking.details && nowChecking.details.options && nowChecking.details.options.params && nowChecking.details.options.params.title && nowChecking.details.options.params.title != "") {
+						myTitle = nowChecking.details.options.params.title;
+					}
+				
+					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image " + myTitle + " should be delivered shortly.";
 					
 					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
 					
 					//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
 					nowChecking.slowLoopCnt = 90;
-					checkComplete.push(nowChecking);
+					
 					
 					//The file exists on the server still - try again in 30 seconds
-					setTimeout(glbThis.check, 30000);
+					setTimeout(function() {
+						
+						glbThis.check();						
+					}, 30000);
 				} else {
 					//Count down
 					nowChecking.slowLoopCnt --;
@@ -860,7 +866,12 @@ var app = {
 								}
 							} else {
 								//The file exists on the server still - try again in 30 seconds
-								setTimeout(glbThis.check, 30000);
+								
+								var myNowChecking = nowChecking;
+								setTimeout(function() {
+									
+									glbThis.check();
+								}, 30000);
 							} 
 						});
 					}
@@ -952,11 +963,11 @@ var app = {
             		
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
-            		
+            		            		
             		glbThis.removeCheckComplete(repeatIfNeeded.imageURI);
             		var moreLength = checkComplete.length + retryIfNeeded.length;
             		
-            		var more = " " + moreLength + " more.";			//Some more yet . OLD: retryIfNeeded.length
+            		var more = " " + moreLength + " more.";	
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
