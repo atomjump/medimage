@@ -274,7 +274,7 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-       	alert(JSON.stringify(localPhotos));		//TESTING
+       	alert("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -343,9 +343,7 @@ var app = {
     				localPhotos[cnt].status = newStatus;
     				
     				if((newStatus == "onserver")&&(fullData)) {
-    					alert("FullData:" + JSON.stringify(fullData));
     					localPhotos[cnt].fullData = fullData;	
-    					alert("After fullData:" + JSON.stringify(localPhotos));		//TESTING
     						
     				}
     				
