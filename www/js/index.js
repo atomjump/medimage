@@ -793,8 +793,7 @@ var app = {
 	  			}
 	  		}
 	  		if(!nowChecking) {
-	  			//This check is complete, already. Strictly speaking we shouldn't get here.
-				document.getElementById("notify").innerHTML = 'Image transferred. Success! ';								
+	  			//This check is complete, already. Strictly speaking we shouldn't get here.						
 	  			return;
 	  		}
 			nowChecking.loopCnt --;
