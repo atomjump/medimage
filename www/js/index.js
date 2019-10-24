@@ -811,7 +811,7 @@ var app = {
 	  		var nowChecking = null;
 	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
-	  				nowChecking = Array.from(checkComplete[cnt]);
+	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
 	  			}
 	  		}
 	  		if(!nowChecking) {
@@ -1005,7 +1005,7 @@ var app = {
 			var repeatIfNeeded = null;
 			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
 				if(retryIfNeeded[cnt].imageURI === imageURI) {
-					repeatIfNeeded =  Array.from(retryIfNeeded[cnt]);
+					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
 				}
 			}	
             		            		
@@ -1040,7 +1040,7 @@ var app = {
 			var repeatIfNeeded = null;
 			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
 				if(retryIfNeeded[cnt].imageURI === imageURI) {
-					repeatIfNeeded =  Array.from(retryIfNeeded[cnt]);
+					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
 				}
 			}	
 			
