@@ -621,8 +621,13 @@ var app = {
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
+					var scope = this;
+					scope.imageURIin = imageURIin;
+					scope.idEnteredB = idEnteredB;
+					scope.newFilename = newFilename;
+					
 					setTimeout(function() {
-						glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename)
+						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
 						}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
@@ -897,8 +902,7 @@ var app = {
 			} else {
 				//Try a get request to the check
 				//Get the current file data
-				//OLDcheckComplete.push(nowChecking);
-			
+				
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
 				
@@ -1018,23 +1022,30 @@ var app = {
 	     				var thisFile = repeatIfNeeded.options.fileName;
 	     				var usingServer = localStorage.getItem("usingServer");
 	     				
-	     				var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
+	     				if(usingServer) {	//Note, we have had a case of a null server here. In this case
+	     									//simply don't do any follow on checks.
+	     					var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
+	     					
+	     					var nowChecking = {};
+						
+							nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
+							nowChecking.fullGet = fullGet;
+							nowChecking.details = repeatIfNeeded;
+							checkComplete.push(nowChecking);
+						
+							//Set an 'onserver' status
+							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+						
+							var self = this;
+							self.thisImageURI = repeatIfNeeded.imageURI;
+							setTimeout(function() {	//Wait two seconds and then do a check
+								glbThis.check(self.thisImageURI);
+							}, 2000);
+	     					
+	     					
+	     				}
 	     				
-	     				var nowChecking = {};
-						
-						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
-						nowChecking.fullGet = fullGet;
-						nowChecking.details = repeatIfNeeded;
-						checkComplete.push(nowChecking);
-						
-						//Set an 'onserver' status
-	     				glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
-						
-						var self = this;
-						self.thisImageURI = repeatIfNeeded.imageURI;
-						setTimeout(function() {	//Wait two seconds and then do a check
-							glbThis.check(self.thisImageURI);
-						}, 2000);
+	     				
 					} else {
 						//Trying to check, but no file on stack	
 					}
