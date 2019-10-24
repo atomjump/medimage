@@ -921,7 +921,7 @@ var app = {
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
 				
-				
+				var myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = ". " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
