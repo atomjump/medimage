@@ -991,11 +991,12 @@ var app = {
             		
             		if(repeatIfNeeded) {
             			
-            			//OLD if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+            			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							//OLD myTitle = repeatIfNeeded.detail.options.params.title;
 							myTitle = repeatIfNeeded.options.params.title;
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
+							
+							
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 						}
