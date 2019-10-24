@@ -858,7 +858,7 @@ var app = {
 								
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
-								var moreLength = checkComplete.length + retryIfNeeded.length;
+								var moreLength = (checkComplete.length + retryIfNeeded.length);
 								var more = " " + moreLength + " more.";			//Some more yet
 								
 								if(moreLength == 0) {
@@ -920,7 +920,7 @@ var app = {
 						}
 						
 						
-						var moreLength = checkComplete.length + retryIfNeeded.length;
+						var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = " " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
