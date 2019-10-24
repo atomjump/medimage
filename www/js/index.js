@@ -394,7 +394,7 @@ var app = {
       						var fullData = newPhoto.fullData;
       						if(fullData.details && fullData.details.imageURI) {
       							fullData.loopCnt = 11;
-      							nowChecking.slowLoopCnt = null;		//Start again with a quick loop
+      							fullData.slowLoopCnt = null;		//Start again with a quick loop
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
 		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
