@@ -397,7 +397,7 @@ var app = {
       							fullData.slowLoopCnt = null;		//Start again with a quick loop
 		  						checkComplete.push(fullData);
 		  						setTimeout(function() {
-		  							glbThis.check();		//This will only upload again if it finds it hasn't been transferred off the 
+		  							glbThis.check(fullData.details.imageURI);		//This will only upload again if it finds it hasn't been transferred off the 
 		  													//server
 		  						}, 1);					//Split this off in parallel, after 1 millisecond
 		  					} else {
@@ -780,10 +780,15 @@ var app = {
 	
 	  },
 
-	  check: function(){
+	  check: function(imageURI){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
-			var nowChecking = checkComplete.pop();
+	  		for(var cnt = 0; cnt< checkComplete; cnt++) {
+	  			if(checkComplete[cnt].details.imageURI === imageURI) {
+	  				var nowChecking = checkComplete[cnt];
+	  			}
+	  		}
+			//OLDvar nowChecking = checkComplete.pop();
 			nowChecking.loopCnt --;
 			
 		 
@@ -792,7 +797,9 @@ var app = {
 				
  				//Have finished - remove interval and report back
 				if(!nowChecking.slowLoopCnt) {
-					checkComplete.push(nowChecking);
+					//Have now finished the frequent checks. Move into slower checks.
+					
+					//OLD:checkComplete.push(nowChecking);
 					
 					var myTitle = "Image";
 					if(nowChecking.details && nowChecking.details.options && nowChecking.details.options.params && nowChecking.details.options.params.title && nowChecking.details.options.params.title != "") {
@@ -810,10 +817,10 @@ var app = {
 					//The file exists on the server still - try again in 30 seconds
 					setTimeout(function() {
 						
-						glbThis.check();						
+						glbThis.check(imageURI);						
 					}, 30000);
 				} else {
-					//Count down
+					//Count down inside the slower checks
 					nowChecking.slowLoopCnt --;
 					
 					if(nowChecking.slowLoopCnt <= 0) {
@@ -868,7 +875,7 @@ var app = {
 								var myNowChecking = nowChecking;
 								setTimeout(function() {
 									
-									glbThis.check();
+									glbThis.check(imageURI);
 								}, 30000);
 							} 
 						});
@@ -879,7 +886,7 @@ var app = {
 			} else {
 				//Try a get request to the check
 				//Get the current file data
-				checkComplete.push(nowChecking);
+				//OLDcheckComplete.push(nowChecking);
 			
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
@@ -926,7 +933,7 @@ var app = {
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
-						setTimeout(glbThis.check, 2000);
+						setTimeout(glbThis.check(imageURI), 2000);
 					} 
 				});
 			}
@@ -962,7 +969,8 @@ var app = {
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
             		            		
-            		glbThis.removeCheckComplete(repeatIfNeeded.imageURI);
+            		glbThis.removeCheckComplete(repeatIfNeeded.imageURI);		//We may have started the checkCompletes
+            																	//althought this should be an unnecessary line
             		var moreLength = checkComplete.length + retryIfNeeded.length;
             		
             		var more = " " + moreLength + " more.";	
@@ -970,10 +978,10 @@ var app = {
             		
             		if(repeatIfNeeded) {
             			
-            			//if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+            			//OLD if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							//myTitle = repeatIfNeeded.detail.options.params.title;
+							//OLD myTitle = repeatIfNeeded.detail.options.params.title;
 							myTitle = repeatIfNeeded.options.params.title;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
@@ -1012,7 +1020,7 @@ var app = {
 	     				glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
 						
 						setTimeout(function() {	//Wait two seconds and then do a check
-							glbThis.check();
+							glbThis.check(repeatIfNeeded.imageURI);
 						}, 2000);
 					} else {
 						//Trying to check, but no file on stack	
