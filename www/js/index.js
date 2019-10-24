@@ -790,7 +790,6 @@ var app = {
 	  		}
 	  		if(!nowChecking) {
 	  			//This check is complete.
-	  			document.getElementById("notify").innerHTML = "";
 	  			return;
 	  		}
 			nowChecking.loopCnt --;
