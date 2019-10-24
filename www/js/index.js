@@ -807,7 +807,6 @@ var app = {
 				if(!nowChecking.slowLoopCnt) {
 					//Have now finished the frequent checks. Move into slower checks.
 					
-					checkComplete.push(nowChecking);
 					
 					var myTitle = "Image";
 					if(nowChecking.details && nowChecking.details.options && nowChecking.details.options.params && nowChecking.details.options.params.title && nowChecking.details.options.params.title != "") {
@@ -840,7 +839,6 @@ var app = {
 						glbThis.cancelNotify("");		//Remove any cancel icons
 					} else {
 						//Otherwise in the long count down
-						checkComplete.push(nowChecking);
 						var myNowChecking = nowChecking;
 						
 						
@@ -944,7 +942,11 @@ var app = {
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
-						setTimeout(glbThis.check(imageURI), 2000);
+						var thisScope = this;
+						thisScope.imageURI = imageURI;
+						setTimeout(function() {
+							glbThis.check(thisScope.imageURI);
+						}, 2000);
 					} 
 				});
 			}
