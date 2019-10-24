@@ -1032,8 +1032,11 @@ var app = {
 						//Set an 'onserver' status
 	     				glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
 						
+						var self = this;
+						self.thisImageURI = repeatIfNeeded.imageURI;
 						setTimeout(function() {	//Wait two seconds and then do a check
-							glbThis.check(repeatIfNeeded.imageURI);
+							alert("Checking " + self.thisImageURI);
+							glbThis.check(self.thisImageURI);
 						}, 2000);
 					} else {
 						//Trying to check, but no file on stack	
