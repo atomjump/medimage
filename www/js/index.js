@@ -691,7 +691,7 @@ var app = {
 			//Keep the screen awake as we upload
 			window.plugins.insomnia.keepAwake();
 						
-			ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
+			ft.upload(imageURI, serverReq, _this.win(r, imageURI), _this.fail, options);
 	     
          }		//End of connected to a server OK
     },
@@ -761,7 +761,7 @@ var app = {
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
 						
-						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, glbThis.win, glbThis.fail, repeatIfNeeded.options);
+						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, glbThis.win(r, repeatIfNeeded.imageURI), glbThis.fail, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
@@ -954,8 +954,10 @@ var app = {
 	},
 						
 
-    win: function(r) {
+    win: function(r, imageURI) {
     	    
+	    alert("ImageURI uploaded:" + imageURI);
+	    
     	    //Have finished transferring the file to the server
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
     	    
