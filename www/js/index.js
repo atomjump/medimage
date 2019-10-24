@@ -254,7 +254,7 @@ var app = {
 		var newArray = [];
 
 		for(var cnt = 0; cnt < arr.length; cnt++) {
-			if(arr[cnt]) {
+			if(arr[cnt] && arr[cnt] != null) {
 				newArray.push(arr[cnt]);
 			}
    		}
@@ -275,7 +275,7 @@ var app = {
     				
     				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
     				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    				alert("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
+    				glbThis.notify("After arrayRemove, and writing:" + JSON.stringify(localPhotos));		//TESTING
     					
     					
     				//Set back the storage of the array
@@ -299,7 +299,7 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-       	alert("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
+       	glbThis.notify("imageURI = " + imageURI + "   Status:" + newStatus);		//TESTING
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
@@ -375,10 +375,13 @@ var app = {
        	*/
       	var photoDetails = null;
       	
+      	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
+       	
+       	alert("LocalPhotos: " + JSON.stringify(localPhotos));	//TESTING
        	
        	
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
