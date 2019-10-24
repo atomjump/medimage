@@ -343,7 +343,8 @@ var app = {
     				localPhotos[cnt].status = newStatus;
     				
     				if((newStatus == "onserver")&&(fullData)) {
-    					localPhotos[cnt].fullData = Array.from(fullData);	
+    					alert("FullData:" + JSON.stringify(fullData));
+    					localPhotos[cnt].fullData = fullData;	
     					alert("After fullData:" + JSON.stringify(localPhotos));		//TESTING
     						
     				}
