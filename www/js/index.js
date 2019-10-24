@@ -387,7 +387,6 @@ var app = {
       			if(newPhoto.status == 'onserver') {
       				
        				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
-      				alert(JSON.stringify(newPhoto));		//TESTING
       				if(newPhoto.fullData) {
       					
       					try {
@@ -398,7 +397,6 @@ var app = {
 		  						checkComplete.push(fullData);
 		  						var thisImageURI = fullData.details.imageURI;
 		  						
-		  						alert("Checking image URI: " + thisImageURI);		//TESTING
 		  						glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
 		  					} else {
 		  						//This is a case where full details are not available. Do nothing.
@@ -1035,7 +1033,6 @@ var app = {
 						var self = this;
 						self.thisImageURI = repeatIfNeeded.imageURI;
 						setTimeout(function() {	//Wait two seconds and then do a check
-							alert("Checking " + self.thisImageURI);
 							glbThis.check(self.thisImageURI);
 						}, 2000);
 					} else {
