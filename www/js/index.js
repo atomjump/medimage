@@ -379,9 +379,7 @@ var app = {
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
-       	
-       	//TESTINGalert("LocalPhotos: " + JSON.stringify(localPhotos));	//TESTING
-       	
+       	      	
        	
        	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
       		var newPhoto = localPhotos[cnt];
