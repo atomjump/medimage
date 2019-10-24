@@ -397,11 +397,9 @@ var app = {
       							fullData.slowLoopCnt = null;		//Start again with a quick loop
 		  						checkComplete.push(fullData);
 		  						var thisImageURI = fullData.details.imageURI;
-		  						setTimeout(function() {
-		  							alert("Checking image URI: " + thisImageURI);		//TESTING
-		  							glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
-		  													//server
-		  						}, 2);					//Split this off in parallel, after 1 millisecond
+		  						
+		  						alert("Checking image URI: " + thisImageURI);		//TESTING
+		  						glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
 		  					} else {
 		  						//This is a case where full details are not available. Do nothing.
 			  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
