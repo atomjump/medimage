@@ -811,7 +811,7 @@ var app = {
 				if(!nowChecking.slowLoopCnt) {
 					//Have now finished the frequent checks. Move into slower checks.
 					
-					//OLD:checkComplete.push(nowChecking);
+					checkComplete.push(nowChecking);
 					
 					var myTitle = "Image";
 					if(nowChecking.details && nowChecking.details.options && nowChecking.details.options.params && nowChecking.details.options.params.title && nowChecking.details.options.params.title != "") {
