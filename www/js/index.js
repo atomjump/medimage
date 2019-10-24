@@ -790,6 +790,20 @@ var app = {
 			 checkComplete = glbThis.arrayRemoveNulls(checkComplete);
 	
 	  },
+	
+	  removeRetryIfNeeded: function(imageURI) {
+			//Loop through the current array and remove the entries
+	
+			for(var cnt = 0; cnt< retryIfNeeded.length; cnt++) {
+				if(retryIfNeeded[cnt].imageURI === imageURI) {
+						retryIfNeeded[cnt] = null;		//Need the delete first to get rid of subobjects
+				}
+			}
+	
+			 //Remove the null array entries
+			 retryIfNeeded = glbThis.arrayRemoveNulls(retryIfNeeded);
+	
+	  },
 
 	  check: function(imageURI){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
@@ -1002,8 +1016,7 @@ var app = {
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
-				glbThis.removeCheckComplete(repeatIfNeeded.imageURI);		//We may have started the checkCompletes
-            		
+				glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
             			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
@@ -1075,6 +1088,9 @@ var app = {
 							setTimeout(function() {	//Wait two seconds and then do a check
 								glbThis.check(self.thisImageURI);
 							}, 2000);
+						
+							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
+            			
 	     					
 	     					
 	     				}
