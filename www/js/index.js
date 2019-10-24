@@ -834,12 +834,11 @@ var app = {
 								}
 								
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
-								var more = " " + checkComplete.length + " more.";			//Some more yet
 								
+								var moreLength = checkComplete.length + retryIfNeeded.length;
+								var more = " " + moreLength + " more.";			//Some more yet
 								
-								
-								
-								if(checkComplete.length == 0) {
+								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
 									
 								} else {
@@ -893,8 +892,9 @@ var app = {
 						}
 						
 						
-						var more = " " + checkComplete.length + " more.";			//Some more yet
-						if(checkComplete.length == 0) {
+						var moreLength = checkComplete.length + retryIfNeeded.length;
+						var more = " " + moreLength + " more.";			//Some more yet
+						if(moreLength == 0) {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
 						} else {
 							if(myTitle != "") {
@@ -952,15 +952,20 @@ var app = {
             		
             		//and delete phone version of file
             		var repeatIfNeeded = retryIfNeeded.pop();
-            		           		
-            		var more = " " + checkComplete.length + " more.";			//Some more yet . OLD: retryIfNeeded.length
+            		
+            		glbThis.removeCheckComplete(repeatIfNeeded.imageURI);
+            		var moreLength = checkComplete.length + retryIfNeeded.length;
+            		
+            		var more = " " + moreLength + " more.";			//Some more yet . OLD: retryIfNeeded.length
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
             			
-						if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+            			//if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							myTitle = repeatIfNeeded.detail.options.params.title;
+							//myTitle = repeatIfNeeded.detail.options.params.title;
+							myTitle = repeatIfNeeded.options.params.title;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 						}
