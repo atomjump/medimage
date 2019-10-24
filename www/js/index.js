@@ -793,16 +793,8 @@ var app = {
 	  			}
 	  		}
 	  		if(!nowChecking) {
-	  			//This check is complete.
-	  			var moreLength = checkComplete.length + retryIfNeeded.length;
-				var more = " " + moreLength + " more.";			//Some more yet
-				
-				if(moreLength == 0) {
-					document.getElementById("notify").innerHTML = 'Image transferred. Success! ';								
-				} else {
-					document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
-					
-				}
+	  			//This check is complete, already. Strictly speaking we shouldn't get here.
+				document.getElementById("notify").innerHTML = 'Image transferred. Success! ';								
 	  			return;
 	  		}
 			nowChecking.loopCnt --;
@@ -831,9 +823,11 @@ var app = {
 					
 					
 					//The file exists on the server still - try again in 30 seconds
+					var thisScope = this;
+					thisScope.imageURI = imageURI;
 					setTimeout(function() {
 						
-						glbThis.check(imageURI);						
+						glbThis.check(thisScope.imageURI);						
 					}, 30000);
 				} else {
 					//Count down inside the slower checks
@@ -889,9 +883,11 @@ var app = {
 								//The file exists on the server still - try again in 30 seconds
 								
 								var myNowChecking = nowChecking;
+								var thisScope = this;
+								thisScope.imageURI = imageURI;
 								setTimeout(function() {
 									
-									glbThis.check(imageURI);
+									glbThis.check(thisScope.imageURI);
 								}, 30000);
 							} 
 						});
