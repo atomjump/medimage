@@ -772,6 +772,20 @@ var app = {
 
 
 
+	  removeCheckComplete: function(imageURI) {
+			//Loop through the current array and remove the entries
+	
+			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
+				if(checkComplete[cnt].imageURI === imageURI) {
+						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
+				}
+			}
+	
+			 //Remove the null array entries
+			 checkComplete = glbThis.arrayRemoveNulls(checkComplete);
+	
+	  },
+
 	  check: function(){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
@@ -819,7 +833,7 @@ var app = {
 									myTitle = myNowChecking.details.options.params.title;
 								}
 								
-								checkComplete.pop();
+								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								var more = " " + checkComplete.length + " more.";			//Some more yet
 								
 								
@@ -871,7 +885,7 @@ var app = {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
-						checkComplete.pop();
+						glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 						
 						var myTitle = "Image";
 						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
