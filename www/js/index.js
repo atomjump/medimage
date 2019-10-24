@@ -964,7 +964,6 @@ var app = {
 
     win: function(r, imageURI) {
     	    
-	    alert("ImageURI uploaded:" + imageURI);
 	    
     	    //Have finished transferring the file to the server
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
@@ -989,9 +988,13 @@ var app = {
             		
             		
             		//and delete phone version of file
-            		var repeatIfNeeded = retryIfNeeded.pop();
+			var repeatIfNeeded = null;
+			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+				if(retryIfNeeded[cnt].imageURI === imageURI) {
+					repeatIfNeeded = retryIfNeeded[cnt];
+				}
+			}	
             		            		
-            		glbThis.removeCheckComplete(repeatIfNeeded.imageURI);		//We may have started the checkCompletes
             																	//althought this should be an unnecessary line
             		var moreLength = checkComplete.length + retryIfNeeded.length;
             		
@@ -999,6 +1002,8 @@ var app = {
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
+				glbThis.removeCheckComplete(repeatIfNeeded.imageURI);		//We may have started the checkCompletes
+            		
             			
             			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
@@ -1018,10 +1023,31 @@ var app = {
             
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
-            		document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..';
+            		//and delete phone version of file
+			var repeatIfNeeded = null;
+			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+				if(retryIfNeeded[cnt].imageURI === imageURI) {
+					repeatIfNeeded = retryIfNeeded[cnt];
+				}
+			}	
+			
+			var moreLength = checkComplete.length + retryIfNeeded.length;
             		
+            		var more = " " + moreLength + " more.";	
+            		var myTitle = "Image";
+			
+			if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+				myTitle = repeatIfNeeded.options.params.title;
+				document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
+
+
+			} else {
+				document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+			}
+		
             		
-            		var repeatIfNeeded = retryIfNeeded.pop();
+			
+			
             		
             		
 	     			
