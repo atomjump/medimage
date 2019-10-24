@@ -921,7 +921,20 @@ var app = {
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
 				
-				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
+				
+				var moreLength = (checkComplete.length + retryIfNeeded.length);
+						var more = ". " + moreLength + " more.";			//Some more yet
+						if(moreLength == 0) {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
+						} else {
+							if(myTitle != "") {
+								document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
+						
+							} else {
+								document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
+							}
+						}
+				
 				glbThis.cancelNotify("");		//Remove any cancel icons
   
   
