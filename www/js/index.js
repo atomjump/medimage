@@ -1001,15 +1001,15 @@ var app = {
 						
 						//and delete phone version
 						if(myNowChecking.details) {
-            				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
-            			} else {
-            				document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
-            			}
+            						glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
+            					} else {
+            						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+            					}
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
 						var thisScope = this;
-						thisScope.imageURI = imageURI;
+						thisScope.imageURI = myNowChecking.imageURI;
 						setTimeout(function() {
 							glbThis.check(thisScope.imageURI);
 						}, 2000);
