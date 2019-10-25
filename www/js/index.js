@@ -915,7 +915,7 @@ var app = {
 								
 								var myNowChecking = nowChecking;
 								var thisScope = this;
-								thisScope.imageURI = imageURI;
+								thisScope.imageURI = myNowChecking.details.imageURI;
 								setTimeout(function() {
 									glbThis.check(thisScope.imageURI);
 								}, 30000);
