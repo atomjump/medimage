@@ -813,6 +813,10 @@ var app = {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
 	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
 					checkComplete[cnt].loopCnt --;		//Decrement the original
+					if(nowChecking.loopCnt <= 0) {
+						//Decrement the slow loop
+						checkComplete[cnt].slowLoopCnt --;		
+					}
 	  			}
 	  		}
 	  		if(!nowChecking) {
@@ -852,7 +856,7 @@ var app = {
 				} else {
 					//Count down inside the slower checks
 					nowChecking.slowLoopCnt --;
-					checkComplete[cnt].slowLoopCnt --;		//Decrement the master copy
+					
 					
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
