@@ -912,10 +912,28 @@ var app = {
 								}
 							} else {
 								//The file exists on the server still - try again in 30 seconds
+								var moreLength = (checkComplete.length + retryIfNeeded.length);
+								var more = " " + moreLength + " more. ";			//Some more yet
 								
-								var myNowChecking = nowChecking;
+								if(moreLength == 0) {
+									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
+									
+								} else {
+									
+									if(myTitle != "") {
+									
+										document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds.' + more + myNowChecking.slowLoopCnt;
+									} else {
+										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + myNowChecking.slowLoopCnt;
+									}
+								}
+								
+								
 								var thisScope = this;
 								thisScope.imageURI = myNowChecking.details.imageURI;
+								
+								
+								
 								setTimeout(function() {
 									glbThis.check(thisScope.imageURI);
 								}, 30000);
