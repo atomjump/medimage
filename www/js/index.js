@@ -148,7 +148,7 @@ var app = {
 		
 		
 							//Now we are connected, upload the photo again
-							glbThis.uploadPhoto(imageURI, idEntered, newFilename);		//OLD: thisImageURI
+							glbThis.uploadPhoto(imageURI, idEntered, newFilename);
 						}
 					});
 				}
