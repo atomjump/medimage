@@ -1111,12 +1111,16 @@ var app = {
             			
 	     					
 	     					
-	     				}
-	     				
-	     				
-					} else {
-						//Trying to check, but no file on stack	
+	     				} else {
+						//Set an 'onserver' status, and remove this entry
+						glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);
 					}
+	     				
+	     				
+				} else {
+					//Trying to check, but no file on stack	
+				}
             	
             	}
             	            	
