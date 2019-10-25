@@ -856,7 +856,7 @@ var app = {
 					
 					
 					//The file exists on the server still - try again in 30 seconds
-					var thisScope = this;
+					var thisScope = {};
 					thisScope.imageURI = imageURI;
 					setTimeout(function() {
 						glbThis.check(thisScope.imageURI);						
@@ -936,7 +936,7 @@ var app = {
 								}
 								
 								
-								var thisScope = this;
+								var thisScope = {};
 								if(myNowChecking && myNowChecking.details) {
 									thisScope.imageURI = myNowChecking.details.imageURI;
 							
@@ -1017,7 +1017,7 @@ var app = {
 						
 					} else {
 						//The file exists on the server still - try again in a few moments
-						var thisScope = this;
+						var thisScope = {};
 						if(myNowChecking && myNowChecking.details) {
 							thisScope.imageURI = myNowChecking.details.imageURI;
 						
