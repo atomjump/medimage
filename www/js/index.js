@@ -823,6 +823,7 @@ var app = {
 						} else {
 							//Decrement the slow loop
 							checkComplete[cnt].slowLoopCnt --;
+							alert("Check slow loop count : " + checkComplete[cnt].slowLoopCnt);	//TESTING
 						}
 					}
 	  			}
@@ -912,8 +913,14 @@ var app = {
 								}
 							} else {
 								//The file exists on the server still - try again in 30 seconds
+								var myTitle = "Image";
+								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+									myTitle = myNowChecking.details.options.params.title;
+								}
+								
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
 								var more = " " + moreLength + " more. ";			//Some more yet
+								
 								
 								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
@@ -935,6 +942,7 @@ var app = {
 							
 								
 									setTimeout(function() {
+										alert("Slow loop checking : " + thisScope.imageURI);		//TESTING
 										glbThis.check(thisScope.imageURI);
 									}, 30000);
 								}
