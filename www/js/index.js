@@ -930,13 +930,14 @@ var app = {
 								
 								
 								var thisScope = this;
-								thisScope.imageURI = myNowChecking.details.imageURI;
+								if(myNowChecking && myNowChecking.details) {
+									thisScope.imageURI = myNowChecking.details.imageURI;
+							
 								
-								
-								
-								setTimeout(function() {
-									glbThis.check(thisScope.imageURI);
-								}, 30000);
+									setTimeout(function() {
+										glbThis.check(thisScope.imageURI);
+									}, 30000);
+								}
 							} 
 						});
 					}
@@ -1009,10 +1010,13 @@ var app = {
 					} else {
 						//The file exists on the server still - try again in a few moments
 						var thisScope = this;
-						thisScope.imageURI = myNowChecking.imageURI;
-						setTimeout(function() {
-							glbThis.check(thisScope.imageURI);
-						}, 2000);
+						if(myNowChecking && myNowChecking.details) {
+							thisScope.imageURI = myNowChecking.details.imageURI;
+						
+							setTimeout(function() {
+								glbThis.check(thisScope.imageURI);
+							}, 2000);
+						}
 					} 
 				});
 			}
