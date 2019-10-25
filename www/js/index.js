@@ -847,12 +847,12 @@ var app = {
 					var thisScope = this;
 					thisScope.imageURI = imageURI;
 					setTimeout(function() {
-						//alert("Checking in 30 sec:" + thisScope.imageURI);  //TESTING
 						glbThis.check(thisScope.imageURI);						
 					}, 30000);
 				} else {
 					//Count down inside the slower checks
 					nowChecking.slowLoopCnt --;
+					checkComplete[cnt].slowLoopCnt --;		//Decrement the master copy
 					
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
@@ -906,7 +906,6 @@ var app = {
 								var thisScope = this;
 								thisScope.imageURI = imageURI;
 								setTimeout(function() {
-									//alert("Checking in 30 sec:" + thisScope.imageURI);  //TESTING
 									glbThis.check(thisScope.imageURI);
 								}, 30000);
 							} 
@@ -983,7 +982,6 @@ var app = {
 						var thisScope = this;
 						thisScope.imageURI = imageURI;
 						setTimeout(function() {
-							//alert("Checking in 2 sec:" + thisScope.imageURI);  //TESTING
 							glbThis.check(thisScope.imageURI);
 						}, 2000);
 					} 
