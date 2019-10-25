@@ -822,9 +822,7 @@ var app = {
 							startSlowLoop = true;
 						} else {
 							//Decrement the slow loop
-							checkComplete[cnt].slowLoopCnt --;
-							alert("Check slow loop count : " + checkComplete[cnt].slowLoopCnt);	//TESTING
-						}
+							checkComplete[cnt].slowLoopCnt --;						}
 					}
 	  			}
 	  		}
@@ -942,7 +940,6 @@ var app = {
 							
 								
 									setTimeout(function() {
-										alert("Slow loop checking : " + thisScope.imageURI);		//TESTING
 										glbThis.check(thisScope.imageURI);
 									}, 30000);
 								}
