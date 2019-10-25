@@ -808,14 +808,22 @@ var app = {
 	  check: function(imageURI){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
+		  	var startSlowLoop = false;
 	  		var nowChecking = null;
 	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
 	  			if(checkComplete[cnt].details.imageURI === imageURI) {
 	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
 					checkComplete[cnt].loopCnt --;		//Decrement the original
 					if(nowChecking.loopCnt <= 0) {
-						//Decrement the slow loop
-						checkComplete[cnt].slowLoopCnt --;		
+						//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
+						if(!nowChecking.slowLoopCnt) {
+							//Need to set a slow count
+							checkComplete[cnt].slowLoopCnt = 90;
+							startSlowLoop = true;
+						} else {
+							//Decrement the slow loop
+							checkComplete[cnt].slowLoopCnt --;
+						}
 					}
 	  			}
 	  		}
@@ -830,7 +838,7 @@ var app = {
 				
 				
  				//Have finished - remove interval and report back
-				if(!nowChecking.slowLoopCnt) {
+				if(startSlowLoop == true) {
 					//Have now finished the frequent checks. Move into slower checks.
 					
 					
@@ -843,8 +851,7 @@ var app = {
 					
 					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
 					
-					//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
-					nowChecking.slowLoopCnt = 90;
+					
 					
 					
 					//The file exists on the server still - try again in 30 seconds
