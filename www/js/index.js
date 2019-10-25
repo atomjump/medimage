@@ -1140,7 +1140,7 @@ var app = {
 							//Set an 'onserver' status
 							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
 						
-							var self = this;
+							var self = {};
 							self.thisImageURI = repeatIfNeeded.imageURI;
 							setTimeout(function() {	//Wait two seconds and then do a check
 								glbThis.check(self.thisImageURI);
