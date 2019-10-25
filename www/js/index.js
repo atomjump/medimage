@@ -103,7 +103,7 @@ var app = {
         
     },
 
-    processPicture: function(imageURI)
+    processPicture: function(imageURIin)
     {
         var _this = this;
         glbThis = this;
@@ -113,11 +113,9 @@ var app = {
       	  localStorage.removeItem("usingServer");		//This will force a reconnection
 	      localStorage.removeItem("defaultDir");
       	  
-      	  var thisImageURI = imageURI;
+      	  var thisImageURI = imageURIin;
       	  var idEntered = document.getElementById("id-entered").value;
        	  
-       	  //Store in case the app quits unexpectably
-       	  _this.recordLocalPhoto( imageURI, idEntered );
        	  
       	  _this.findServer(function(err) {
 				if(err) {
@@ -129,15 +127,36 @@ var app = {
 					setTimeout(function() {
 						localStorage.removeItem("usingServer");		//This will force a reconnection
 	    				localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEnteredB);
+						glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
 					}, 10000);
 				} else {
+					//Now we are connected - so we can get the filename
+			
+			
+					
+					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
+	
+	   
+					   if(err) {
+							//There was a problem getting the filename from the disk file
+							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
+	   
+					   } else {
+		 					
+		 				  //Store in case the app quits unexpectably
+						   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
 				
 				
 					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(thisImageURI, idEntered);
+							glbThis.uploadPhoto(imageURI, idEntered, newFilename);
+						}
+					});
 				}
 		  });
+			  
+       	  
+       	  
+      	 
 	},
 
     takePicture: function() {
@@ -215,9 +234,7 @@ var app = {
     },
     
     
-
-    recordLocalPhoto: function(imageURI, idEntered) {
-
+    recordLocalPhoto: function(imageURI, idEntered, fileName) {
     	 //Save into our localPhotos array, in case the app quits
     	 
        	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
@@ -227,14 +244,58 @@ var app = {
        	  var newPhoto = {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
+       	  					"fileName" : fileName,
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	  localPhotos.push(newPhoto);
        	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
     	  return true;
     },
     
-    changeLocalPhotoStatus: function(imageURI, newStatus) {
+    arrayRemoveNulls: function(arr) {
+		var newArray = [];
+
+		for(var cnt = 0; cnt < arr.length; cnt++) {
+			if(arr[cnt] && arr[cnt] != null) {
+				newArray.push(arr[cnt]);
+			}
+   		}
+   		
+   		return newArray;
+
+	},
+	
+	removeLocalPhoto: function(imageURI) {
+		//Loop through the current array and remove
+		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+		if(!localPhotos) {
+			localPhotos = [];
+		}
+		for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+    		if(localPhotos[cnt].imageURI === imageURI) {
+    		
+    				
+    				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
+    				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
+    					
+    					
+    				//Set back the storage of the array
+    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				return;
+    		}
+    	}
+	},
+    
+    changeLocalPhotoStatus: function(imageURI, newStatus, fullData) {
+    	//Input:
+    	//imageURI  - unique image address on phone filesystem 
+    	//newStatus can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
+    	//If onserver, the optional parameter 'fullGet', is the URL to call to check if the file is back on the server
+    	
+    	//Note: during the cancel, each removeLocalPhoto could occur at any time (async) depending on the filesystem speed,
+    	//so the removeLocalPhoto does a sync load, delete from array, and write back.
+    	
+    	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
        	  	localPhotos = [];
@@ -251,15 +312,7 @@ var app = {
     					fileEntry.remove();
     					
     					//Remove entry from the array
-
-    					
-    					var splicing = cnt - 1;
-    					
-    					localPhotos.splice(splicing,1);
-    					
-   					
-    					//Set back the storage of the array
-    					glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    					glbThis.removeLocalPhoto(imageURI);
     					
     				}, function(evt) {
     				
@@ -276,49 +329,54 @@ var app = {
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway    				 		
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
-    						localPhotos.splice(splicing,1);
-    					
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				 		glbThis.removeLocalPhoto(imageURI);
     				 	} else {
     				 	
 
     				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
     				 		//Remove entry from the array
-    				 		var splicing = cnt - 1;
-    						localPhotos.splice(splicing,1);
-    					
-    						//Set back the storage of the array
-    						glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				 		glbThis.removeLocalPhoto(imageURI);
     				 	}
     				 
     				});
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
+    				if((newStatus == "onserver")&&(fullData)) {
+    					localPhotos[cnt].fullData = fullData;	
+    						
+    				}
+    				
     				//Set back the storage of the array
     				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+    				
     			}
     		}
     	
     	}
     
-    },
+    	//Note: don't put any post proccessing down here. The resolveLocalFileSystem is async.
     
 
+    	
+    
+    },
+    
     loopLocalPhotos: function() {
      
       	//Get a photo, one at a time, in the array format:
       	/* {
        	  					"imageURI" : imageURI,
        	  					"idEntered" : idEntered,
+       	  					"fileName" : fileName,
+       	  					"fullData" : fullDataObject - optional
        	  					"status" : "send"
-       	  					};		//Status can be 'send', 'sent' (usually deleted from the array), or 'cancel' 
+       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	
        	and attempt to upload them.
        	*/
       	var photoDetails = null;
+      	
       	
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
@@ -329,7 +387,40 @@ var app = {
         for(var cnt = 0; cnt< localPhotos.length; cnt++) {
 			var newPhoto = localPhotos[cnt];
 			if(newPhoto) {
-				glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered);		        		
+      		
+      			if(newPhoto.status == 'onserver') {
+      				
+       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
+      				if(newPhoto.fullData) {
+      					
+      					try {
+      						var fullData = newPhoto.fullData;
+      						if(fullData.details && fullData.details.imageURI) {
+      							fullData.loopCnt = 11;
+      							fullData.slowLoopCnt = null;		//Start again with a quick loop
+		  						checkComplete.push(fullData);
+		  						var thisImageURI = fullData.details.imageURI;
+		  						
+		  						glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
+		  					} else {
+		  						//This is a case where full details are not available. Do nothing.
+			  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+		  					}
+      					} catch(err) {
+      						//There was a problem parsing the data.
+       						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+      					}
+      				} else {
+      					//No fullData was added - resend anyway
+      					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+      				
+      				}
+      					
+      			
+      			} else {
+        			//Needs to be resent
+        			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
+        		}
 			} 	    	
 	    }
 
@@ -432,45 +523,25 @@ var app = {
 		
 	},
 	
+	determineFilename: function(imageURIin, idEntered, cb) {
+		//Determines the filename to use based on the imageURI of the photo, 
+		//and the id entered into the text field.
+		//Calls back with: cb(err, newFilename, imageURI)
+		//    where err is null for no error, or text of the error,
+		//    and the newFilename as a text string which includes the .jpg at the end
+		//    imageURI is the local filesystem resolved URI
+		//It will use the current date / time from the phone, thought this format varies slightly
+		//phone to phone.
 
-    uploadPhoto: function(imageURIin, idEntered) {
-  
-        var _this = this;
-	
-		var usingServer = localStorage.getItem("usingServer");
-		
+		//Have connected OK to a server
 		var idEnteredB = idEntered;
 
-	
-		if((!usingServer)||(usingServer == null)) {
-			//No remove server already connected to, find the server now. And then call upload again
-			_this.findServer(function(err) {
-				if(err) {
-					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
-					
-					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					//Search again in 10 seconds:
-					setTimeout(function() {
-						glbThis.uploadPhoto(imageURIin, idEnteredB)
-						}, 10000);
-				} else {
-					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(imageURIin, idEnteredB);
-				}
-			});
-			return;
-		} else {
-		
-			var myImageURIin = imageURIin;
-
-			//Have connected OK to a server
             window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
 
 				deleteThisFile = fileEntry; //Store globally
 			
 				var imageURI = fileEntry.toURL();
-				var options = new FileUploadOptions();
-				options.fileKey="file1";
+				
 
 				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
@@ -513,28 +584,90 @@ var app = {
 						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
 						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
 
-						options.fileName = myoutFile + '-' + mydt + '.jpg';
+						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
+						cb(null, myNewFileName, imageURI);
+					},
+					function () { 
+						navigator.notification.alert('Sorry, there was an error getting the current date\n');
+						cb("Sorry, there was an error getting the current date");
+					},
+					{ formatLength:'medium', selector:'date and time'}
+				); //End of function in globalization date to string
 
+
+
+
+		}, function(evt) {
+			//An error accessing the file
+			//and potentially delete phone version
+			glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
+			cb("Sorry, we could not access the photo file");
+			
+		});		//End of resolveLocalFileSystemURI
+	
+		
+	
+	},
+
+    uploadPhoto: function(imageURIin, idEntered, newFilename) {
+  
+        var _this = this;
+	
+		var usingServer = localStorage.getItem("usingServer");
+		
+		var idEnteredB = idEntered;
+	
+	
+		if((!usingServer)||(usingServer == null)) {
+			//No remove server already connected to, find the server now. And then call upload again
+			_this.findServer(function(err) {
+				if(err) {
+					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
+					
+					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					//Search again in 10 seconds:
+					var scope = this;
+					scope.imageURIin = imageURIin;
+					scope.idEnteredB = idEnteredB;
+					scope.newFilename = newFilename;
+					
+					setTimeout(function() {
+						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
+						}, 10000);
+				} else {
+					//Now we are connected, upload the photo again
+					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
+				}
+			});
+			return;
+		} else {
+			//Have connected OK to a server
+			var myImageURIin = imageURIin;
+			var imageURI = imageURIin;
+
+			var options = new FileUploadOptions();
+			options.fileKey="file1";
 						options.mimeType="image/jpeg";
 
 						var params = new Object();
-						params.title = document.getElementById("id-entered").value;
+			params.title = idEntered; 
 						if((params.title == '')||(params.title == null)) {
-							if((idEnteredC == '')||(idEnteredC == null)) {
+				if((idEnteredB == '')||(idEnteredB == null)) {
 								params.title = 'image';
 							} else {
-								params.title = idEnteredC;
+					params.title = idEnteredB;
 							}
 
 						}
 
+			options.fileName = newFilename;
 						options.params = params;
 						options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
 						options.headers = {
 							Connection: "close"
 						}
 						
-						options.idEntered = idEnteredC;
+			options.idEntered = idEnteredB;
 
 
 						var ft = new FileTransfer();
@@ -564,25 +697,11 @@ var app = {
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
 						
-						ft.upload(imageURI, serverReq, _this.win, _this.fail, options);
-
-					  },
-					function () { 
-						navigator.notification.alert('Error getting dateString\n');
-					},
-					{ formatLength:'medium', selector:'date and time'}
-				); //End of function in globalization date to string
-
-
-
-
-          	}, function(evt) {
-          		//An error accessing the file
-          		//and potentially delete phone version
-            	glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
+						var myImageURI = repeatIfNeeded.imageURI;
             	
-
-          	});		//End of resolveLocalFileSystemURI
+						ft.upload(imageURI, serverReq, function(result) {
+				  						glbThis.win(result, myImageURI);
+				  			}, _this.fail, options);
        
          }		//End of connected to a server OK
     },
@@ -626,7 +745,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -652,8 +771,12 @@ var app = {
 					
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
+						var myImageURI = repeatIfNeeded.imageURI;
 						
-						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq, glbThis.win, glbThis.fail, repeatIfNeeded.options);
+						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
+									 function(result) {
+										glbThis.win(result, myImageURI);
+						}, glbThis.fail, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
@@ -661,8 +784,59 @@ var app = {
 
 
 
-	  check: function(){
-			var nowChecking = checkComplete.pop();
+	  removeCheckComplete: function(imageURI) {
+			//Loop through the current array and remove the entries
+	
+			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
+				if(checkComplete[cnt].details.imageURI === imageURI) {
+						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
+				}
+			}
+	
+			 //Remove the null array entries
+			 checkComplete = glbThis.arrayRemoveNulls(checkComplete);
+	
+	  },
+	
+	  removeRetryIfNeeded: function(imageURI) {
+			//Loop through the current array and remove the entries
+	
+			for(var cnt = 0; cnt< retryIfNeeded.length; cnt++) {
+				if(retryIfNeeded[cnt].imageURI === imageURI) {
+						retryIfNeeded[cnt] = null;		//Need the delete first to get rid of subobjects
+				}
+			}
+	
+			 //Remove the null array entries
+			 retryIfNeeded = glbThis.arrayRemoveNulls(retryIfNeeded);
+	
+	  },
+
+	  check: function(imageURI){
+	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
+	  		
+		  	var startSlowLoop = false;
+	  		var nowChecking = null;
+	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
+	  			if(checkComplete[cnt].details.imageURI === imageURI) {
+	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
+					checkComplete[cnt].loopCnt --;		//Decrement the original
+					if(nowChecking.loopCnt <= 0) {
+						//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
+						if(!nowChecking.slowLoopCnt) {
+							//Need to set a slow count
+							checkComplete[cnt].slowLoopCnt = 90;
+							startSlowLoop = true;
+						} else {
+							//Decrement the slow loop
+							checkComplete[cnt].slowLoopCnt --;						}
+					}
+	  			}
+	  		}
+	  		if(!nowChecking) {
+	  			//This check is complete, already. Strictly speaking we shouldn't get here.						
+	  			return;
+	  		}
 			nowChecking.loopCnt --;
 			
 		 
@@ -670,20 +844,32 @@ var app = {
 
 				
  				//Have finished - remove interval and report back
-				if(!nowChecking.slowLoopCnt) {
-					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image should be delivered shortly.";
+				if(startSlowLoop == true) {
+					//Have now finished the frequent checks. Move into slower checks.
+					
+					
+					var myTitle = "Image";
+					if(nowChecking.details && nowChecking.details.options && nowChecking.details.options.params && nowChecking.details.options.params.title && nowChecking.details.options.params.title != "") {
+						myTitle = nowChecking.details.options.params.title;
+					}
+				
+					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image " + myTitle + " should be delivered shortly.";
 					
 					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
 					
-					//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
-					nowChecking.slowLoopCnt = 90;
-					checkComplete.push(nowChecking);
+					
+					
 					
 					//The file exists on the server still - try again in 30 seconds
-					setTimeout(glbThis.check, 30000);
+					var thisScope = {};
+					thisScope.imageURI = imageURI;
+					setTimeout(function() {
+						glbThis.check(thisScope.imageURI);						
+					}, 30000);
 				} else {
-					//Count down
+					//Count down inside the slower checks
 					nowChecking.slowLoopCnt --;
+					
 					
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
@@ -692,7 +878,6 @@ var app = {
 						glbThis.cancelNotify("");		//Remove any cancel icons
 					} else {
 						//Otherwise in the long count down
-						checkComplete.push(nowChecking);
 						var myNowChecking = nowChecking;
 						
 						
@@ -706,14 +891,13 @@ var app = {
 									myTitle = myNowChecking.details.options.params.title;
 								}
 								
-								checkComplete.pop();
-								var more = " " + checkComplete.length + " more.";			//Some more yet
+								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
+								var moreLength = (checkComplete.length + retryIfNeeded.length);
+								var more = " " + moreLength + " more.";			//Some more yet
 								
-								
-								
-								if(checkComplete.length == 0) {
-									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';	//TESTING REMOVE THE myTitle at the start!									
+								if(moreLength == 0) {
+									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
 									
 								} else {
 									
@@ -734,14 +918,45 @@ var app = {
 									document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 								}
 								
-								//Show a trace wound button if we are MedImage Server connected
-								glbThis.traceWound(myTitle);
-								
-
-								
+								//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
+								glbThis.traceWound(myTitle);	
 							} else {
 								//The file exists on the server still - try again in 30 seconds
-								setTimeout(glbThis.check, 30000);
+								var myTitle = "Image";
+								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+									myTitle = myNowChecking.details.options.params.title;
+								}
+								
+								var moreLength = (checkComplete.length + retryIfNeeded.length);
+								var more = " " + moreLength + " more. ";			//Some more yet
+								
+
+								if(moreLength == 0) {
+									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
+								
+							} else {
+									
+									if(myTitle != "") {
+									
+										document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds.' + more + myNowChecking.slowLoopCnt;
+									} else {
+										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + myNowChecking.slowLoopCnt;
+									}
+								}
+								
+								//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
+								glbThis.traceWound(myTitle);	
+								
+								
+								var thisScope = {};
+								if(myNowChecking && myNowChecking.details) {
+									thisScope.imageURI = myNowChecking.details.imageURI;
+							
+								
+									setTimeout(function() {
+										glbThis.check(thisScope.imageURI);
+									}, 30000);
+								}
 							} 
 						});
 					}
@@ -751,12 +966,27 @@ var app = {
 			} else {
 				//Try a get request to the check
 				//Get the current file data
-				checkComplete.push(nowChecking);
 			
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
 				
-				document.getElementById("notify").innerHTML = "Image on server. Transferring to PC.. " + nowChecking.loopCnt;
+				var myTitle = "Image";
+				if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
+							myTitle = myNowChecking.details.options.params.title;
+				}
+				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
+						var more = ". " + moreLength + " more.";			//Some more yet
+						if(moreLength == 0) {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
+						} else {
+							if(myTitle != "") {
+								document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
+						
+							} else {
+								document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
+							}
+						}
+				
 				glbThis.cancelNotify("");		//Remove any cancel icons
 
   
@@ -765,7 +995,7 @@ var app = {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
-						checkComplete.pop();
+						glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 	
 						var myTitle = "Image";
 						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
@@ -773,8 +1003,9 @@ var app = {
 						}
 						
 						
-						var more = " " + checkComplete.length + " more.";			//Some more yet
-						if(checkComplete.length == 0) {
+						var moreLength = (checkComplete.length + retryIfNeeded.length);
+						var more = " " + moreLength + " more.";			//Some more yet
+						if(moreLength == 0) {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
 						} else {
 							if(myTitle != "") {
@@ -788,6 +1019,7 @@ var app = {
 						
 						
 						
+						
 						//and delete phone version
 						if(myNowChecking.details) {
             				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
@@ -795,20 +1027,26 @@ var app = {
             				document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
             			}
             			
-            			//Show a trace wound button if we are MedImage Server connected
+            			//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
 						glbThis.traceWound(myTitle);
 						
 
 					} else {
 						//The file exists on the server still - try again in a few moments
-						setTimeout(glbThis.check, 2000);
-					} 
+						var thisScope = {};
+						if(myNowChecking && myNowChecking.details) {
+							thisScope.imageURI = myNowChecking.details.imageURI;
+		
+							setTimeout(function() {
+								glbThis.check(thisScope.imageURI);
+							}, 2000);
+						}
+					}
 				});
-			}
-									
-								
+				}
+				
+		
 	},
-	
 	
 	traceWound: function(myTitle) {
 	
@@ -870,10 +1108,11 @@ var app = {
 	},
 						
 
-    win: function(r) {
+    win: function(r, imageURI) {
     	    
+    	    
+    	    //Have finished transferring the file to the server
     	    window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
-    	    
 
     	    document.querySelector('#status').innerHTML = "";	//Clear progress status
     	    
@@ -895,52 +1134,107 @@ var app = {
             		
             		
             		//and delete phone version of file
-            		var repeatIfNeeded = retryIfNeeded.pop();
-            		var more = " " + retryIfNeeded.length + " more.";			//Some more yet
+					var repeatIfNeeded = null;
+					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+						if(retryIfNeeded[cnt].imageURI === imageURI) {
+							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
+						}
+					}	
+            		            		
+            																	//althought this should be an unnecessary line
+            		var moreLength = checkComplete.length + retryIfNeeded.length;
+            		
+            		var more = " " + moreLength + " more.";	
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
+						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
-						if(repeatIfNeeded.detail && repeatIfNeeded.detail.options && repeatIfNeeded.detail.options.params && repeatIfNeeded.detail.options.params.title && repeatIfNeeded.detail.options.params.title != "") {
+            			
+						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+							myTitle = repeatIfNeeded.options.params.title;
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
-							myTitle = repeatIfNeeded.detail.options.params.title;
+							
+							
 						} else {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
+            			
+            			//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
+						glbThis.traceWound(myTitle);	
             		} else {
 						//Trying to check, but no file on stack	
 						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 					}
 					
-					//Show a trace wound button if we are MedImage Server connected
-					glbThis.traceWound(myTitle);
+            	} else {
+            		//Onto remote server - now do some pings to check we have got to the PC
+            		//and delete phone version of file
+			var repeatIfNeeded = null;
+			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+				if(retryIfNeeded[cnt].imageURI === imageURI) {
+					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
+				}
+			}	
+			
+			var moreLength = checkComplete.length + retryIfNeeded.length;
+            		
+            		var more = " " + moreLength + " more.";	
+            		var myTitle = "Image";
+			
+			if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+				myTitle = repeatIfNeeded.options.params.title;
+				document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
             
 
             	} else {
-            		//Onto remote server - now do some pings to check we have got to the PC
-            		document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..';
+				document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+			}
+		
             		
-            		var repeatIfNeeded = retryIfNeeded.pop();
+			
+			
+            		
+            		
 	     			
 	     	
 	     			if(repeatIfNeeded) {
 	     				var thisFile = repeatIfNeeded.options.fileName;
 	     				var usingServer = localStorage.getItem("usingServer");
 	     				
-	     				var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
-	     				
-	     				var nowChecking = {};
+	     				if(usingServer) {	//Note, we have had a case of a null server here. In this case
+	     									//simply don't do any follow on checks.
+							var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
 						
-						nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
-						nowChecking.fullGet = fullGet;
-						nowChecking.details = repeatIfNeeded;
-						checkComplete.push(nowChecking);
+							var nowChecking = {};
 						
+							nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
+							nowChecking.fullGet = fullGet;
+							nowChecking.details = repeatIfNeeded;
+							checkComplete.push(nowChecking);
+						
+							//Set an 'onserver' status
+							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+						
+							var self = {};
+							self.thisImageURI = repeatIfNeeded.imageURI;
 						setTimeout(function() {	//Wait two seconds and then do a check
-							glbThis.check();
+								glbThis.check(self.thisImageURI);
 						}, 2000);
+						
+							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
+            			
+	     					
+	     					
+	     				} else {
+						//Set an 'onserver' status, and remove this entry
+						glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);
+					}
+	     				
+	     				
 					} else {
 						//Trying to check, but no file on stack	
 					}
@@ -969,9 +1263,6 @@ var app = {
   		
   		glbThis.cancelNotify("");		//Remove any cancel icons
 
-  
-  		glbThis.cancelNotify("");		//Remove any cancel icons
-  		
         switch(error.code)
         {
             case 1:
