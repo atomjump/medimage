@@ -883,10 +883,11 @@ var app = {
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
 								}
+								if(myTitle === "image") myTitle = "Image";
 								
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
-								var moreLength = (checkComplete.length + retryIfNeeded.length);
+								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
 								var more = " " + moreLength + " more.";			//Some more yet
 								
 								if(moreLength == 0) {
@@ -915,6 +916,7 @@ var app = {
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
 								}
+								if(myTitle === "image") myTitle = "Image";
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
 								var more = " " + moreLength + " more. ";			//Some more yet
@@ -960,6 +962,7 @@ var app = {
 				if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 							myTitle = myNowChecking.details.options.params.title;
 				}
+				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
 						var more = ". " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
@@ -987,6 +990,7 @@ var app = {
 						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 							myTitle = myNowChecking.details.options.params.title;
 						}
+						if(myTitle === "image") myTitle = "Image";
 						
 						
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
@@ -1056,25 +1060,26 @@ var app = {
             		
             		
             		//and delete phone version of file
-			var repeatIfNeeded = null;
-			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
-				if(retryIfNeeded[cnt].imageURI === imageURI) {
-					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
-				}
-			}	
+					var repeatIfNeeded = null;
+					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+						if(retryIfNeeded[cnt].imageURI === imageURI) {
+							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
+						}
+					}	
             		            		
-            																	//althought this should be an unnecessary line
+            																	
             		var moreLength = checkComplete.length + retryIfNeeded.length;
             		
             		var more = " " + moreLength + " more.";	
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
-				glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
+						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
             			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							myTitle = repeatIfNeeded.options.params.title;
+							if(myTitle === "image") myTitle = "Image";
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
 							
 							
@@ -1091,26 +1096,27 @@ var app = {
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
             		//and delete phone version of file
-			var repeatIfNeeded = null;
-			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
-				if(retryIfNeeded[cnt].imageURI === imageURI) {
-					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
-				}
-			}	
-			
-			var moreLength = checkComplete.length + retryIfNeeded.length;
-            		
-            		var more = " " + moreLength + " more.";	
-            		var myTitle = "Image";
-			
-			if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
-				myTitle = repeatIfNeeded.options.params.title;
-				document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
+					var repeatIfNeeded = null;
+					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+						if(retryIfNeeded[cnt].imageURI === imageURI) {
+							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
+						}
+					}	
+					
+					var moreLength = checkComplete.length + retryIfNeeded.length;
+				    		
+				    var more = " " + moreLength + " more.";	
+				    var myTitle = "Image";
+					
+					if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+						myTitle = repeatIfNeeded.options.params.title;
+						if(myTitle === "image") myTitle = "Image";
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
 
 
-			} else {
-				document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
-			}
+					} else {
+						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+					}
 		
             		
 			
