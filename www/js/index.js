@@ -50,6 +50,7 @@ var fileTransferMap = new SimpleHashMap();
 
 
 
+
 var app = {
 
 
@@ -102,7 +103,7 @@ var app = {
 		
         
     },
-
+    
     processPicture: function(imageURIin)
     {
         var _this = this;
@@ -121,12 +122,12 @@ var app = {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
-					var passedImageURI = thisImageURI;
+					var passedImageURI = thisImageURI;  
 					var idEnteredB = idEntered;
-					
+			
 					setTimeout(function() {
 						localStorage.removeItem("usingServer");		//This will force a reconnection
-	    				localStorage.removeItem("defaultDir");
+						localStorage.removeItem("defaultDir");
 						glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
 					}, 10000);
 				} else {
@@ -145,9 +146,9 @@ var app = {
 		 					
 		 				  //Store in case the app quits unexpectably
 						   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
-				
-				
-					//Now we are connected, upload the photo again
+		
+		
+							//Now we are connected, upload the photo again
 							glbThis.uploadPhoto(imageURI, idEntered, newFilename);
 						}
 					});
@@ -172,7 +173,7 @@ var app = {
 		  var d = new Date(),
 			  n = d.getTime(),
 			  newFileName = n + ".jpg";
-
+			
 			
 		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
 		 
@@ -194,8 +195,8 @@ var app = {
 								} else {
 									glbThis.notify("Sorry we could not find the moved photo on the phone. Please let medimage.co.nz know that a moveFile() has not worked correctly.");
 								}
-
-							 
+								
+								
 							  }, function(err){
 								//an error occured moving file - send anyway, even if it is in the temporary folder
 								glbThis.processPicture(imageURI);
@@ -303,7 +304,7 @@ var app = {
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
     		if(localPhotos[cnt].imageURI === imageURI) {
-
+    	
     			if(newStatus === "cancel") {
     				//Delete the photo
     				window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
@@ -328,7 +329,7 @@ var app = {
     				 	}
      				 	if(errorCode === 1) {
     				 		//The photo is not there. Remove anyway    				 		
-    				 		//Remove entry from the array
+    				 		//Remove entry from the array    				 		
     				 		glbThis.removeLocalPhoto(imageURI);
     				 	} else {
     				 	
@@ -354,7 +355,7 @@ var app = {
     		}
     	
     	}
-    
+    	
     	//Note: don't put any post proccessing down here. The resolveLocalFileSystem is async.
     
 
@@ -383,10 +384,9 @@ var app = {
        	  	localPhotos = [];
        	}
        	
-
-        for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-			var newPhoto = localPhotos[cnt];
-			if(newPhoto) {
+       	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
+      		var newPhoto = localPhotos[cnt];
+      		if(newPhoto) {
       		
       			if(newPhoto.status == 'onserver') {
       				
@@ -421,9 +421,9 @@ var app = {
         			//Needs to be resent
         			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
         		}
-			} 	    	
-	    }
-
+        	}    	
+    	}
+    	
     	
     	return;
     
@@ -535,14 +535,14 @@ var app = {
 
 		//Have connected OK to a server
 		var idEnteredB = idEntered;
-
-            window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
+		
+        window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
 
 				deleteThisFile = fileEntry; //Store globally
 			
 				var imageURI = fileEntry.toURL();
 				
-
+				
 				var tempName = idEnteredB;
 				if((tempName == '')||(tempName == null)) {
 					tempName = 'image';
@@ -647,62 +647,61 @@ var app = {
 
 			var options = new FileUploadOptions();
 			options.fileKey="file1";
-						options.mimeType="image/jpeg";
+			options.mimeType="image/jpeg";
 
-						var params = new Object();
+			var params = new Object();
 			params.title = idEntered; 
-						if((params.title == '')||(params.title == null)) {
+			if((params.title == '')||(params.title == null)) {
 				if((idEnteredB == '')||(idEnteredB == null)) {
-								params.title = 'image';
-							} else {
+					params.title = 'image';
+				} else {
 					params.title = idEnteredB;
-							}
-
-						}
+				}
+				
+			}
 
 			options.fileName = newFilename;
-						options.params = params;
-						options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
-						options.headers = {
-							Connection: "close"
-						}
-						
+			options.params = params;
+			options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
+			options.headers = {
+				Connection: "close"
+			}
+			
 			options.idEntered = idEnteredB;
 
 
-						var ft = new FileTransfer();
-						_this.notify("Uploading " + params.title);
+			var ft = new FileTransfer();
+			_this.notify("Uploading " + params.title);
+			_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
 
-						_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
+			ft.onprogress = _this.progress;
+
+		 
+		 
+			var serverReq = usingServer + '/api/photo';
+
+			var repeatIfNeeded = {
+				"imageURI" : imageURI,
+				"serverReq" : serverReq,
+				"options" :options,
+				"failureCount": 0,
+				"nextAttemptSec": 15
+			};
 			
-						ft.onprogress = _this.progress;
-						
+			retryIfNeeded.push(repeatIfNeeded);
 			
-					 
-						var serverReq = usingServer + '/api/photo';
-		
-						var repeatIfNeeded = {
-							"imageURI" : imageURI,
-							"serverReq" : serverReq,
-							"options" :options,
-							"failureCount": 0,
-							"nextAttemptSec": 15
-						};
-						
-						retryIfNeeded.push(repeatIfNeeded);
-						
-						fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
+			fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
+			
 
-
-						//Keep the screen awake as we upload
-						window.plugins.insomnia.keepAwake();
-						
-						var myImageURI = repeatIfNeeded.imageURI;
-            	
-						ft.upload(imageURI, serverReq, function(result) {
-				  						glbThis.win(result, myImageURI);
-				  			}, _this.fail, options);
-       
+			//Keep the screen awake as we upload
+			window.plugins.insomnia.keepAwake();
+			
+			var myImageURI = repeatIfNeeded.imageURI;
+			
+			ft.upload(imageURI, serverReq, function(result) {
+				  				glbThis.win(result, myImageURI);
+				  }, _this.fail, options);
+	     
          }		//End of connected to a server OK
     },
 	
@@ -763,8 +762,7 @@ var app = {
 					
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
-						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);
-
+						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);	
 						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon><br/>Cancel");
 					
 						retryIfNeeded.push(repeatIfNeeded);
@@ -841,7 +839,7 @@ var app = {
 			
 		 
 			if(nowChecking.loopCnt <= 0) {
-
+				
 				
  				//Have finished - remove interval and report back
 				if(startSlowLoop == true) {
@@ -886,14 +884,17 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
+								
+								glbThis.cancelNotify("");		//Remove any transfer icons
 								var myTitle = "Image";
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
 								}
+								if(myTitle === "image") myTitle = "Image";
 								
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
-								var moreLength = (checkComplete.length + retryIfNeeded.length);
+								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
 								var more = " " + moreLength + " more.";			//Some more yet
 								
 								if(moreLength == 0) {
@@ -905,7 +906,7 @@ var app = {
 									
 										document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 									} else {
-										document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
+										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 									}
 								}
 								
@@ -926,15 +927,16 @@ var app = {
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
 								}
+								if(myTitle === "image") myTitle = "Image";
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
 								var more = " " + moreLength + " more. ";			//Some more yet
 								
-
+								
 								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
-								
-							} else {
+									
+								} else {
 									
 									if(myTitle != "") {
 									
@@ -961,12 +963,12 @@ var app = {
 						});
 					}
 				}
-
-			 
+ 
+ 
 			} else {
 				//Try a get request to the check
 				//Get the current file data
-			
+				
 				glbThis.cancelNotify("");		//Remove any cancel icons
 				var myNowChecking = nowChecking;
 				
@@ -974,44 +976,49 @@ var app = {
 				if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 							myTitle = myNowChecking.details.options.params.title;
 				}
+				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
-						var more = ". " + moreLength + " more.";			//Some more yet
-						if(moreLength == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
-						} else {
-							if(myTitle != "") {
-								document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
-						
-							} else {
-								document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
-							}
-						}
+				var more = " " + moreLength + " more.";			//Some more yet
+				if(moreLength == 0) {
+					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
+				} else {
+					if(myTitle != "") {
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
 				
-				glbThis.cancelNotify("");		//Remove any cancel icons
-
+					} else {
+						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+					}
+				}
+				
+				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
+				
+  
   
   				var myNowChecking = nowChecking;
 				glbThis.get(nowChecking.fullGet, function(url, resp) {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
+						glbThis.cancelNotify("");		//Remove any transfer icons
+						
 						glbThis.removeCheckComplete(myNowChecking.details.imageURI);
-	
+						
 						var myTitle = "Image";
 						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 							myTitle = myNowChecking.details.options.params.title;
 						}
+						if(myTitle === "image") myTitle = "Image";
 						
 						
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = " " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
 						} else {
 							if(myTitle != "") {
 								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							} else {
-								document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
+								document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 							}
 						}
 						
@@ -1024,7 +1031,7 @@ var app = {
 						if(myNowChecking.details) {
             				glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
             			} else {
-            				document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+            				document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
             			}
             			
             			//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
@@ -1132,6 +1139,7 @@ var app = {
 
             		
             		
+            		glbThis.cancelNotify("");		//Remove any transfer icons
             		
             		//and delete phone version of file
 					var repeatIfNeeded = null;
@@ -1141,23 +1149,25 @@ var app = {
 						}
 					}	
             		            		
-            																	//althought this should be an unnecessary line
+            																	
             		var moreLength = checkComplete.length + retryIfNeeded.length;
             		
             		var more = " " + moreLength + " more.";	
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
+        
 						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
             			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							myTitle = repeatIfNeeded.options.params.title;
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
+							if(myTitle === "image") myTitle = "Image";
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							
 							
 						} else {
-							document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more;
+							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 						}
             		
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
@@ -1166,32 +1176,40 @@ var app = {
 						glbThis.traceWound(myTitle);	
             		} else {
 						//Trying to check, but no file on stack	
-						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+						document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
 					}
-					
+            
             	} else {
             		//Onto remote server - now do some pings to check we have got to the PC
             		//and delete phone version of file
-			var repeatIfNeeded = null;
-			for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
-				if(retryIfNeeded[cnt].imageURI === imageURI) {
-					repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
-				}
-			}	
-			
-			var moreLength = checkComplete.length + retryIfNeeded.length;
-            		
-            		var more = " " + moreLength + " more.";	
-            		var myTitle = "Image";
-			
-			if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
-				myTitle = repeatIfNeeded.options.params.title;
-				document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
-            
-
-            	} else {
-				document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
-			}
+					var repeatIfNeeded = null;
+					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
+						if(retryIfNeeded[cnt].imageURI === imageURI) {
+							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
+						}
+					}	
+					
+					var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
+				    		
+				    var more = " " + moreLength + " more.";	
+				    var myTitle = "Image";
+					
+					if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
+						myTitle = repeatIfNeeded.options.params.title;
+					}
+					if(myTitle === "image") myTitle = "Image";
+					
+					if(moreLength == 0) {
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
+					} else {
+						if(myTitle != "") {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
+						} else {
+							document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+						}
+					}
+					
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
 		
             		
 			
@@ -1220,9 +1238,9 @@ var app = {
 						
 							var self = {};
 							self.thisImageURI = repeatIfNeeded.imageURI;
-						setTimeout(function() {	//Wait two seconds and then do a check
+							setTimeout(function() {	//Wait two seconds and then do a check
 								glbThis.check(self.thisImageURI);
-						}, 2000);
+							}, 2000);
 						
 							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
