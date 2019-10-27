@@ -976,7 +976,7 @@ var app = {
 					}
 				}
 				
-				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-icon-spinner\"></ons-icon><br/>");
+				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
 				
   
   
@@ -1111,15 +1111,19 @@ var app = {
 					
 					if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 						myTitle = repeatIfNeeded.options.params.title;
-						if(myTitle === "image") myTitle = "Image";
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
-
-
-					} else {
-						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
 					}
 					
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-icon-spinner\"></ons-icon><br/>");
+					if(moreLength == 0) {
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ';
+					} else {
+						if(myTitle != "") {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
+						} else {
+							document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+						}
+					}
+					
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
 		
             		
 			
