@@ -879,6 +879,8 @@ var app = {
 					
 							if((resp === "false")||(resp === false)) {
 								//File no longer exists, success!
+								
+								glbThis.cancelNotify("");		//Remove any transfer icons
 								var myTitle = "Image";
 								if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
 									myTitle = myNowChecking.details.options.params.title;
@@ -985,6 +987,8 @@ var app = {
 					
 					if((resp === "false")||(resp === false)) {
 						//File no longer exists, success!
+						glbThis.cancelNotify("");		//Remove any transfer icons
+						
 						glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 						
 						var myTitle = "Image";
@@ -1058,7 +1062,7 @@ var app = {
             		//i.e. Wifi case
             		
             		
-            		
+            		glbThis.cancelNotify("");		//Remove any transfer icons
             		
             		//and delete phone version of file
 					var repeatIfNeeded = null;
@@ -1075,6 +1079,7 @@ var app = {
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
+        
 						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
             			
             			
