@@ -966,13 +966,13 @@ var app = {
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
 				var more = ". " + moreLength + " more.";			//Some more yet
 				if(moreLength == 0) {
-					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
+					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ';
 				} else {
 					if(myTitle != "") {
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
 				
 					} else {
-						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
+						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
 					}
 				}
 				
