@@ -964,19 +964,20 @@ var app = {
 				}
 				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
-						var more = ". " + moreLength + " more.";			//Some more yet
-						if(moreLength == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
-						} else {
-							if(myTitle != "") {
-								document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
-						
-							} else {
-								document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
-							}
-						}
+				var more = ". " + moreLength + " more.";			//Some more yet
+				if(moreLength == 0) {
+					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt;
+				} else {
+					if(myTitle != "") {
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + nowChecking.loopCnt + more;
 				
-				glbThis.cancelNotify("");		//Remove any cancel icons
+					} else {
+						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + nowChecking.loopCnt + more;
+					}
+				}
+				
+				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-icon-spinner\"></ons-icon><br/>");
+				
   
   
   				var myNowChecking = nowChecking;
@@ -1103,7 +1104,7 @@ var app = {
 						}
 					}	
 					
-					var moreLength = checkComplete.length + retryIfNeeded.length;
+					var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
 				    		
 				    var more = " " + moreLength + " more.";	
 				    var myTitle = "Image";
@@ -1117,6 +1118,8 @@ var app = {
 					} else {
 						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
 					}
+					
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-icon-spinner\"></ons-icon><br/>");
 		
             		
 			
