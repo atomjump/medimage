@@ -966,12 +966,12 @@ var app = {
 				}
 				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
-				var more = ". " + moreLength + " more.";			//Some more yet
+				var more = " " + moreLength + " more.";			//Some more yet
 				if(moreLength == 0) {
-					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ';
+					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 				} else {
 					if(myTitle != "") {
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
 				
 					} else {
 						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
@@ -1001,7 +1001,7 @@ var app = {
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = " " + moreLength + " more.";			//Some more yet
 						if(moreLength == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! '; 
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
 						} else {
 							if(myTitle != "") {
 								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
@@ -1018,7 +1018,7 @@ var app = {
 						if(myNowChecking.details) {
             						glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
             					} else {
-            						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+            						document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
             					}
 						
 					} else {
@@ -1086,7 +1086,7 @@ var app = {
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 							myTitle = repeatIfNeeded.options.params.title;
 							if(myTitle === "image") myTitle = "Image";
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ' + more;
+							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 							
 							
 						} else {
@@ -1096,7 +1096,7 @@ var app = {
             			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
-						document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
+						document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
 					}
             
             	} else {
@@ -1120,10 +1120,10 @@ var app = {
 					if(myTitle === "image") myTitle = "Image";
 					
 					if(moreLength == 0) {
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ';
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 					} else {
 						if(myTitle != "") {
-							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ' + more;
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
 						} else {
 							document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
 						}
