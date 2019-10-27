@@ -1152,7 +1152,11 @@ var app = {
             																	
             		var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
             		
-            		var more = " " + moreLength + " more.";	
+            		if(moreLength == 0) {
+            			var more = "";
+            		} else {
+            			var more = " " + moreLength + " more.";	
+            		}
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
