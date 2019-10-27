@@ -1117,6 +1117,7 @@ var app = {
 					if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
 						myTitle = repeatIfNeeded.options.params.title;
 					}
+					if(myTitle === "image") myTitle = "Image";
 					
 					if(moreLength == 0) {
 						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC.. ';
