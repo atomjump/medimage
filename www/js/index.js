@@ -1267,8 +1267,8 @@ var app = {
   		alert("localPhotos: " + JSON.stringify(localPhotos));
   		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
-  			if(checkComplete[cntb].imageURI) {
-  				alert("Deleting local:" + checkComplete[cntb].imageURI);		//TESTING
+  			if(checkComplete[cntc].imageURI) {
+  				alert("Deleting local:" + checkComplete[cntc].imageURI);		//TESTING
   			
   				glbThis.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
   			}
