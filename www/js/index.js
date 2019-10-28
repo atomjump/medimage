@@ -1245,24 +1245,33 @@ var app = {
     forgetAllPhotos: function() {
     	//Loop through all photos in retryIfNeeded, checkComplete and localPhotos and remove them
     	//all.
+    	alert("retryIfNeeded: " + JSON.stringify(retryIfNeeded));
   		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
-  			alert("Deleting retry:" + retryIfNeeded[cnta].imageURI);		//TESTING
-  			glbThis.cancelUpload(retryIfNeeded[cnta].imageURI);
-  			glbThis.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
+  			if(retryIfNeeded[cnta].imageURI) {
+  				alert("Deleting retry:" + retryIfNeeded[cnta].imageURI);		//TESTING
+  				glbThis.cancelUpload(retryIfNeeded[cnta].imageURI);
+  				glbThis.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
+  			}
   		
   		}	
   		
+  		alert("checkComplete: " + JSON.stringify(checkComplete));
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
-  			if(checkComplete[cntb].details) {
+  			if(checkComplete[cntb].details && checkComplete[cntb].details.imageURI) {
   				alert("Deleting check:" + checkComplete[cntb].details.imageURI);		//TESTING
   				glbThis.removeCheckComplete(checkComplete[cntb].details.imageURI);
   			}
   		
   		}
   		
+  		alert("localPhotos: " + JSON.stringify(localPhotos));
+  		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
-  			alert("Deleting local:" + checkComplete[cntb].details.imageURI);		//TESTING
-  			glbThis.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
+  			if(checkComplete[cntb].imageURI) {
+  				alert("Deleting local:" + checkComplete[cntb].imageURI);		//TESTING
+  			
+  				glbThis.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
+  			}
   		}
    	
    		glbThis.notify("All photos have been deleted and forgotten.");
