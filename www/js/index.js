@@ -785,13 +785,17 @@ var app = {
 			//Loop through the current array and remove the entries
 	
 			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
-				if(checkComplete[cnt].details.imageURI === imageURI) {
+				if(checkComplete[cnt].details && checkComplete[cnt].details.imageURI && checkComplete[cnt].details.imageURI === imageURI) {
 						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
+						alert("TESTING nullified OK");	//TESTING
 				}
 			}
+			
+			alert("TESTING made it through the loop");	//TESTING
 	
 			 //Remove the null array entries
 			 checkComplete = glbThis.arrayRemoveNulls(checkComplete);
+			 return;
 	
 	  },
 	
@@ -806,6 +810,7 @@ var app = {
 	
 			 //Remove the null array entries
 			 retryIfNeeded = glbThis.arrayRemoveNulls(retryIfNeeded);
+			 return;
 	
 	  },
 
@@ -1246,6 +1251,7 @@ var app = {
     	//Loop through all photos in retryIfNeeded, checkComplete and localPhotos and remove them
     	//all.
     	 var _this = this;
+    	 glbThis = this;
     	 
     	alert("retryIfNeeded: " + JSON.stringify(retryIfNeeded));
   		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
