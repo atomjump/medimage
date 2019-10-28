@@ -826,7 +826,8 @@ var app = {
 							startSlowLoop = true;
 						} else {
 							//Decrement the slow loop
-							checkComplete[cnt].slowLoopCnt --;						}
+							checkComplete[cnt].slowLoopCnt --;						
+						}
 					}
 	  			}
 	  		}
