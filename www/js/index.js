@@ -931,7 +931,6 @@ var app = {
 									nowChecking.slowLoopCnt = 100;	//Init								
 								}
 								if(moreLength == 0) {
-									if(
 									document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
 									
 								} else {
