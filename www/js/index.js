@@ -1269,7 +1269,7 @@ var app = {
   		}
   		
   		var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
-  		alert("localPhotos: " + JSON.stringify(localPhotos));
+  		alert("localPhotos: " + JSON.stringify(localPhotos) + "  LENGTH:" + localPhotos.length);
   		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
   			if(localPhotos[cntc].imageURI) {
