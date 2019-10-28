@@ -870,7 +870,7 @@ var app = {
 					
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
-						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts. <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>";
+						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>";
 						
 						glbThis.cancelNotify("");		//Remove any cancel icons
 					} else {
@@ -894,7 +894,7 @@ var app = {
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
-								var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+								var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
   								
 								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
@@ -925,7 +925,7 @@ var app = {
 								if(myTitle === "image") myTitle = "Image";
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
-								var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+								var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
             		
 								if(!nowChecking.slowLoopCnt) {
 									nowChecking.slowLoopCnt = 100;	//Init								
@@ -973,7 +973,7 @@ var app = {
 				}
 				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
-				var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+				var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
  				if(moreLength == 0) {
 					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 				} else {
@@ -1006,7 +1006,7 @@ var app = {
 						
 						
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
-						var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+						var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
             			if(moreLength == 0) {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
 						} else {
