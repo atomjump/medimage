@@ -695,7 +695,9 @@ var app = {
 			
 			ft.upload(imageURI, serverReq, function(result) {
 				  				glbThis.win(result, myImageURI);
-				  }, _this.fail, options);
+				  }, function(result) {
+				  				glbThis.fail(result, myImageURI);
+				  }, options);
 	     
          }		//End of connected to a server OK
     },
@@ -769,7 +771,9 @@ var app = {
 						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
 									 function(result) {
 										glbThis.win(result, myImageURI);
-						}, glbThis.fail, repeatIfNeeded.options);
+						},function(result) {
+										glbThis.fail(result, myImageURI);
+						}, repeatIfNeeded.options);
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
@@ -815,10 +819,10 @@ var app = {
 	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
 					checkComplete[cnt].loopCnt --;		//Decrement the original
 					if(nowChecking.loopCnt <= 0) {
-						//Now continue to check with this photo, but only once every 30 seconds, 90 times (i.e. for 45 minutes).
+						//Now continue to check with this photo, but only once every 30 seconds, 100 times (i.e. about 45 minutes).
 						if(!nowChecking.slowLoopCnt) {
 							//Need to set a slow count
-							checkComplete[cnt].slowLoopCnt = 90;
+							checkComplete[cnt].slowLoopCnt = 100;
 							startSlowLoop = true;
 						} else {
 							//Decrement the slow loop
@@ -866,7 +870,7 @@ var app = {
 					
 					if(nowChecking.slowLoopCnt <= 0) {
 						//Have finished the long count down, and given up
-						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts.";
+						document.getElementById("notify").innerHTML = "Sorry, the image is on the remote server, but has not been delivered to your local PC.  We will try again once your app restarts. <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>";
 						
 						glbThis.cancelNotify("");		//Remove any cancel icons
 					} else {
@@ -890,8 +894,8 @@ var app = {
 								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
-								var more = " " + moreLength + " more.";			//Some more yet
-								
+								var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+  								
 								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
 									
@@ -921,8 +925,8 @@ var app = {
 								if(myTitle === "image") myTitle = "Image";
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
-								var more = " " + moreLength + " more. ";			//Some more yet
-								
+								var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+            		
 								
 								if(moreLength == 0) {
 									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
@@ -966,8 +970,8 @@ var app = {
 				}
 				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
-				var more = " " + moreLength + " more.";			//Some more yet
-				if(moreLength == 0) {
+				var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+ 				if(moreLength == 0) {
 					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 				} else {
 					if(myTitle != "") {
@@ -999,8 +1003,8 @@ var app = {
 						
 						
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
-						var more = " " + moreLength + " more.";			//Some more yet
-						if(moreLength == 0) {
+						var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+            			if(moreLength == 0) {
 							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
 						} else {
 							if(myTitle != "") {
@@ -1077,7 +1081,7 @@ var app = {
             		if(moreLength == 0) {
             			var more = "";
             		} else {
-            			var more = " " + moreLength + " more.";	
+            			var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
             		}
             		var myTitle = "Image";
             		
@@ -1112,9 +1116,9 @@ var app = {
 						}
 					}	
 					
-					var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
-				    		
-				    var more = " " + moreLength + " more.";	
+					var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;		    		
+				    var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
+            		
 				    var myTitle = "Image";
 					
 					if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
@@ -1196,7 +1200,7 @@ var app = {
     },
 
 
-    fail: function(error) {
+    fail: function(error, imageURI) {
   
   		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
   		
@@ -1208,6 +1212,9 @@ var app = {
         {
             case 1:
                 glbThis.notify("The photo was uploaded.");
+                
+                //Remove the photo from the list
+                glbThis.changeLocalPhotoStatus(imageURI, 'cancel');
             break;
 
             case 2:
@@ -1228,6 +1235,54 @@ var app = {
                 glbThis.notify("An error has occurred: Code = " + error.code);
             break;
         }
+    },
+    
+    
+    forgetAllPhotos: function() {
+    	//Loop through all photos in retryIfNeeded, checkComplete and localPhotos and remove them
+    	//all.
+  		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
+  			glbThis.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
+  		
+  		}	
+  		
+  		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
+  			glbThis.removeCheckComplete(checkComplete[cntb].details.imageURI);
+  		
+  		}
+  		
+  		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
+  			glbThis.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
+  		}
+   
+    
+    },
+    
+    askForgetAllPhotos: function() {
+    	//Ask if we want to remove all the photos on the system
+             		
+    	//Get a live current photo count
+    	var moreLength = checkComplete.length + retryIfNeeded.length;
+    	if(moreLength == 1) {
+    		var moreStr = "is " + moreLength + " photo";
+    	} else {
+    		var moreStr = "are " + moreLength + "photos";
+    	}
+    	
+     	navigator.notification.confirm(
+				'There ' + moreStr + ' in memory. Do you want to forget and delete all of these photos? (Some of them may have been sent already)',  // message
+				function(buttonIndex) {
+					if(buttonIndex == 1) {
+						glbThis.forgetAllPhotos();
+						return;
+					} else {
+						return;
+					}
+	
+				},                  			// callback to invoke
+				'Forget Photos',            	// title
+				['Yes','No']             		// buttonLabels
+			);
     },
 
     getip: function(cb) {
