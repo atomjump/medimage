@@ -927,15 +927,18 @@ var app = {
 								var moreLength = (checkComplete.length + retryIfNeeded.length);
 								var more = " <a style=\"color:#f7afbb;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>.";	
             		
-								
+								if(!nowChecking.slowLoopCnt) {
+									nowChecking.slowLoopCnt = 100;	//Init								
+								}
 								if(moreLength == 0) {
-									document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
+									if(
+									document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
 									
 								} else {
 									
 									if(myTitle != "") {
 									
-										document.getElementById("notify").innerHTML = myTitle + ' not finished. Checking again in 30 seconds.' + more + myNowChecking.slowLoopCnt;
+										document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds.' + more + myNowChecking.slowLoopCnt;
 									} else {
 										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + myNowChecking.slowLoopCnt;
 									}
@@ -1242,16 +1245,19 @@ var app = {
     	//Loop through all photos in retryIfNeeded, checkComplete and localPhotos and remove them
     	//all.
   		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
+  			alert("Deleting retry:" + retryIfNeeded[cnta].imageURI);		//TESTING
   			glbThis.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
   		
   		}	
   		
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
+  			alert("Deleting check:" + checkComplete[cntb].details.imageURI);		//TESTING
   			glbThis.removeCheckComplete(checkComplete[cntb].details.imageURI);
   		
   		}
   		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
+  			alert("Deleting local:" + checkComplete[cntb].details.imageURI);		//TESTING
   			glbThis.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
   		}
    
@@ -1266,7 +1272,7 @@ var app = {
     	if(moreLength == 1) {
     		var moreStr = "is " + moreLength + " photo";
     	} else {
-    		var moreStr = "are " + moreLength + "photos";
+    		var moreStr = "are " + moreLength + " photos";
     	}
     	
      	navigator.notification.confirm(
