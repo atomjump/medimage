@@ -1257,8 +1257,9 @@ var app = {
   		
   		}	
   		
-  		alert("checkComplete: " + JSON.stringify(checkComplete));
+  		alert("checkComplete: " + JSON.stringify(checkComplete) + "  LENGTH:" + checkComplete.length);
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
+  			
   			alert("checking individual complete " + cntb + ". " + JSON.stringify(checkComplete[cntb]));
   			if(checkComplete[cntb].details && checkComplete[cntb].details.imageURI) {
   				alert("Deleting check:" + checkComplete[cntb].details.imageURI);		//TESTING
@@ -1271,8 +1272,8 @@ var app = {
   		alert("localPhotos: " + JSON.stringify(localPhotos));
   		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
-  			if(checkComplete[cntc].imageURI) {
-  				alert("Deleting local:" + checkComplete[cntc].imageURI);		//TESTING
+  			if(localPhotos[cntc].imageURI) {
+  				alert("Deleting local:" + localPhotos[cntc].imageURI);		//TESTING
   			
   				_this.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
   			}
