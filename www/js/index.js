@@ -1274,33 +1274,26 @@ var app = {
     	 var _this = this;
     	 glbThis = this;
     	 
-    	alert("retryIfNeeded: " + JSON.stringify(retryIfNeeded));
   		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
   			if(retryIfNeeded[cnta].imageURI) {
-  				alert("Deleting retry:" + retryIfNeeded[cnta].imageURI);		//TESTING
   				_this.cancelUpload(retryIfNeeded[cnta].imageURI);
   				_this.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
   			}
   		
   		}	
   		
-  		alert("checkComplete: " + JSON.stringify(checkComplete) + "  LENGTH:" + checkComplete.length);
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
   			
-  			alert("checking individual complete " + cntb + ". " + JSON.stringify(checkComplete[cntb]));
   			if(checkComplete[cntb].details && checkComplete[cntb].details.imageURI) {
-  				alert("Deleting check:" + checkComplete[cntb].details.imageURI);		//TESTING
   				_this.removeCheckComplete(checkComplete[cntb].details.imageURI);
   			}
   		
   		}
   		
   		var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
-  		alert("localPhotos: " + JSON.stringify(localPhotos) + "  LENGTH:" + localPhotos.length);
   		
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
   			if(localPhotos[cntc].imageURI) {
-  				alert("Deleting local:" + localPhotos[cntc].imageURI);		//TESTING
   			
   				_this.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
   			}
