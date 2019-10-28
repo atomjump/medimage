@@ -1257,6 +1257,7 @@ var app = {
   		
   		alert("checkComplete: " + JSON.stringify(checkComplete));
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
+  			alert("checking individual complete " + cntb + ". " + JSON.stringify(checkComplete[cntb]));
   			if(checkComplete[cntb].details && checkComplete[cntb].details.imageURI) {
   				alert("Deleting check:" + checkComplete[cntb].details.imageURI);		//TESTING
   				glbThis.removeCheckComplete(checkComplete[cntb].details.imageURI);
