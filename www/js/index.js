@@ -787,11 +787,8 @@ var app = {
 			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
 				if(checkComplete[cnt].details && checkComplete[cnt].details.imageURI && checkComplete[cnt].details.imageURI === imageURI) {
 						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
-						alert("TESTING nullified OK");	//TESTING
 				}
 			}
-			
-			alert("TESTING made it through the loop");	//TESTING
 	
 			 //Remove the null array entries
 			 checkComplete = glbThis.arrayRemoveNulls(checkComplete);
@@ -903,17 +900,21 @@ var app = {
 								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
 								var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
   								
-								if(moreLength == 0) {
-									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
+  								if(moreLength >= 0) {
+									if(moreLength == 0) {
+										document.getElementById("notify").innerHTML = myTitle + ' transferred. Success! ';								
 									
-								} else {
-									
-									if(myTitle != "") {
-									
-										document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
 									} else {
-										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+									
+										if(myTitle != "") {
+									
+											document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
+										} else {
+											document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+										}
 									}
+								} else {
+									return;
 								}
 								
 								
@@ -937,17 +938,21 @@ var app = {
 								if(!nowChecking.slowLoopCnt) {
 									nowChecking.slowLoopCnt = 100;	//Init								
 								}
-								if(moreLength == 0) {
-									document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
+								if(moreLength >= 0) {
+									if(moreLength == 0) {
+										document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds. ' + myNowChecking.slowLoopCnt;								
 									
-								} else {
-									
-									if(myTitle != "") {
-									
-										document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds.' + more + ' ' + myNowChecking.slowLoopCnt;
 									} else {
-										document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + myNowChecking.slowLoopCnt;
+									
+										if(myTitle != "") {
+									
+											document.getElementById("notify").innerHTML = myTitle + ' has not finished transferring. Checking again in 30 seconds.' + more + ' ' + myNowChecking.slowLoopCnt;
+										} else {
+											document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + myNowChecking.slowLoopCnt;
+										}
 									}
+								} else {
+									return;
 								}
 								
 								
@@ -980,18 +985,22 @@ var app = {
 				if(myTitle === "image") myTitle = "Image";
 				var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;	//The -1 is to not include the current in the count
 				var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
- 				if(moreLength == 0) {
-					document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
-				} else {
-					if(myTitle != "") {
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
-				
+ 				if(moreLength >= 0) {
+					if(moreLength == 0) {
+						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 					} else {
-						document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
-					}
-				}
+						if(myTitle != "") {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
 				
-				glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
+						} else {
+							document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+						}
+					}
+				
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
+				} else {
+					return;
+				}
 				
   
   
@@ -1013,14 +1022,18 @@ var app = {
 						
 						var moreLength = (checkComplete.length + retryIfNeeded.length);
 						var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
-            			if(moreLength == 0) {
-							document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
-						} else {
-							if(myTitle != "") {
-								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
+            			if(moreLength >= 0) {
+							if(moreLength == 0) {
+								document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!'; 
 							} else {
-								document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+								if(myTitle != "") {
+									document.getElementById("notify").innerHTML = myTitle + ' transferred. Success!' + more;
+								} else {
+									document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
+								}
 							}
+						} else {
+							return;
 						}
 						
 						
@@ -1087,11 +1100,15 @@ var app = {
             		            		
             																	
             		var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
-            		if(moreLength == 0) {
-            			var more = "";
-            		} else {
-            			var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
-            		}
+            		if(moreLength >= 0) {
+						if(moreLength == 0) {
+							var more = "";
+						} else {
+							var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
+						}
+					} else {
+						return;
+					}
             		var myTitle = "Image";
             		
             		if(repeatIfNeeded) {
@@ -1135,17 +1152,21 @@ var app = {
 					}
 					if(myTitle === "image") myTitle = "Image";
 					
-					if(moreLength == 0) {
-						document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
-					} else {
-						if(myTitle != "") {
-							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
+					if(moreLength >= 0) {
+						if(moreLength == 0) {
+							document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..';
 						} else {
-							document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+							if(myTitle != "") {
+								document.getElementById("notify").innerHTML = myTitle + ' on server. Transferring to PC..' + more;
+							} else {
+								document.getElementById("notify").innerHTML = 'Image on server. Transferring to PC..' + more;
+							}
 						}
-					}
 					
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
+						glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#DDD;\" size=\"20px\" spin icon=\"fa-spinner\"></ons-icon><br/>");
+					} else {
+						return;
+					}
 		
             		
 			
@@ -1286,6 +1307,7 @@ var app = {
   		}
    	
    		glbThis.notify("All photos have been deleted and forgotten.");
+   		glbThis.cancelNotify("");		//Remove any cancel icons
     
     },
     
