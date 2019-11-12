@@ -1175,46 +1175,46 @@ var app = {
             		
 	     			
 	     	
-	     			if(repeatIfNeeded) {
-	     				var thisFile = repeatIfNeeded.options.fileName;
-	     				var usingServer = localStorage.getItem("usingServer");
-	     				
-	     				if(usingServer) {	//Note, we have had a case of a null server here. In this case
-	     									//simply don't do any follow on checks.
-	     					var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
-	     					
-	     					var nowChecking = {};
+					if(repeatIfNeeded) {
+						var thisFile = repeatIfNeeded.options.fileName;
+						var usingServer = localStorage.getItem("usingServer");
+					
+						if(usingServer) {	//Note, we have had a case of a null server here. In this case
+											//simply don't do any follow on checks.
+							var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
 						
+							var nowChecking = {};
+					
 							nowChecking.loopCnt = 11; //Max timeout = 11*2 = 22 secs but also a timeout of 5 seconds on the request.
 							nowChecking.fullGet = fullGet;
 							nowChecking.details = repeatIfNeeded;
 							checkComplete.push(nowChecking);
-						
+					
 							//Set an 'onserver' status
 							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
-						
+					
 							var self = {};
 							self.thisImageURI = repeatIfNeeded.imageURI;
 							setTimeout(function() {	//Wait two seconds and then do a check
 								glbThis.check(self.thisImageURI);
 							}, 2000);
-						
+					
 							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
-            			
-	     					
-	     					
-	     				} else {
-						//Set an 'onserver' status, and remove this entry
-						glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
-						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);
+					
+						
+						
+						} else {
+							//Set an 'onserver' status, and remove this entry
+							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);
+						}
+						
+						
+					} else {
+						//Trying to check, but no file on stack	
 					}
-	     				
-	     				
-				} else {
-					//Trying to check, but no file on stack	
-				}
             	
-            	}
+            	}	//End of if(remoteServer == 'false')
             	            	
             	//Save the current server settings for future reuse
             	glbThis.saveServer();
