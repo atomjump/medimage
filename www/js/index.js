@@ -1348,6 +1348,10 @@ var app = {
                 _this.lan = ipInfo.ip.substr(0,len);
                 clearTimeout(iptime);
                 cb(null);
+           },
+           function(err) {
+           	   var retErr = "Sorry, there was a problem getting your IP address. Error: " + err;
+           	   cb(err);
            });
     },
 
