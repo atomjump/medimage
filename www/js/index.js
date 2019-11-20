@@ -482,14 +482,14 @@ var app = {
 
        //timeout after 5 secs
        var scanning = setTimeout(function() {
-            _this.notify('Timeout finding your Wifi server.');
+            _this.notify('Timeout finding your Wifi server. Scanned for http://' + lan + "[0-255]" + ":" + port);
        }, 4000);
 
 
 
       } else {
 		  //No lan detected
-         cb(null,'Local Wifi server not detected.');
+         cb(null,'Local Wifi server not detected. Scanned for http://' + lan + "[0-255]" + ":" + port);
       }
     },
 
