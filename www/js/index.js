@@ -1333,13 +1333,13 @@ var app = {
 
     getip: function(cb) {
 
-           var _this = this;
+           var _this = glbThis;
 
            //timeout after 3 secs -rerun this.findServer()
            var iptime = setTimeout(function() {
                   var err = "You don't appear to be connected to your wifi. Please connect and try again.";
                   
-                  cb(err);
+                  cb(null, err);
            }, 5000);
 
            networkinterface.getWiFiIPAddress(function(ipInfo) {
@@ -1351,7 +1351,7 @@ var app = {
            },
            function(err) {
            	   var retErr = "Sorry, there was a problem getting your IP address. Error: " + err;
-           	   cb(err);
+           	   cb(null, err);
            });
     },
 
