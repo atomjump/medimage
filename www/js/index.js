@@ -1355,7 +1355,7 @@ var app = {
            },
            function(err) {
            	   var retErr = "Sorry, there was a problem getting your IP address.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Error: " + err + "', function() {}, 'More Details');\">More Details</a>";
-           	   cb(null, err);
+           	   cb(null, retErr);
            });
     },
 
