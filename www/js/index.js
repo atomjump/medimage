@@ -482,26 +482,16 @@ var app = {
 
        //timeout after 5 secs
        var scanning = setTimeout(function() {
-            _this.notify("Timeout finding your Wifi server.</br><a href='javascript:' onclick='var mySpan = document.getElementById('cancel-trans'); mySpan.style.display = 'block'; return false;'>More Details</a>");
+            _this.notify("Timeout finding your Wifi server.</br><a href='javascript:' onclick='alert(\'Scanned for http://" + lan + "[0-255]" + ":" + port + "\'); return false;'>More Details</a>");
            
-           //Set a 'more details' error
-           var more = document.getElementById('cancel-trans');
-           more.style.display = 'none';		//Hide it for now.
-           more.innerHTML = "Scanned for http://" + lan + "[0-255]" + ":" + port; 
-            
        }, 4000);
 
 		
 
       } else {
 		  //No lan detected
-		  
-		   //Set a 'more details' error
-           var more = document.getElementById('cancel-trans');
-           more.style.display = 'none';		//Hide it for now.
-           more.innerHTML = "Scanned for http://" + lan + "[0-255]" + ":" + port;  
-		  
-         cb(null,"Local Wifi server not detected.<br/><a href='javascript:' onclick='var mySpan = document.getElementById('cancel-trans'); mySpan.style.display = 'block'; return false;'>More Details</a>");
+		  		  
+         cb(null,"Local Wifi server not detected.<br/><a href='javascript:' onclick='alert(\'Scanned for http://" + lan + "[0-255]" + ":" + port + "\'); return false;'>More Details</a>");
          
         
       }
@@ -1364,11 +1354,7 @@ var app = {
                 cb(null);
            },
            function(err) {
-           	   var retErr = "Sorry, there was a problem getting your IP address.<br/><a href='javascript:' onclick='var mySpan = document.getElementById('cancel-trans'); mySpan.style.display = 'block'; return false;'>More Details</a>";
-           	   //Set a 'more details' error
-           	   var more = document.getElementById('cancel-trans');
-           	   more.style.display = 'none';		//Hide it for now.
-           	   more.innerHTML = "Error: " + err;
+           	   var retErr = "Sorry, there was a problem getting your IP address.<br/><a href='javascript:' onclick='alert(\'Error: " + err + "\'); return false;'>More Details</a>";
            	   cb(null, err);
            });
     },
