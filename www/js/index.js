@@ -487,14 +487,18 @@ var app = {
 
        //timeout after 5 secs
        var scanning = setTimeout(function() {
-            _this.notify('Timeout finding your Wifi server.');
+            _this.notify("Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+           
        }, 4000);
 
 
 
       } else {
 		  //No lan detected
-         cb(null,'Local Wifi server not detected.');
+		  		  
+         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+         
+        
       }
     },
 
@@ -1293,7 +1297,7 @@ var app = {
 						//Trying to check, but no file on stack	
 					}
             	
-            	}
+            	}	//End of if(remoteServer == 'false')
             	            	
             	//Save the current server settings for future reuse
             	glbThis.saveServer();
@@ -1412,13 +1416,13 @@ var app = {
 
     getip: function(cb) {
 
-           var _this = this;
+           var _this = glbThis;
 
            //timeout after 3 secs -rerun this.findServer()
            var iptime = setTimeout(function() {
                   var err = "You don't appear to be connected to your wifi. Please connect and try again.";
                   
-                  cb(err);
+                  cb(null, err);
            }, 5000);
 
            networkinterface.getWiFiIPAddress(function(ipInfo) {
@@ -1427,6 +1431,10 @@ var app = {
                 _this.lan = ipInfo.ip.substr(0,len);
                 clearTimeout(iptime);
                 cb(null);
+           },
+           function(err) {
+           	   var retErr = "Sorry, there was a problem getting your IP address.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Error: " + err + "', function() {}, 'More Details');\">More Details</a>";
+           	   cb(null, retErr);
            });
     },
 
