@@ -432,7 +432,7 @@ var app = {
         request.open("GET", url, true);
    
    		var getTimeout = setTimeout(function() {
-            cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
+            cb(url, null, "timeout");   // Assume it hasn't gone through - we have a 404 error checking the server
         }, 5000);
    			
                 	
@@ -466,17 +466,24 @@ var app = {
        for(var cnt=0; cnt< 255; cnt++){
           var machine = cnt.toString();
           var url = 'http://' + lan + machine + ':' + port;
-          this.get(url, function(goodurl, resp) {
-              if(resp) {
-              	                  
-                 //Save the first TODO: if more than one, open another screen here
-                 localStorage.setItem("currentWifiServer", goodurl);
-                 
-                 clearInterval(scanning);
-                 cb(goodurl, null);
-              } else {
-              	 totalScanned ++;
+          this.get(url, function(goodurl, resp, timeout) {
               
+              if(resp) {
+              	//This is a good server
+				totalScanned ++;
+							  
+				 //Save the first TODO: if more than one, open another screen here
+				 localStorage.setItem("currentWifiServer", goodurl);
+			 
+				 clearInterval(scanning);
+				 cb(goodurl, null);
+              } else {
+              	if(timeout && timeout == "timeout") {
+              		//Just a timeout
+              		totalScanned ++totalScanned
+              	} else {
+              		//Some form of null error message. Don't count these.
+              	}
               }
               
               _this.notify("Scanning Wifi. Checks:" + totalScanned);
@@ -489,7 +496,7 @@ var app = {
        var scanning = setInterval(function() {
        		
        		
-       		if(totalScanned < 510) {
+       		if(totalScanned < 255) {
        			//Let a user continue
 				navigator.notification.confirm(
 					"Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " checks. Do you wish to keep scanning?",  // message
