@@ -480,13 +480,14 @@ var app = {
               } else {
               	if(timeout && timeout == "timeout") {
               		//Just a timeout
-              		totalScanned ++totalScanned
+              		totalScanned ++;
+              		_this.notify("Scanning Wifi. Checks:" + totalScanned);
               	} else {
               		//Some form of null error message. Don't count these.
               	}
               }
               
-              _this.notify("Scanning Wifi. Checks:" + totalScanned);
+              
           });
 
 
