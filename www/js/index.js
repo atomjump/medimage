@@ -450,7 +450,7 @@ var app = {
             }
         }
         request.onerror = function() {
-        	if (request.status != 200) {		//TESTING THIS
+        	if (request.status != 200) {
         	
         		clearTimeout(getTimeout);
         		cb(url, null);
@@ -498,18 +498,25 @@ var app = {
 
        }
 
+	   var pausing = false;
        //timeout check every 6 secs
        var scanning = setInterval(function() {
        		
        		
        		if(totalScanned < 255) {
        			//Let a user decide to continue
-				if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
-							//Yes, do nothing and wait.
-				} else {
-							//Exit out of here
-							clearInterval(scanning);  
-							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+       			
+       			if(pausing == false) {
+       				pausing = true;		//Pausing prevents it from opening up more windows
+					if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
+								//Yes, do nothing and wait.
+								pausing = false;		//Can start asking again
+						
+					} else {
+								//Exit out of here
+								clearInterval(scanning);  
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+					}
 				}
 	
 			} else {	//Total scanned is complete
@@ -519,7 +526,7 @@ var app = {
 			}
             
            
-       }, 6000);
+       }, 8000);
 
 		
 
