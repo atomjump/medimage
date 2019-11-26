@@ -503,12 +503,13 @@ var app = {
 					'Continue Scanning',            	// title
 					['Yes','No']             		// buttonLabels
 				);
-       	} else {
-       		//Have scanned the full range, error out of here.      		 		
-            cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+			} else {	//Total scanned is complete
+				//Have scanned the full range, error out of here.      		 		
+				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+			}
             
            
-       }, 5000);
+       }, 6000);
 
 		
 
