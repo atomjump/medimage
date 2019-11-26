@@ -467,14 +467,12 @@ var app = {
           var machine = cnt.toString();
           var url = 'http://' + lan + machine + ':' + port;
           this.get(url, function(goodurl, resp) {
-              
+              totalScanned ++;
+              _this.notify("Scanning Wifi. Response count:" + totalScanned));
               if(resp) {
-              	 totalScanned ++;
-                 _this.notify("Scanning Wifi " + (255 - totalScanned));
-                 
+              	                  
                  //Save the first TODO: if more than one, open another screen here
                  localStorage.setItem("currentWifiServer", goodurl);
-                 
                  
                  clearInterval(scanning);
                  cb(goodurl, null);
@@ -486,7 +484,7 @@ var app = {
 
        //timeout check every 6 secs
        var scanning = setInterval(function() {
-       		clearInterval(scanning);  
+       		
        		
        		if(totalScanned < 255) {
        			//Let a user
@@ -497,6 +495,7 @@ var app = {
 							//Yes, do nothing and wait.
 						} else {
 							//Exit out of here
+							clearInterval(scanning);  
 							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + ", and have completed " + totalScanned + " out of the 255 range', function() {}, 'More Details');\">More Details</a>");
 						}
 	
@@ -505,7 +504,8 @@ var app = {
 					['Yes','No']             		// buttonLabels
 				);
 			} else {	//Total scanned is complete
-				//Have scanned the full range, error out of here.      		 		
+				//Have scanned the full range, error out of here.   
+				clearInterval(scanning);     		 		
 				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
 			}
             
