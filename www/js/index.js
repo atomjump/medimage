@@ -450,8 +450,9 @@ var app = {
             }
         }
         request.onerror = function() {
-        	clearTimeout(getTimeout);
-        	if (request.readyState == 4) {		//TESTING THIS
+        	if (request.status == 0) {		//TESTING THIS
+        	
+        		clearTimeout(getTimeout);
         		cb(url, null);
         	}			
         }
@@ -503,18 +504,18 @@ var app = {
        		
        		if(totalScanned < 255) {
        			//Let a user decide to continue
-				if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " responses. Do you wish to keep scanning?")) {
+				if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
 							//Yes, do nothing and wait.
 				} else {
 							//Exit out of here
 							clearInterval(scanning);  
-							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
 			}
             
            
