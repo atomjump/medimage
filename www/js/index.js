@@ -485,7 +485,7 @@ var app = {
        }
 
        //timeout after 5 secs
-       var scanning = setTimeout(function() {
+       var scanning = setInterval(function() {
        		clearTimeout(scanning);  
        		
        		if(totalScanned < 255) {
