@@ -467,9 +467,10 @@ var app = {
           var machine = cnt.toString();
           var url = 'http://' + lan + machine + ':' + port;
           this.get(url, function(goodurl, resp) {
-              totalScanned ++;
-              _this.notify("Scanning Wifi " + (255 - totalScanned));
+              
               if(resp) {
+              	 totalScanned ++;
+                 _this.notify("Scanning Wifi " + (255 - totalScanned));
                  
                  //Save the first TODO: if more than one, open another screen here
                  localStorage.setItem("currentWifiServer", goodurl);
