@@ -450,7 +450,7 @@ var app = {
             }
         }
         request.onerror = function() {
-        	if (request.status == 0) {		//TESTING THIS
+        	if (request.status != 200) {		//TESTING THIS
         	
         		clearTimeout(getTimeout);
         		cb(url, null);
