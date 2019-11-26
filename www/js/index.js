@@ -480,11 +480,12 @@ var app = {
 
        }
 
-       //timeout after 5 secs
+       //timeout after 8 secs
        var scanning = setTimeout(function() {
-            _this.notify("Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+       		clearTimeout(scanning);   		
+            cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
            
-       }, 4000);
+       }, 8000);
 
 		
 
