@@ -489,8 +489,8 @@ var app = {
        var scanning = setInterval(function() {
        		
        		
-       		if(totalScanned < 255) {
-       			//Let a user
+       		if(totalScanned < 510) {
+       			//Let a user continue
 				navigator.notification.confirm(
 					"Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " checks. Do you wish to keep scanning?",  // message
 					function(buttonIndex) {
@@ -509,7 +509,7 @@ var app = {
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " checks', function() {}, 'More Details');\">More Details</a>");
 			}
             
            
