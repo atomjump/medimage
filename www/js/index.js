@@ -476,7 +476,7 @@ var app = {
                  localStorage.setItem("currentWifiServer", goodurl);
                  
                  
-                 clearTimeout(scanning);
+                 clearInterval(scanning);
                  cb(goodurl, null);
               }
           });
@@ -484,9 +484,9 @@ var app = {
 
        }
 
-       //timeout after 5 secs
+       //timeout check every 6 secs
        var scanning = setInterval(function() {
-       		clearTimeout(scanning);  
+       		clearInterval(scanning);  
        		
        		if(totalScanned < 255) {
        			//Let a user
@@ -497,7 +497,7 @@ var app = {
 							//Yes, do nothing and wait.
 						} else {
 							//Exit out of here
-							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + ", and have completed " + totalScanned + " out of the 255 range', function() {}, 'More Details');\">More Details</a>");
 						}
 	
 					},                  			// callback to invoke
