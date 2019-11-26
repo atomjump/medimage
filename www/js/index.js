@@ -467,8 +467,6 @@ var app = {
           var machine = cnt.toString();
           var url = 'http://' + lan + machine + ':' + port;
           this.get(url, function(goodurl, resp) {
-              totalScanned ++;
-              _this.notify("Scanning Wifi. Response count:" + totalScanned));
               if(resp) {
               	                  
                  //Save the first TODO: if more than one, open another screen here
@@ -476,7 +474,12 @@ var app = {
                  
                  clearInterval(scanning);
                  cb(goodurl, null);
+              } else {
+              	 totalScanned ++;
+              
               }
+              
+              _this.notify("Scanning Wifi. Checks:" + totalScanned);
           });
 
 
@@ -489,14 +492,14 @@ var app = {
        		if(totalScanned < 255) {
        			//Let a user
 				navigator.notification.confirm(
-					"Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]" + cnt + "]" + ":" + port + ", and have completed " + totalScanned + " out of the 255 range. Do you wish to keep scanning?",  // message
+					"Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " checks. Do you wish to keep scanning?",  // message
 					function(buttonIndex) {
 						if(buttonIndex == 1) {
 							//Yes, do nothing and wait.
 						} else {
 							//Exit out of here
 							clearInterval(scanning);  
-							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + ", and have completed " + totalScanned + " out of the 255 range', function() {}, 'More Details');\">More Details</a>");
+							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and have completed " + totalScanned + " checks', function() {}, 'More Details');\">More Details</a>");
 						}
 	
 					},                  			// callback to invoke
@@ -506,7 +509,7 @@ var app = {
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
 			}
             
            
@@ -517,7 +520,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
          
         
       }
