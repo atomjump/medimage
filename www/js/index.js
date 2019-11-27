@@ -437,7 +437,7 @@ var app = {
         request.open("GET", url, true);
    
    		var getTimeout = setTimeout(function() {
-            cb(url, null);   // Assume it hasn't gone through - we have a 404 error checking the server
+            cb(url, null, "timeout");   // Assume it hasn't gone through - we have a 404 error checking the server
         }, 5000);
    			
                 	
@@ -449,12 +449,17 @@ var app = {
 					clearTimeout(getTimeout);
                     cb(url, request.responseText);   // -> request.responseText <- is a result		
                     
+                } else {
+                	cb(url, null);	
                 }
             }
         }
         request.onerror = function() {
+        	if (request.status != 200) {
+        	
         	clearTimeout(getTimeout);
         	cb(url, null);			
+        }
         }
         request.send();
     },
@@ -471,57 +476,69 @@ var app = {
        for(var cnt=0; cnt< 255; cnt++){
           var machine = cnt.toString();
           var url = 'http://' + lan + machine + ':' + port;
-          this.get(url, function(goodurl, resp) {
-              totalScanned ++;
-              _this.notify("Scanning Wifi " + (255 - totalScanned));
+          this.get(url, function(goodurl, resp, timeout) {
+              
               if(resp) {
+              	//This is a good server
+				totalScanned ++;
                  
                  //Save the first TODO: if more than one, open another screen here
                  localStorage.setItem("currentWifiServer", goodurl);
                  
-                 
-                 clearTimeout(scanning);
+				 clearInterval(scanning);
                  cb(goodurl, null);
+              } else {
+              	if(timeout && timeout == "timeout") {
+              		//Just a timeout
+              		totalScanned ++;
+              		_this.notify("Scanning Wifi. Responses:" + totalScanned);
+              	} else {
+              		//Some form of null error message. Don't count these.
+              	}
               }
+              
+              
           });
 
 
        }
 
-       //timeout after 5 secs
-       var scanning = setTimeout(function() {
-       		clearTimeout(scanning);  
+	   var pausing = false;
+       //timeout check every 6 secs
+       var scanning = setInterval(function() {
+       		
        		
        		if(totalScanned < 255) {
-       			//Let a user
-				navigator.notification.confirm(
-					"Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]" + cnt + "]" + ":" + port + ", and have completed " + totalScanned + " out of the 255 range. Do you wish to keep scanning?",  // message
-					function(buttonIndex) {
-						if(buttonIndex == 1) {
+       			//Let a user decide to continue
+       			
+       			if(pausing == false) {
+       				pausing = true;		//Pausing prevents it from opening up more windows
+					if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
 							//Yes, do nothing and wait.
+								pausing = false;		//Can start asking again
+						
 						} else {
 							//Exit out of here
-							cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+								clearInterval(scanning);  
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+					}
 						}
 	
-					},                  			// callback to invoke
-					'Continue Scanning',            	// title
-					['Yes','No']             		// buttonLabels
-				);
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.      		 		
-				cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+				clearInterval(scanning);     		 		
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
 			}
             
            
-       }, 6000);
+       }, 8000);
 
 		
 
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]" + ":" + port + "', function() {}, 'More Details');\">More Details</a>");
+         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
          
         
       }
