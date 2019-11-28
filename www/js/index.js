@@ -515,14 +515,14 @@ var app = {
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"if(app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"if(app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
 					}
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
 			}
             
            
@@ -533,7 +533,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + "');\">More Details</a>");
+         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ".  You can enter this manually below:');\">More Details</a>");
          
         
       }
