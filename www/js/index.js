@@ -2110,11 +2110,13 @@ var app = {
     },
     
     saveServerAddress: function(result) {
+    	alert("Button" + results.buttonIndex);
     	switch(results.buttonIndex) {
     	
     		case 1:
     			//Clicked on 'Ok'
     			//Called from enterServerManually
+    			alert("Setting to : " + results.input1);		//TESTING
     			localStorage.setItem("currentWifiServer", results.input1);
     			localStorage.setItem("usingServer", results.input1);
     			
