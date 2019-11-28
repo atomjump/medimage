@@ -1685,6 +1685,8 @@ var app = {
 	   //Then actually try to connect - if wifi is an option, use that first
        var _this = this;
        
+       alert("Inside findServer");	//TESTING
+       
        var alreadyReturned = false;
        var found = false;
        
@@ -1694,6 +1696,10 @@ var app = {
        var foundRemoteDir = null;
        var foundWifiDir = null;
        var usingServer = null;
+  
+  
+         alert("Inside findServer2");	//TESTING
+
        
        this.clearOptions();
        
@@ -1709,7 +1715,8 @@ var app = {
        	
        }
        
-       
+              alert("Inside findServer3");	//TESTING
+
 	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
 	   foundWifiServer = localStorage.getItem("currentWifiServer");
 	   
@@ -2143,7 +2150,7 @@ var app = {
     			
     			alert("Now trying to find server:" + result.input1);			//TESTING REMOVE ME
     			
-    			this.findServer(function(err) {
+    			glbThis.findServer(function(err) {
     				alert("Got it error:" + err);			//TESTING REMOVE ME
 					if(err) {
 						glbThis.notify("Sorry, we cannot connect to the server");
