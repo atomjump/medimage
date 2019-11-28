@@ -2111,7 +2111,7 @@ var app = {
     
     saveServerAddress: function(result) {
     	alert("Button" + result.buttonIndex);
-    	switch(results.buttonIndex) {
+    	switch(result.buttonIndex) {
     	
     		case 1:
     			//Clicked on 'Ok'
