@@ -515,14 +515,14 @@ var app = {
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but no servers. You can enter this manually below:');\">More Details</a>");
 					}
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but no servers. You can enter this manually below:');\">More Details</a>");
 			}
             
            
@@ -533,7 +533,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ".  You can enter this manually below:');\">More Details</a>");
+         cb(null,"Local Wifi not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Sorry, we could not detect the LAN. You can enter the server address manually below:');\">More Details</a>");
          
         
       }
@@ -2117,6 +2117,12 @@ var app = {
     			//Called from enterServerManually
     			localStorage.setItem("currentWifiServer", results.input1);
     			localStorage.setItem("usingServer", results.input1);
+    			
+    			//Now try to connect
+    			glbThis.bigButton();
+    			
+    			
+    			
     		break;
     		
     		
