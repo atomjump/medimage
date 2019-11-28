@@ -489,13 +489,10 @@ var app = {
 				 clearInterval(scanning);
 				 cb(goodurl, null);
               } else {
-              	if(timeout && timeout == "timeout") {
-              		//Just a timeout
-              		totalScanned ++;
-              		_this.notify("Scanning Wifi. Responses:" + totalScanned);
-              	} else {
-              		//Some form of null error message. Don't count these.
-              	}
+              	
+				totalScanned ++;
+				_this.notify("Scanning Wifi. Responses:" + totalScanned);
+              	
               }
               
               
