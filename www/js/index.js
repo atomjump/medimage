@@ -446,10 +446,16 @@ var app = {
 
                 if (request.status == 200 || request.status == 0) {
 					clearTimeout(getTimeout);
-                    cb(url, request.responseText);   // -> request.responseText <- is a result		
+					if(alreadyReturned == false) {
+						alreadyReturned = true;
+                    	cb(url, request.responseText);   // -> request.responseText <- is a result
+                    }		
                     
                 } else {
-                	cb(url, null);	
+                	if(alreadyReturned == false) {				//Don't double up with onerror
+                		alreadyReturned = true;
+                		cb(url, null);	
+                	}
                 }
             }
         }
@@ -518,14 +524,14 @@ var app = {
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but no servers. You can enter this manually below:');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 					}
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but no servers. You can enter this manually below:');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 			}
             
            
@@ -2104,7 +2110,7 @@ var app = {
 			_this.saveServerAddress,                  					// callback to invoke
 			'Set Server Manually',            									// title
 			['Ok','Cancel'],             							// buttonLabels
-			'http://' + _this.lan + ':5566'                									// defaultText
+			'http://' + _this.lan + '0:5566'                									// defaultText
 		);
         
     	
@@ -2116,8 +2122,11 @@ var app = {
     
     	var _this = this;
     	
+    	alert(result.buttonIndex);
+    	
     	switch(result.buttonIndex) {
     	
+    		
     		case 1:
     			//Clicked on 'Ok'
     			//Called from enterServerManually
@@ -2125,6 +2134,8 @@ var app = {
     			localStorage.setItem("usingServer", result.input1);
     			
     			//Now try to connect
+    			
+    			alert("Now trying to find server:" + err);			//TESTING REMOVE ME
     			
     			_this.findServer(function(err) {
     				alert("Got it error:" + err);			//TESTING REMOVE ME
