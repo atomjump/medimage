@@ -428,11 +428,15 @@ var app = {
     
 
    get: function(url, cb) {
+   		var alreadyReturned = false;
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
    
    		var getTimeout = setTimeout(function() {
-            cb(url, null, "timeout");   // Assume it hasn't gone through - we have a 404 error checking the server
+   			if(alreadyReturned == false) {				//Don't double up with onerror
+   				alreadyReturned = true;
+            	cb(url, null, "timeout");   // Assume it hasn't gone through - we have a 404 error checking the server
+            }
         }, 5000);
    			
                 	
@@ -451,9 +455,11 @@ var app = {
         }
         request.onerror = function() {
         	if (request.status != 200) {
-        	
-        		clearTimeout(getTimeout);
-        		cb(url, null);
+        		if(alreadyReturned == false) {		//Don't double up with timeout
+        			clearTimeout(getTimeout);
+        			alreadyReturned = true;
+        			cb(url, null);
+        		}
         	}			
         }
         request.send();
@@ -2101,7 +2107,7 @@ var app = {
 			_this.saveServerAddress,                  					// callback to invoke
 			'Set Server Manually',            									// title
 			['Ok','Cancel'],             							// buttonLabels
-			'http://'                 									// defaultText
+			'http://' + _this.lan + ':5566'                									// defaultText
 		);
         
     	
@@ -2124,6 +2130,7 @@ var app = {
     			//Now try to connect
     			
     			_this.findServer(function(err) {
+    				alert("Got it error:" + err);			//TESTING REMOVE ME
 					if(err) {
 						glbThis.notify("Sorry, we cannot connect to the server");
 						
