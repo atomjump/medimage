@@ -2110,19 +2110,34 @@ var app = {
     },
     
     saveServerAddress: function(result) {
-    	alert("Button" + result.buttonIndex);
+    
+    	var _this = this;
+    	
     	switch(result.buttonIndex) {
     	
     		case 1:
     			//Clicked on 'Ok'
     			//Called from enterServerManually
-    			alert("Setting to : " + result.input1);		//TESTING
     			localStorage.setItem("currentWifiServer", result.input1);
     			localStorage.setItem("usingServer", result.input1);
     			
     			//Now try to connect
-    			glbThis.bigButton();
     			
+    			_this.findServer(function(err) {
+					if(err) {
+						glbThis.notify("Sorry, we cannot connect to the server");
+						
+						localStorage.removeItem("usingServer");		//This will force a reconnection
+						localStorage.removeItem("defaultDir");
+						localStorage.removeItem("currentWifiServer");
+					} else {
+						//Now we are connected - so we can get the photo
+				
+				
+						glbThis.bigButton();
+					}
+				});
+					
     			
     			
     		break;
