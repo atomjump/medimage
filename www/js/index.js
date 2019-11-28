@@ -515,7 +515,7 @@ var app = {
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"if(app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. You can enter this manually below:');\">More Details</a>");
 					}
 				}
 	
@@ -2109,10 +2109,24 @@ var app = {
     
     },
     
-    saveServerAddress: function(address) {
-    	//Called from enterServerManually
-    	localStorage.setItem("currentWifiServer", address);
-    	localStorage.setItem("usingServer", address);
+    saveServerAddress: function(result) {
+    	switch(results.buttonIndex) {
+    	
+    		case 1:
+    			//Clicked on 'Ok'
+    			//Called from enterServerManually
+    			localStorage.setItem("currentWifiServer", results.input1);
+    			localStorage.setItem("usingServer", results.input1);
+    		break;
+    		
+    		
+    		default:
+    			//Clicked on 'Cancel'
+    		
+    		break;
+    	}
+    		
+    	
     	return false;
     
     
