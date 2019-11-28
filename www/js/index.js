@@ -2136,13 +2136,14 @@ var app = {
     			usingServer = result.input1;
     			var item = String(result.input1);
     			localStorage.setItem("currentWifiServer", item);
+    			localStorage.setItem("usingServer", item);
     			
     			
     			//Now try to connect
     			
     			alert("Now trying to find server:" + result.input1);			//TESTING REMOVE ME
     			
-    			_this.findServer(function(err) {
+    			this.findServer(function(err) {
     				alert("Got it error:" + err);			//TESTING REMOVE ME
 					if(err) {
 						glbThis.notify("Sorry, we cannot connect to the server");
