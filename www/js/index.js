@@ -2122,7 +2122,7 @@ var app = {
     
     	var _this = this;
     	
-    	alert(result.buttonIndex);
+    	alert(result.buttonIndex + " Result:" + JSON.stringify(result));
     	
     	switch(result.buttonIndex) {
     	
