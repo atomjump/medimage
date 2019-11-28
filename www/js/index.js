@@ -515,14 +515,14 @@ var app = {
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"if(app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses');\">More Details</a>");
 					}
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses');\">More Details</a>");
 			}
             
            
@@ -533,7 +533,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
+         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Scanned for http://" + lan + "[range of 0-255]:" + port + "');\">More Details</a>");
          
         
       }
@@ -1402,6 +1402,10 @@ var app = {
     },
 
     
+    
+    
+    
+    
     factoryReset: function() {
         //We have connected to a server OK
         
@@ -2083,6 +2087,35 @@ var app = {
      		localStorage.setItem("initialHash", "false");
     		
     	}
+    },
+    
+    
+    enterServerManually: function(message) {
+    
+        var _this = this;
+        
+        
+        //Ask for a name of the current Server:
+		navigator.notification.prompt(
+			message,  					// message
+			_this.saveServerAddress,                  					// callback to invoke
+			'Set Server Manually',            									// title
+			['Ok','Cancel'],             							// buttonLabels
+			'http://'                 									// defaultText
+		);
+        
+    	
+		return false;
+    
+    },
+    
+    saveServerAddress: function(address) {
+    	//Called from enterServerManually
+    	localStorage.setItem("currentWifiServer", address);
+    	localStorage.setItem("usingServer", address);
+    	return false;
+    
+    
     },
     
     
