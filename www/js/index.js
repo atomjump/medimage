@@ -2140,7 +2140,7 @@ var app = {
     			
     			//Now try to connect
     			
-    			alert("Now trying to find server:" + err);			//TESTING REMOVE ME
+    			alert("Now trying to find server:" + result.input1);			//TESTING REMOVE ME
     			
     			_this.findServer(function(err) {
     				alert("Got it error:" + err);			//TESTING REMOVE ME
