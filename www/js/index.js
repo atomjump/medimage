@@ -2130,8 +2130,13 @@ var app = {
     		case 1:
     			//Clicked on 'Ok'
     			//Called from enterServerManually
-    			localStorage.setItem("currentWifiServer", result.input1);
-    			localStorage.setItem("usingServer", result.input1);
+    			alert("In here with result1:" + result.input1);
+    			    			
+    			currentWifiServer =  result.input1;
+    			usingServer = result.input1;
+    			var item = String(result.input1);
+    			localStorage.setItem("currentWifiServer", item);
+    			
     			
     			//Now try to connect
     			
@@ -2160,6 +2165,7 @@ var app = {
     		
     		default:
     			//Clicked on 'Cancel'
+    			alert("cancel");			//TESTING REMOVE ME
     		
     		break;
     	}
