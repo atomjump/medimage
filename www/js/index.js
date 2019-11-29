@@ -2129,7 +2129,6 @@ var app = {
     
     	var _this = this;
     	
-    	alert(result.buttonIndex + " Result:" + JSON.stringify(result));
     	
     	switch(result.buttonIndex) {
     	
@@ -2137,19 +2136,17 @@ var app = {
     		case 1:
     			//Clicked on 'Ok'
     			//Called from enterServerManually
-    			alert("In here with result1:" + result.input1);
-    			    			
+     			    			
     			currentWifiServer =  result.input1;
     			usingServer = result.input1;
     			var item = String(result.input1);
     			localStorage.setItem("currentWifiServer", item);
-    			localStorage.setItem("usingServer", item);
+    			localStorage.setItem("usingServer", "");
     			
     			
     			//Now try to connect
     			
-    			alert("Now trying to find server:" + result.input1);			//TESTING REMOVE ME
-    			
+     			
     			glbThis.findServer(function(err) {
     				alert("Got it error:" + err);			//TESTING REMOVE ME
 					if(err) {
