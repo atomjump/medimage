@@ -1684,9 +1684,7 @@ var app = {
 	   //along with splitting any subdirectories, ready for use by the the uploader.
 	   //Then actually try to connect - if wifi is an option, use that first
        var _this = this;
-       
-       alert("Inside findServer");	//TESTING
-       
+              
        var alreadyReturned = false;
        var found = false;
        
@@ -1697,10 +1695,7 @@ var app = {
        var foundWifiDir = null;
        var usingServer = null;
   
-  
-         alert("Inside findServer2");	//TESTING
-
-       
+         
        this.clearOptions();
        
        //Early out
@@ -1715,7 +1710,6 @@ var app = {
        	
        }
        
-              alert("Inside findServer3");	//TESTING
 
 	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
 	   foundWifiServer = localStorage.getItem("currentWifiServer");
@@ -2145,11 +2139,8 @@ var app = {
     			
     			
     			//Now try to connect
-    			
-     			
-    			glbThis.findServer(function(err) {
-    				alert("Got it error:" + err);			//TESTING REMOVE ME
-					if(err) {
+      			glbThis.findServer(function(err) {
+ 					if(err) {
 						glbThis.notify("Sorry, we cannot connect to the server");
 						
 						localStorage.removeItem("usingServer");		//This will force a reconnection
@@ -2157,8 +2148,6 @@ var app = {
 						localStorage.removeItem("currentWifiServer");
 					} else {
 						//Now we are connected - so we can get the photo
-				
-				
 						glbThis.bigButton();
 					}
 				});
@@ -2169,9 +2158,7 @@ var app = {
     		
     		
     		default:
-    			//Clicked on 'Cancel'
-    			alert("cancel");			//TESTING REMOVE ME
-    		
+				//Do nothing    		
     		break;
     	}
     		
