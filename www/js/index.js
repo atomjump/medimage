@@ -433,11 +433,15 @@ var app = {
 
 
    get: function(url, cb) {
+   		var alreadyReturned = false;
         var request = new XMLHttpRequest();
         request.open("GET", url, true);
    
    		var getTimeout = setTimeout(function() {
+   			if(alreadyReturned == false) {				//Don't double up with onerror
+   				alreadyReturned = true;
             cb(url, null, "timeout");   // Assume it hasn't gone through - we have a 404 error checking the server
+            }
         }, 5000);
    			
                 	
@@ -447,19 +451,27 @@ var app = {
 
                 if (request.status == 200 || request.status == 0) {
 					clearTimeout(getTimeout);
-                    cb(url, request.responseText);   // -> request.responseText <- is a result		
+					if(alreadyReturned == false) {
+						alreadyReturned = true;
+                    	cb(url, request.responseText);   // -> request.responseText <- is a result		
+                    }		
                     
                 } else {
-                	cb(url, null);	
-                }
-            }
+                	if(alreadyReturned == false) {				//Don't double up with onerror
+                		alreadyReturned = true;
+                		cb(url, null);	
+					}
+				}
+			}
         }
         request.onerror = function() {
         	if (request.status != 200) {
-        	
-        	clearTimeout(getTimeout);
-        	cb(url, null);			
-        }
+        		if(alreadyReturned == false) {		//Don't double up with timeout
+        			clearTimeout(getTimeout);
+        			alreadyReturned = true;
+        			cb(url, null);			
+        		}
+        	}
         }
         request.send();
     },
@@ -488,13 +500,10 @@ var app = {
 				 clearInterval(scanning);
                  cb(goodurl, null);
               } else {
-              	if(timeout && timeout == "timeout") {
-              		//Just a timeout
+              	
               		totalScanned ++;
               		_this.notify("Scanning Wifi. Responses:" + totalScanned);
-              	} else {
-              		//Some form of null error message. Don't count these.
-              	}
+              	
               }
               
               
@@ -520,14 +529,14 @@ var app = {
 						} else {
 							//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 					}
 						}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.      		 		
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses', function() {}, 'More Details');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 			}
             
            
@@ -538,7 +547,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi server not detected.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Scanned for http://" + lan + "[range of 0-255]:" + port + "', function() {}, 'More Details');\">More Details</a>");
+         cb(null,"Local Wifi not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Sorry, we could not detect the LAN. You can enter the server address manually below:');\">More Details</a>");
          
         
       }
@@ -977,9 +986,6 @@ var app = {
 
 									document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 								}
-								
-								//Show a trace wound button if we are MedImage Server connected - WOUND MAPP ONLY
-								glbThis.traceWound(myTitle);	
 							} else {
 								//The file exists on the server still - try again in 30 seconds
 								var myTitle = "Image";
@@ -1481,6 +1487,10 @@ var app = {
     },
 
     
+    
+    
+    
+    
     factoryReset: function() {
         //We have connected to a server OK
         
@@ -1761,6 +1771,7 @@ var app = {
        var foundWifiDir = null;
        var usingServer = null;
        
+         
        this.clearOptions();
        
        //Early out
@@ -2168,6 +2179,75 @@ var app = {
      		localStorage.setItem("initialHash", "false");
     		
     	}
+    },
+    
+    
+    enterServerManually: function(message) {
+    
+        var _this = this;
+        
+        
+        //Ask for a name of the current Server:
+		navigator.notification.prompt(
+			message,  					// message
+			_this.saveServerAddress,                  					// callback to invoke
+			'Set Server Manually',            									// title
+			['Ok','Cancel'],             							// buttonLabels
+			'http://' + _this.lan + '0:5566'                									// defaultText
+		);
+        
+    	
+		return false;
+    
+    },
+    
+    saveServerAddress: function(result) {
+    
+    	var _this = this;
+    	
+    	
+    	switch(result.buttonIndex) {
+    	
+    		
+    		case 1:
+    			//Clicked on 'Ok'
+    			//Called from enterServerManually
+     			    			
+    			currentWifiServer =  result.input1;
+    			usingServer = result.input1;
+    			var item = String(result.input1);
+    			localStorage.setItem("currentWifiServer", item);
+    			localStorage.setItem("usingServer", "");
+    			
+    			
+    			//Now try to connect
+      			glbThis.findServer(function(err) {
+ 					if(err) {
+						glbThis.notify("Sorry, we cannot connect to the server");
+						
+						localStorage.removeItem("usingServer");		//This will force a reconnection
+						localStorage.removeItem("defaultDir");
+						localStorage.removeItem("currentWifiServer");
+					} else {
+						//Now we are connected - so we can get the photo
+						glbThis.bigButton();
+					}
+				});
+					
+    			
+    			
+    		break;
+    		
+    		
+    		default:
+				//Do nothing    		
+    		break;
+    	}
+    		
+    	
+    	return false;
+    
+    
     },
     
     
