@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.woundmapp"
-        version   = "2.0.4"
-        versionCode = "449">
+        version   = "2.0.5"
+        versionCode = "450">
 
 
 
@@ -76,7 +76,9 @@
         <icon src="res/mipmap/xxhdpi.png" density="xxhdpi" />
         <icon src="res/mipmap/xxxhdpi.png" density="xxxhdpi" />
         
-  
+       <config-file platform="android" parent="/manifest" mode="merge">
+		  <application android:usesCleartextTraffic="true" />
+		</config-file>  
          
          
     </platform>
@@ -175,6 +177,9 @@
 		<splash src="img/Default@2x~iphone_640x960.png" platform="ios" width="640" height="960"/>
 		<splash src="img/Default~ipad.png" platform="ios" width="1536" height="2008"/>
 		<splash src="img/Default~iphone.png" platform="ios" width="320" height="480"/>
+
+
+
 
 
     </platform>
