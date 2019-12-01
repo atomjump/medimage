@@ -72,9 +72,14 @@
         <icon src="res/mipmap/xxhdpi.png" density="xxhdpi" />
         <icon src="res/mipmap/xxxhdpi.png" density="xxxhdpi" />
         
-  		<edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='usesCleartextTraffic']" mode="merge">
+        
+        <config-file platform="android" parent="/manifest" mode="merge">
+		  <application android:usesCleartextTraffic="true" />
+		</config-file>
+        
+  		<!--<edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='usesCleartextTraffic']" mode="merge">
     		<application android:usesCleartextTraffic="true">
-		</edit-config>
+		</edit-config>-->
          
          
     </platform>
