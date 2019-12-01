@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.medimage"
-        version   = "2.0.4"
-        versionCode = "449">
+        version   = "2.0.5"
+        versionCode = "450">
 
 
 
@@ -72,7 +72,9 @@
         <icon src="res/mipmap/xxhdpi.png" density="xxhdpi" />
         <icon src="res/mipmap/xxxhdpi.png" density="xxxhdpi" />
         
-  
+  		<edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='usesCleartextTraffic']" mode="merge">
+    		<application android:usesCleartextTraffic="true">
+		</edit-config>
          
          
     </platform>
