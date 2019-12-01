@@ -76,11 +76,7 @@
         <config-file platform="android" parent="/manifest" mode="merge">
 		  <application android:usesCleartextTraffic="true" />
 		</config-file>
-        
-  		<!--<edit-config file="AndroidManifest.xml" target="/manifest/application/activity[@android:name='usesCleartextTraffic']" mode="merge">
-    		<application android:usesCleartextTraffic="true">
-		</edit-config>-->
-         
+                
          
     </platform>
     
