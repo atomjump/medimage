@@ -5,7 +5,7 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.woundmapp"
-        version   = "2.0.5"
+        version   = "2.0.6"
         versionCode = "450">
 
 
@@ -76,7 +76,7 @@
         <icon src="res/mipmap/xxhdpi.png" density="xxhdpi" />
         <icon src="res/mipmap/xxxhdpi.png" density="xxxhdpi" />
         
-       <config-file platform="android" parent="/manifest" mode="merge">
+       <config-file parent="/manifest" mode="merge">
 		  <application android:usesCleartextTraffic="true" />
 		</config-file>  
          
