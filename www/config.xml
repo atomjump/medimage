@@ -73,7 +73,7 @@
         <icon src="res/mipmap/xxxhdpi.png" density="xxxhdpi" />
         
         
-        <config-file platform="android" parent="/manifest" mode="merge">
+        <config-file parent="/manifest" mode="merge">
 		  <application android:usesCleartextTraffic="true" />
 		</config-file>
                 
