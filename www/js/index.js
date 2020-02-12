@@ -24,6 +24,7 @@ var centralPairingUrl = "https://medimage-pairing.atomjump.com/med-genid.php";		
 var glbThis = {};  //Used as a global error handler
 var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
+var checkConnected = 0;		//Global count of checking photos taken before we are connected
 var retryNum = 0;
 
 
@@ -116,6 +117,7 @@ var app = {
       	  var thisImageURI = imageURIin;
       	  var idEntered = document.getElementById("id-entered").value;
        	 
+       	  checkConnected ++;		//Increment count of connected
        	  	   	 
 		   _this.findServer(function(err) {
 				if(err) {
@@ -176,7 +178,7 @@ var app = {
 					
 				} else {
 					//Now we are connected - so we can get the filename
-			
+					checkConnected --;
 			
 					
 					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
@@ -607,7 +609,7 @@ var app = {
 	stopConnecting: function(cancelURI) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
-		glbThis.notify("Stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a> <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget Photo</a>");
+		glbThis.notify("Stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
 		glbThis.cancelNotify("");
 		
 		//remove the photo from memory
@@ -728,6 +730,9 @@ var app = {
 	
 		if((!usingServer)||(usingServer == null)) {
 			//No remove server already connected to, find the server now. And then call upload again
+			
+			checkConnected ++;
+			
 			_this.findServer(function(err) {
 				if(err) {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
@@ -762,6 +767,8 @@ var app = {
 					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
+					checkConnected --;
+					
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
 					return;
 				}
@@ -1440,7 +1447,7 @@ var app = {
     	//Ask if we want to remove all the photos on the system
              		
     	//Get a live current photo count
-    	var moreLength = checkComplete.length + retryIfNeeded.length;
+    	var moreLength = checkComplete.length + retryIfNeeded.length + checkConnected;
     	if(moreLength == 1) {
     		var moreStr = "is " + moreLength + " photo";
     	} else {
