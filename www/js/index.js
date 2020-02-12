@@ -692,11 +692,6 @@ var app = {
 					scope.idEnteredB = idEnteredB;
 					scope.newFilename = newFilename;
 					
-					setTimeout(function() {
-						alert("10 seconds up");   //TESTING
-						alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
-						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename);
-						}, 10000);
 					
 					//Countdown
 					var cntDown = 10;
@@ -707,6 +702,13 @@ var app = {
 						}
 						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 					},1000);
+					
+					
+					setTimeout(function() {
+						glbThis.notify("Trying again.");
+						//alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
+						//glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename);
+					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
