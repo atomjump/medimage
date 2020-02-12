@@ -693,6 +693,7 @@ var app = {
 					scope.newFilename = newFilename;
 					
 					setTimeout(function() {
+						alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
 						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
 						}, 10000);
 					
