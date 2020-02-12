@@ -120,7 +120,7 @@ var app = {
 		   _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
 					
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;  
@@ -156,7 +156,7 @@ var app = {
 							
 							//Countdown
 							var cntDown = 10;
-							var glbThis.cntLoop = setInterval(function() {
+							glbThis.cntLoop = setInterval(function() {
 								cntDown --;
 								if(cntDown == 0) {
 										clearInterval(glbThis.cntLoop);				
@@ -601,7 +601,7 @@ var app = {
         document.getElementById("cancel-trans").innerHTML = msg;
     },
 
-	stopUpload: function(cancelURI) {
+	stopConnecting: function(cancelURI) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
 		glbThis.notify("Stopped trying to connect. The photo has been stored, and restarting the app will attempt to send it again.");
@@ -729,7 +729,7 @@ var app = {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURIin + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageURIin + "');\"></ons-icon><br/>Cancel");
 					//Search again in 10 seconds:
 					var thisScope = {};
 					thisScope.imageURIin = imageURIin;
@@ -739,7 +739,7 @@ var app = {
 					
 					//Countdown
 					var cntDown = 10;
-					var cntLoop = setInterval(function() {
+					glbThis.cntLoop = setInterval(function() {
 						cntDown --;
 						if(cntDown == 0) {
 								clearInterval(cntLoop);				
