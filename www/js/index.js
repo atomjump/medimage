@@ -20,7 +20,7 @@
 //Source code Copyright (c) 2018 AtomJump Ltd. (New Zealand)
 
 var deleteThisFile = {}; //Global object for image taken, to be deleted
-var centralPairingUrl = "https://atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
+var centralPairingUrl = "https://medimage-pairing.atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
 var glbThis = {};  //Used as a global error handler
 var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
@@ -120,7 +120,7 @@ var app = {
 		   _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
 					
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;  
@@ -726,7 +726,7 @@ var app = {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURIin + "');\"></ons-icon><br/>Cancel");
 					//Search again in 10 seconds:
 					var thisScope = {};
 					thisScope.imageURIin = imageURIin;
