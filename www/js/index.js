@@ -695,7 +695,7 @@ var app = {
 					setTimeout(function() {
 						alert("10 seconds up");   //TESTING
 						alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
-						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
+						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename);
 						}, 10000);
 					
 					//Countdown
