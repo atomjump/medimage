@@ -692,7 +692,8 @@ var app = {
 					scope.idEnteredB = idEnteredB;
 					scope.newFilename = newFilename;
 					
-					setTimeout(function() {
+					setTimeout(function(scope) {
+						alert("10 seconds up");
 						alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
 						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
 						}, 10000);
