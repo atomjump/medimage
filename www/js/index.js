@@ -156,10 +156,10 @@ var app = {
 							
 							//Countdown
 							var cntDown = 10;
-							glbThis.cntLoop = setInterval(function() {
+							glbThis.cntLoopB = setInterval(function() {
 								cntDown --;
 								if(cntDown == 0) {
-										clearInterval(glbThis.cntLoop);				
+										clearInterval(glbThis.cntLoopB);				
 								}
 								glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 							},1000);	
@@ -609,7 +609,8 @@ var app = {
 		
 		//remove the photo from memory
 		//glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
-		clearInterval(glbThis.cntLoop);
+		clearInterval(glbThis.cntLoopA);
+		clearInterval(glbThis.cntLoopB);
 			
 		
 	},
@@ -739,10 +740,10 @@ var app = {
 					
 					//Countdown
 					var cntDown = 10;
-					glbThis.cntLoop = setInterval(function() {
+					glbThis.cntLoopA = setInterval(function() {
 						cntDown --;
 						if(cntDown == 0) {
-								clearInterval(cntLoop);				
+								clearInterval(glbThis.cntLoopA);				
 						}
 						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 					},1000);
