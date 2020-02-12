@@ -708,13 +708,14 @@ var app = {
 						glbThis.notify("Trying again.");
 						//alert("About to try uploading again: ImageURI:" + scope.imageURIin + " idEntered: " + scope.idEnteredB + "  newFilename:" + scope.newFilename);		//TESTING
 						//glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename);
-					}, 10000);
+					}, 11000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
+					return;
 				}
 			});
-			return;
+			//TESTING  OUT  return;
 		} else {
 			//Have connected OK to a server
 			var myImageURIin = imageURIin;
