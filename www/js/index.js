@@ -614,11 +614,10 @@ var app = {
 		
 		
 		//remove the photo from memory
-		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		clearInterval(glbThis.cntLoopA);
 		clearInterval(glbThis.cntLoopB);
 		
-		glbThis.notify("Stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
+		glbThis.notify("We have stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
 		glbThis.cancelNotify("");			
 		
 	},
