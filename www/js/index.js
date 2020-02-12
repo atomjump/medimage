@@ -120,6 +120,8 @@ var app = {
 		   _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
+					
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;  
 					var idEnteredB = idEntered;
@@ -142,15 +144,13 @@ var app = {
 		 				  	//Store in case the app quits unexpectably
 						   	_this.recordLocalPhoto( imageURI, idEntered, newFilename);
 							
-							
-						   setTimeout(function() {
-								alert("End of timeout");
-								glbThis.notify("Trying to connect again.");
-								alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
-								
-								localStorage.removeItem("usingServer");		//This will force a reconnection
-								localStorage.removeItem("defaultDir");
-								glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+							glbThis.continueConnectAttempts = true;
+						    setTimeout(function() {
+						    	if(glbThis.continueConnectAttempts == true) {
+									localStorage.removeItem("usingServer");		//This will force a reconnection
+									localStorage.removeItem("defaultDir");
+									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+								}
 							}, 10000);
 							
 							//Countdown
@@ -600,9 +600,19 @@ var app = {
         document.getElementById("cancel-trans").innerHTML = msg;
     },
 
+	stopUpload: function(cancelURI) {
+		//Similar to cancelUpload, but before the upload has started
+		glbThis.continueConnectAttempts = false;
+		glbThis.notify("Stopped trying to connect.");
+		
+		//remove the photo
+		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+			
+		
+	},
 
 	cancelUpload: function(cancelURI) {
-	
+		//Cancel during an upload
 		var ft = fileTransferMap.getItem(cancelURI);
 		if (ft)
 		{
@@ -716,6 +726,7 @@ var app = {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
 					//Search again in 10 seconds:
 					var thisScope = {};
 					thisScope.imageURIin = imageURIin;
@@ -733,12 +744,12 @@ var app = {
 						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 					},1000);
 					
-					
+					glbThis.continueConnectAttempts = true;
 					setTimeout(function() {
-						glbThis.notify("Trying to connect again.");
-						//alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
-						glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
-					}, 11000);
+						if(glbThis.continueConnectAttempts == true) {
+							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
+						}
+					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
