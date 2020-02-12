@@ -147,6 +147,7 @@ var app = {
 							glbThis.continueConnectAttempts = true;
 						    setTimeout(function() {
 						    	if(glbThis.continueConnectAttempts == true) {
+						    		glbThis.notify("Trying to connect again.");
 									localStorage.removeItem("usingServer");		//This will force a reconnection
 									localStorage.removeItem("defaultDir");
 									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
@@ -155,10 +156,10 @@ var app = {
 							
 							//Countdown
 							var cntDown = 10;
-							var cntLoop = setInterval(function() {
+							var glbThis.cntLoop = setInterval(function() {
 								cntDown --;
 								if(cntDown == 0) {
-										clearInterval(cntLoop);				
+										clearInterval(glbThis.cntLoop);				
 								}
 								glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 							},1000);	
@@ -604,9 +605,11 @@ var app = {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
 		glbThis.notify("Stopped trying to connect.");
+		glbThis.cancelNotify("");
 		
-		//remove the photo
+		//remove the photo from memory
 		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		clearInterval(glbThis.cntLoop);
 			
 		
 	},
@@ -747,6 +750,7 @@ var app = {
 					glbThis.continueConnectAttempts = true;
 					setTimeout(function() {
 						if(glbThis.continueConnectAttempts == true) {
+							glbThis.notify("Trying to connect again.");
 							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
 						}
 					}, 10000);
