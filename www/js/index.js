@@ -684,6 +684,16 @@ var app = {
 					setTimeout(function() {
 						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
 						}, 10000);
+					
+					//Countdown
+					var cntDown = 10;
+					var cntLoop = setInterval(function() {
+						cntDown --;
+						if(cntDown == 0) {
+								clearInterval(cntLoop);				
+						}
+						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
+					},1000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
