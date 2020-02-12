@@ -117,8 +117,7 @@ var app = {
       	  var thisImageURI = imageURIin;
       	  var idEntered = document.getElementById("id-entered").value;
        	 
-       	  checkConnected ++;		//Increment count of connected
-       	  	   	 
+        	  	   	 
 		   _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
@@ -152,7 +151,6 @@ var app = {
 						    		glbThis.notify("Trying to connect again.");
 									localStorage.removeItem("usingServer");		//This will force a reconnection
 									localStorage.removeItem("defaultDir");
-									checkConnected --;
 									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
 								}
 							}, 10000);
@@ -179,9 +177,6 @@ var app = {
 					
 				} else {
 					//Now we are connected - so we can get the filename
-					checkConnected --;
-			
-					
 					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
 	
 	   
@@ -610,14 +605,21 @@ var app = {
 	stopConnecting: function(cancelURI) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
-		glbThis.notify("Stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
-		glbThis.cancelNotify("");
+		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+       	if(!localPhotos) {
+       	 	localPhotos = [];
+       	}
+       	checkConnected = localPhotos.length;
+       	 
+		
 		
 		//remove the photo from memory
-		//glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		clearInterval(glbThis.cntLoopA);
 		clearInterval(glbThis.cntLoopB);
-			
+		
+		glbThis.notify("Stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
+		glbThis.cancelNotify("");			
 		
 	},
 
@@ -731,9 +733,6 @@ var app = {
 	
 		if((!usingServer)||(usingServer == null)) {
 			//No remove server already connected to, find the server now. And then call upload again
-			
-			checkConnected ++;
-			
 			_this.findServer(function(err) {
 				if(err) {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
@@ -763,23 +762,18 @@ var app = {
 					setTimeout(function() {
 						if(glbThis.continueConnectAttempts == true) {
 							glbThis.notify("Trying to connect again.");
-							checkConnected --;
 							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
 						}
 					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
-					
-					checkConnected --;
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
 					return;
 				}
 			});
 			return;
 		} else {
-			//Have connected OK to a server
-			checkConnected --;
-			
+			//Have connected OK to a server		
 			var myImageURIin = imageURIin;
 			var imageURI = imageURIin;
 
