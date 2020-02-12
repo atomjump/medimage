@@ -152,6 +152,7 @@ var app = {
 						    		glbThis.notify("Trying to connect again.");
 									localStorage.removeItem("usingServer");		//This will force a reconnection
 									localStorage.removeItem("defaultDir");
+									checkConnected --;
 									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
 								}
 							}, 10000);
@@ -762,20 +763,23 @@ var app = {
 					setTimeout(function() {
 						if(glbThis.continueConnectAttempts == true) {
 							glbThis.notify("Trying to connect again.");
+							checkConnected --;
 							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
 						}
 					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
-					checkConnected --;
 					
+					checkConnected --;
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
 					return;
 				}
 			});
-			//TESTING  OUT  return;
+			return;
 		} else {
 			//Have connected OK to a server
+			checkConnected --;
+			
 			var myImageURIin = imageURIin;
 			var imageURI = imageURIin;
 
