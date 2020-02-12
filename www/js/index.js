@@ -123,22 +123,52 @@ var app = {
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;  
 					var idEnteredB = idEntered;
+					var thisScope = {};
 			
-					setTimeout(function() {
-						localStorage.removeItem("usingServer");		//This will force a reconnection
-						localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
-					}, 10000);
-					
-					//Countdown
-					var cntDown = 10;
-					var cntLoop = setInterval(function() {
-						cntDown --;
-						if(cntDown == 0) {
-								clearInterval(cntLoop);				
+			
+					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
+	
+	   					
+					   if(err) {
+							//There was a problem getting the filename from the disk file
+							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
+	   
+					   } else {
+		 					thisScope.imageURIin = passedImageURI;
+							thisScope.idEnteredB = idEnteredB;
+							thisScope.newFilename = newFilename;
+							
+							
+		 				  	//Store in case the app quits unexpectably
+						   	_this.recordLocalPhoto( imageURI, idEntered, newFilename);
+							
+							
+						   setTimeout(function() {
+								alert("End of timeout");
+								glbThis.notify("Trying to connect again.");
+								alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
+								
+								localStorage.removeItem("usingServer");		//This will force a reconnection
+								localStorage.removeItem("defaultDir");
+								glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+							}, 10000);
+							
+							//Countdown
+							var cntDown = 10;
+							var cntLoop = setInterval(function() {
+								cntDown --;
+								if(cntDown == 0) {
+										clearInterval(cntLoop);				
+								}
+								glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
+							},1000);	
+		
 						}
-						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
-					},1000);
+					});
+					
+					
+			
+					
 					
 				} else {
 					//Now we are connected - so we can get the filename
@@ -692,26 +722,23 @@ var app = {
 					thisScope.idEnteredB = idEnteredB;
 					thisScope.newFilename = newFilename;
 					
-					glbThis.notify("Trying to connect again.");
-					glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
-					
 					
 					//Countdown
-					/*var cntDown = 10;
+					var cntDown = 10;
 					var cntLoop = setInterval(function() {
 						cntDown --;
 						if(cntDown == 0) {
 								clearInterval(cntLoop);				
 						}
 						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
-					},1000);*/
+					},1000);
 					
 					
-					/*TESTING OUT setTimeout(function() {
-						glbThis.notify("Trying again.");
-						alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
+					setTimeout(function() {
+						glbThis.notify("Trying to connect again.");
+						//alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
 						glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
-					}, 11000);  */
+					}, 11000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
