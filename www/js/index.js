@@ -687,7 +687,7 @@ var app = {
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
 					//Search again in 10 seconds:
-					var scope = this;
+					var scope = {};
 					scope.imageURIin = imageURIin;
 					scope.idEnteredB = idEnteredB;
 					scope.newFilename = newFilename;
