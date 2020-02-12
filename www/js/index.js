@@ -692,23 +692,26 @@ var app = {
 					thisScope.idEnteredB = idEnteredB;
 					thisScope.newFilename = newFilename;
 					
+					glbThis.notify("Trying to connect again.");
+					glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
+					
 					
 					//Countdown
-					var cntDown = 10;
+					/*var cntDown = 10;
 					var cntLoop = setInterval(function() {
 						cntDown --;
 						if(cntDown == 0) {
 								clearInterval(cntLoop);				
 						}
 						glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
-					},1000);
+					},1000);*/
 					
 					
-					setTimeout(function() {
+					/*TESTING OUT setTimeout(function() {
 						glbThis.notify("Trying again.");
 						alert("About to try uploading again: ImageURI:" + thisScope.imageURIin + " idEntered: " + thisScope.idEnteredB + "  newFilename:" + thisScope.newFilename);		//TESTING
 						glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
-					}, 11000);
+					}, 11000);  */
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
