@@ -161,7 +161,7 @@ var app = {
 								if(cntDown <= 0) {
 										clearInterval(glbThis.cntLoopB);				
 								}
-								if((!glbThis.cntLoopA) && (cntDown >= 0)) {	
+								if((!glbThis.cntLoopA) && (cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {	
 									//Only show if the other loop is not running too
 									glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 								}
@@ -748,7 +748,7 @@ var app = {
 						if(cntDown <= 0) {
 								clearInterval(glbThis.cntLoopA);				
 						}
-						if(cntDown >= 0) {
+						if((cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {
 							glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
 						}
 					},1000);
