@@ -158,7 +158,7 @@ var app = {
 							var cntDown = 10;
 							glbThis.cntLoopB = setInterval(function() {
 								cntDown --;
-								if(cntDown == 0) {
+								if(cntDown <= 0) {
 										clearInterval(glbThis.cntLoopB);				
 								}
 								if((!glbThis.cntLoopA) && (cntDown >= 0)) {	
@@ -745,7 +745,7 @@ var app = {
 					var cntDown = 10;
 					glbThis.cntLoopA = setInterval(function() {
 						cntDown --;
-						if(cntDown == 0) {
+						if(cntDown <= 0) {
 								clearInterval(glbThis.cntLoopA);				
 						}
 						if(cntDown >= 0) {
