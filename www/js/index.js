@@ -604,11 +604,11 @@ var app = {
 	stopUpload: function(cancelURI) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
-		glbThis.notify("Stopped trying to connect.");
+		glbThis.notify("Stopped trying to connect. The photo has been stored, and restarting the app will attempt to send it again.");
 		glbThis.cancelNotify("");
 		
 		//remove the photo from memory
-		glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		//glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
 		clearInterval(glbThis.cntLoop);
 			
 		
