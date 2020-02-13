@@ -20,7 +20,7 @@
 //Source code Copyright (c) 2018 AtomJump Ltd. (New Zealand)
 
 var deleteThisFile = {}; //Global object for image taken, to be deleted
-var centralPairingUrl = "https://medimage-pairing.atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
+var centralPairingUrl = "https://medimage-pair.atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
 var glbThis = {};  //Used as a global error handler
 var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
