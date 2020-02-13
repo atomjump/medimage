@@ -20,10 +20,11 @@
 //Source code Copyright (c) 2018 AtomJump Ltd. (New Zealand)
 
 var deleteThisFile = {}; //Global object for image taken, to be deleted
-var centralPairingUrl = "https://atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
+var centralPairingUrl = "https://medimage-pairing.atomjump.com/med-genid.php";		//Redirects to an https connection. In future try setting to http://atomjump.org/med-genid.php
 var glbThis = {};  //Used as a global error handler
 var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
+var checkConnected = 0;		//Global count of checking photos taken before we are connected
 var retryNum = 0;
 
 
@@ -121,20 +122,62 @@ var app = {
       	  _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
+					
 					//Search again in 10 seconds:
 					var passedImageURI = thisImageURI;  
 					var idEnteredB = idEntered;
+					var thisScope = {};
 			
-					setTimeout(function() {
-						localStorage.removeItem("usingServer");		//This will force a reconnection
-						localStorage.removeItem("defaultDir");
-						glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
-					}, 10000);
-				} else {
-					//Now we are connected - so we can get the filename
+			
+					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
+			
+	   					
+					   if(err) {
+							//There was a problem getting the filename from the disk file
+							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
+	   
+					   } else {
+		 					thisScope.imageURIin = passedImageURI;
+							thisScope.idEnteredB = idEnteredB;
+							thisScope.newFilename = newFilename;
+							
+							
+		 				  	//Store in case the app quits unexpectably
+						   	_this.recordLocalPhoto( imageURI, idEntered, newFilename);
+							
+							glbThis.continueConnectAttempts = true;
+							setTimeout(function() {
+						    	if(glbThis.continueConnectAttempts == true) {
+						    		glbThis.notify("Trying to connect again.");
+									localStorage.removeItem("usingServer");		//This will force a reconnection
+									localStorage.removeItem("defaultDir");
+									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
+								}
+							}, 10000);
+							
+							//Countdown
+							var cntDown = 10;
+							glbThis.cntLoopB = setInterval(function() {
+								cntDown --;
+								if(cntDown <= 0) {
+										clearInterval(glbThis.cntLoopB);				
+								}
+								if((!glbThis.cntLoopA) && (cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {	
+									//Only show if the other loop is not running too
+									glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
+								}
+							},1000);	
+		
+						}
+					});
+					
+					
 			
 			
 					
+				} else {
+					//Now we are connected - so we can get the filename
 					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
 	
 	   
@@ -564,10 +607,28 @@ var app = {
         document.getElementById("cancel-trans").innerHTML = msg;
     },
 
+	stopConnecting: function(cancelURI) {
+		//Similar to cancelUpload, but before the upload has started
+		glbThis.continueConnectAttempts = false;
+		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+       	if(!localPhotos) {
+       	 	localPhotos = [];
+       	}
+       	checkConnected = localPhotos.length;
+       	 
+		
+		
+		//remove the photo from memory
+		clearInterval(glbThis.cntLoopA);
+		clearInterval(glbThis.cntLoopB);
 
+		glbThis.notify("We have stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
+		glbThis.cancelNotify("");			
+		
+	},
 
 	cancelUpload: function(cancelURI) {
-	
+		//Cancel during an upload
 		var ft = fileTransferMap.getItem(cancelURI);
 		if (ft)
 		{
@@ -681,18 +742,37 @@ var app = {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageURIin + "');\"></ons-icon><br/>Cancel");
 					//Search again in 10 seconds:
-					var scope = this;
-					scope.imageURIin = imageURIin;
-					scope.idEnteredB = idEnteredB;
-					scope.newFilename = newFilename;
+					var thisScope = {};
+					thisScope.imageURIin = imageURIin;
+					thisScope.idEnteredB = idEnteredB;
+					thisScope.newFilename = newFilename;
 					
+					
+					//Countdown
+					var cntDown = 10;
+					glbThis.cntLoopA = setInterval(function() {
+						cntDown --;
+						if(cntDown <= 0) {
+								clearInterval(glbThis.cntLoopA);				
+						}
+						if((cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {
+							glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
+						}
+					},1000);
+					
+					glbThis.continueConnectAttempts = true;
 					setTimeout(function() {
-						glbThis.uploadPhoto(scope.imageURIin, scope.idEnteredB, scope.newFilename)
+						if(glbThis.continueConnectAttempts == true) {
+							glbThis.notify("Trying to connect again.");
+							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
+						}
 						}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
 					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
+					return;
 				}
 			});
 			return;
@@ -1439,7 +1519,7 @@ var app = {
     	//Ask if we want to remove all the photos on the system
              		
     	//Get a live current photo count
-    	var moreLength = checkComplete.length + retryIfNeeded.length;
+    	var moreLength = checkComplete.length + retryIfNeeded.length + checkConnected;
     	if(moreLength == 1) {
     		var moreStr = "is " + moreLength + " photo";
     	} else {
