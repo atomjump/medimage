@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.medimage"
-        version   = "2.0.11"
-        versionCode = "457">
+        version   = "2.0.12"
+        versionCode = "458">
 
 
 
@@ -23,7 +23,7 @@
 
 	<preference name='phonegap-version' value='cli-9.0.0' />
 	<preference name='pgb-builder-version' value='2' />
-	<preference name="android-targetSdkVersion" value="28" />
+	<preference name="android-targetSdkVersion" value="29" />
     
     <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
     <gap:plugin name="cordova-plugin-networkinterface" source="npm" spec="~2.0.0"/>
