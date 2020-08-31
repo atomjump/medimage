@@ -995,7 +995,7 @@ var app = {
 						myTitle = nowChecking.details.options.params.title;
 					}
 				
-					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal, likely due to a slow network.  Your image " + myTitle + " should be delivered shortly. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>";
+					document.getElementById("notify").innerHTML = "You are experiencing a slightly longer transfer time than normal.  Your image " + myTitle + " should be delivered shortly, and you can carry on taking new photos, but you won't be notified of delivery. You can also <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">forget</a> them fully.";
 					
 					window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep, we could be here for a while.
 					
