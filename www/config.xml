@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.phonegap.medimage"
-        version   = "2.0.12"
-        versionCode = "458">
+        version   = "2.0.13"
+        versionCode = "459">
 
 
 
@@ -152,7 +152,7 @@
 
 		<!-- iPad Appstore Icon -->
 		<icon src="medimage-appstore-icon-1024.png" platform="ios" width="1024" height="1024" />
-		<preference name="phonegap-version" value="cli-7.1.0" /> <!-- Note: this is for the 1024 appstore icon. We need to keep this up-to-date if the phonegap version updates -->
+		<!--<preference name="phonegap-version" value="cli-7.1.0" />--> <!-- Note: this is for the 1024 appstore icon. We need to keep this up-to-date if the phonegap version updates -->
 
 
 		<!--<splash src="img/splash-568h@2x.png" platform="ios" width="640" height="1136" />-->
