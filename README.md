@@ -8,7 +8,7 @@ securely to their desktop system, which has the MedImage Server installed on it.
 # Requirements
 
 The project can be built with the PhoneGap Build tool.
-The desktop system should have the MedImage Server at https://github.com/atomjump/medimageserv installed first.
+The desktop system should have the MedImage Server at https://src.atomjump.com/atomjump/medimageserv installed first.
 
 
 # License
