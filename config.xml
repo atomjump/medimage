@@ -3,7 +3,7 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:cdv= "http://cordova.apache.org/ns/1.0"
         id        = "com.phonegap.medimage"
-        version   = "2.0.13"
+        version   = "2.1.0"
         versionCode = "459">
 
 	<!-- config.xml reference: Note: add 1 to the versioncode each new release -->
