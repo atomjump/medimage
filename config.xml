@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- config.xml reference: https://build.phonegap.com/docs/config-xml. Note: add 1 to the versioncode each new release -->
+<widget xmlns     = "http://www.w3.org/ns/widgets"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0"
+        id        = "com.phonegap.medimage"
+        version   = "2.0.13"
+        versionCode = "459">
+
+
+
+        
+    <name>MedImage</name>
+    
+    <description>
+        Copy a camera image to your PC.
+    </description>
+
+    <author href="http://atomjump.com" email="webmaster@atomjump.com">
+        AtomJump
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+
+	<allow-navigation href="*"/>
+
+	<preference name='phonegap-version' value='cli-9.0.0' />
+	<preference name='pgb-builder-version' value='2' />
+	<preference name="android-targetSdkVersion" value="29" />
+    
+    <!--
+    <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
+    <gap:plugin name="cordova-plugin-networkinterface" source="npm" spec="~2.0.0"/>
+    
+    <plugin name="cordova-plugin-file-transfer" spec="~1.6.1" />
+    <plugin name="cordova-plugin-dialogs" source="npm" spec="~1.3.1" />
+    <plugin name="cordova-plugin-globalization" spec="1.0.5" />
+    <plugin name="cordova-plugin-file" spec="~6.0.1" />
+ 	<plugin name="cordova-plugin-cleartext" />
+    
+    <plugin name="cordova-plugin-insomnia" version="4.3.0" source="npm" />
+
+	<plugin name="cordova-plugin-camera" source="npm" spec="~2.4.1" >
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your camera, so that you can take patient photos." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos." />
+	</plugin>
+   -->
+    
+    
+    
+    <platform name="android">       
+        <preference name="permissions" value="none" />
+        <preference name="orientation" value="portrait" />
+        <preference name="fullscreen" value="false" />
+        
+        <preference name="AndroidPersistentFileLocation" value="Internal" />
+
+        
+        <uses-permission android:name="android.permission.CAMERA" />
+         <uses-feature android:name="android.hardware.camera" />
+         <uses-feature android:name="android.hardware.camera.autofocus" />
+         <icon src="www/res/icon.png" width="128" height="128" />
+         
+          <!--
+            ldpi    : 36x36 px
+            mdpi    : 48x48 px
+            hdpi    : 72x72 px
+            xhdpi   : 96x96 px
+            xxhdpi  : 144x144 px
+            xxxhdpi : 192x192 px
+        -->
+        <icon src="www/res/mipmap/ldpi.png" density="ldpi" />
+        <icon src="www/res/mipmap/mdpi.png" density="mdpi" />
+        <icon src="www/res/mipmap/hdpi.png" density="hdpi" />
+        <icon src="www/res/mipmap/xhdpi.png" density="xhdpi" />
+        <icon src="www/res/mipmap/xxhdpi.png" density="xxhdpi" />
+        <icon src="www/res/mipmap/xxxhdpi.png" density="xxxhdpi" />
+        
+        
+        <!-- Portrait -->        
+	    <splash src="res/screen/android/splash-port-hdpi.png" density="hdpi"/>
+		<splash src="res/screen/android/splash-port-ldpi.png" density="ldpi"/>
+		<splash src="res/screen/android/splash-port-mdpi.png" density="mdpi"/>
+		<splash src="res/screen/android/splash-port-xhdpi.png" density="xhdpi"/>
+		<splash src="res/screen/android/splash-port-xxhdpi.png" density="xxhdpi"/>
+
+		<!-- Landscape -->
+		<splash src="res/screen/android/splash-land-hdpi.png" density="land-hdpi" />
+		<splash src="res/screen/android/splash-land-ldpi.png" density="land-ldpi" />
+		<splash src="res/screen/android/splash-land-mdpi.png" density="land-mdpi" />
+		<splash src="res/screen/android/splash-land-xhdpi.png" density="land-xhdpi" />
+		<splash src="res/screen/android/splash-land-xxhdpi.png" density="land-xxhdpi" />
+		<splash src="res/screen/android/splash-land-xxxhdpi.png" density="land-xxxhdpi" />
+        
+        <config-file parent="/manifest" mode="merge">
+		  <application android:usesCleartextTraffic="true" />
+		</config-file>
+                
+         
+    </platform>
+    
+    <platform name="ios">
+    
+    	<preference name='phonegap-version' value='cli-8.0.0' />
+        <preference name="permissions" value="none" />
+        <preference name="orientation" value="portrait" />
+        <preference name="BackupWebStorage" value="none" />
+		<preference name="exit-on-suspend" value="false" />
+	    
+	    <preference name="iosPersistentFileLocation" value="Library" />
+
+	    <!--<edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+    		<string>AtomJump MedImage would like to access your camera, so that you can take patient photos.</string>
+		</edit-config>
+	
+		<edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+			<string>AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos.</string>
+		</edit-config>-->
+		
+		<gap:config-file platform="ios" target="*-Info.plist" parent="NSCameraUsageDescription" overwrite="true">
+  			<string>AtomJump MedImage would like to access your camera, so that you can take patient photos.</string>
+</gap:config-file>
+
+		<gap:config-file platform="ios" target="*-Info.plist" parent="NSPhotoLibraryUsageDescription" overwrite="true">
+					<string>AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos.</string>
+		</gap:config-file>
+		
+		
+	    
+        <!-- This line is to remove the encryption message when publishing -->
+        <gap:config-file platform="ios" parent="ITSAppUsesNonExemptEncryption" mode="add"><false/></gap:config-file>
+        
+        
+        <icon src="res/ios/medimage-appstore-icon-1024.png" platform="ios" width="1024" height="1024" />
+        
+        
+        
+              <!-- iOS 8.0+ -->
+        <!-- iPhone 6 Plus  -->
+        <icon src="res/ios/icon-60@3x.png" width="180" height="180" />
+        <!-- iOS 7.0+ -->
+        <!-- iPhone / iPod Touch  -->
+        <icon src="res/ios/icon-60.png" width="60" height="60" />
+        <icon src="res/ios/icon-60@2x.png" width="120" height="120" />
+        
+        <icon src="res/ios/icon-66.png" width="66" height="66" />
+        <icon src="res/ios/icon-66@2x.png" width="132" height="132" />
+        <icon src="res/ios/icon-66@3x.png" width="196" height="196" />
+        
+        <!-- iPad -->
+        <icon src="res/ios/icon-76.png" width="76" height="76" />
+        <icon src="res/ios/icon-76@2x.png" width="152" height="152" />
+        <!-- Spotlight Icon -->
+        <icon src="res/ios/icon-40.png" width="40" height="40" />
+        <icon src="res/ios/icon-40@2x.png" width="80" height="80" />
+        <!-- iOS 6.1 -->
+        <!-- iPhone / iPod Touch -->
+        <icon src="res/ios/icon.png" width="57" height="57" />
+        <icon src="res/ios/icon@2x.png" width="114" height="114" />
+        <!-- iPad -->
+        <icon src="res/ios/icon-72.png" width="72" height="72" />
+        <icon src="res/ios/icon-72@2x.png" width="144" height="144" />
+        <!-- iPad Pro -->
+        <icon src="res/ios/icon-167.png" width="167" height="167" />
+        <!-- iPhone Spotlight and Settings Icon -->
+        <icon src="res/ios/icon-small.png" width="29" height="29" />
+        <icon src="res/ios/icon-small@2x.png" width="58" height="58" />
+        <icon src="res/ios/icon-small@3x.png" width="87" height="87" />
+        <!-- iPad Spotlight and Settings Icon -->
+        <icon src="res/ios/icon-50.png" width="50" height="50" />
+        <icon src="res/ios/icon-50@2x.png" width="100" height="100" />
+        <!-- iPad Pro -->
+        <icon src="res/ios/icon-83.5@2x.png" width="167" height="167" />
+        <!-- iTunes Marketing Image -->
+        <icon src="res/ios/icon-1024.png" width="1024" height="1024" />
+        
+        
+        
+    	<splash src="res/ios/Default.png" platform="ios" width="320" height="480" />
+		<splash src="res/ios/Default-Portrait.png" platform="ios" width="768" height="1024" />
+		<splash src="res/ios/Default-Landscape.png" platform="ios" width="1024" height="768" />
+
+		<splash src="res/ios/img/Default-1242@3x~iphone6s-landscape_2208x1242.png" platform="ios" width="2208" height="1242"/>
+		<splash src="res/ios/img/Default-1242@3x~iphone6s-portrait_1242x2208.png" platform="ios" width="1242" height="2208"/>
+		<splash src="res/ios/img/Default-568h@2x~iphone_640x1136.png" platform="ios" width="640" height="1136"/>
+		<splash src="res/ios/img/Default-750@2x~iphone6-landscape_1334x750.png" platform="ios" width="1334" height="750"/>
+		<splash src="res/ios/img/Default-750@2x~iphone6-portrait_750x1334.png" platform="ios" width="750" height="1334"/>
+		<splash src="res/ios/img/Default-Landscape@2x~ipad_2048x1496.png" platform="ios" width="2048" height="1496"/>
+		<splash src="res/ios/img/Default-Landscape@2x~ipad_2048x1536.png" platform="ios" width="2048" height="1536"/>
+		<splash src="res/ios/img/Default-Landscape~ipad_1024x748.png" platform="ios" width="1024"  height="748"/>
+		<splash src="res/ios/img/Default-Landscape~ipad_1024x768.png" platform="ios" width="1024"  height="768"/>
+		<splash src="res/ios/img/Default-Portrait@2x~ipad_1536x2008.png" platform="ios" width="1536" height="2008"/>
+		<splash src="res/ios/img/Default-Portrait@2x~ipad_1536x2048.png" platform="ios" width="1536" height="2048"/>
+		<splash src="res/ios/img/Default-Portrait~ipad_768x1024.png" platform="ios" width="768" height="1024"/>
+		<splash src="res/ios/img/Default.png" platform="ios" width="768" height="1004"/>
+		<splash src="res/ios/img/Default@2x~iphone_640x960.png" platform="ios" width="640" height="960"/>
+		<splash src="res/ios/img/Default~ipad.png" platform="ios" width="1536" height="2008"/>
+		<splash src="res/ios/img/Default~iphone.png" platform="ios" width="320" height="480"/>
+
+        
+        
+        
+        
+        
+        
+        
+        
+        <!-- OLD style Phonegap icons: -->
+         <!--<icon src="icon.png" width="128" height="128" />
+       
+        <!-- iPhone 6 / 6+ -->
+		<icon src="res/ios/icon-60@3x.png" platform="ios" width="180" height="180" />
+
+
+		<!--   -->
+		<icon src="icon-57.png" platform="ios" width="57" height="57" />
+		<icon src="icon-57@2x.png" platform="ios" width="114" height="114" />
+	
+		<!-- iPhone / iPod Touch  -->
+		<icon src="icon-60.png" platform="ios" width="60" height="60" />
+		<icon src="icon-60@2x.png" platform="ios" width="120" height="120" />
+	
+		<!-- iPad -->
+		<icon src="icon-76.png" platform="ios" width="76" height="76" />
+		<icon src="icon-76@2x.png" platform="ios" width="152" height="152" />
+	
+		<!-- Settings Icon -->
+		<icon src="icon-small.png" platform="ios" width="29" height="29" />
+		<icon src="icon-small@2x.png" platform="ios" width="58" height="58" />
+	
+		<!-- Spotlight Icon -->
+		<icon src="icon-40.png" platform="ios" width="40" height="40" />
+		<icon src="icon-40@2x.png" platform="ios" width="80" height="80" />
+		<icon src="icon.png" platform="ios" width="57" height="57" />
+		<icon src="icon@2x.png" platform="ios" width="114" height="114" />
+
+		<!-- iPad -->
+		<icon src="icon-72.png" platform="ios" width="72" height="72" />
+		<icon src="icon-72@2x.png" platform="ios" width="144" height="144" />
+
+		<!-- iPhone Spotlight and Settings Icon -->
+		<icon src="icon-small.png" platform="ios" width="29" height="29" />
+		<icon src="icon-small@2x.png" platform="ios" width="58" height="58" />
+
+
+		<!-- iPad Appstore Icon -->
+		<icon src="medimage-appstore-icon-1024.png" platform="ios" width="1024" height="1024" />
+	
+		<splash src="img/Default-1242@3x~iphone6s-landscape_2208x1242.png" platform="ios" width="2208" height="1242"/>
+		<splash src="img/Default-1242@3x~iphone6s-portrait_1242x2208.png" platform="ios" width="1242" height="2208"/>
+		<splash src="img/Default-568h@2x~iphone_640x1136.png" platform="ios" width="640" height="1136"/>
+		<splash src="img/Default-750@2x~iphone6-landscape_1334x750.png" platform="ios" width="1334" height="750"/>
+		<splash src="img/Default-750@2x~iphone6-portrait_750x1334.png" platform="ios" width="750" height="1334"/>
+		<splash src="img/Default-Landscape@2x~ipad_2048x1496.png" platform="ios" width="2048" height="1496"/>
+		<splash src="img/Default-Landscape@2x~ipad_2048x1536.png" platform="ios" width="2048" height="1536"/>
+		<splash src="img/Default-Landscape~ipad_1024x748.png" platform="ios" width="1024"  height="748"/>
+		<splash src="img/Default-Landscape~ipad_1024x768.png" platform="ios" width="1024"  height="768"/>
+		<splash src="img/Default-Portrait@2x~ipad_1536x2008.png" platform="ios" width="1536" height="2008"/>
+		<splash src="img/Default-Portrait@2x~ipad_1536x2048.png" platform="ios" width="1536" height="2048"/>
+		<splash src="img/Default-Portrait~ipad_768x1024.png" platform="ios" width="768" height="1024"/>
+		<splash src="img/Default.png" platform="ios" width="768" height="1004"/>
+		<splash src="img/Default@2x~iphone_640x960.png" platform="ios" width="640" height="960"/>
+		<splash src="img/Default~ipad.png" platform="ios" width="1536" height="2008"/>
+		<splash src="img/Default~iphone.png" platform="ios" width="320" height="480"/>
+
+		-->
+    </platform>
+    
+  
+    <access origin="*" />
+    <allow-intent href="*" />
+    <allow-navigation href="*" />
+</widget>
