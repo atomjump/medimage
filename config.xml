@@ -24,9 +24,9 @@
 
 	<allow-navigation href="*"/>
 
-	<preference name='phonegap-version' value='cli-9.0.0' />
+	<!--<preference name='phonegap-version' value='cli-9.0.0' />
 	<preference name='pgb-builder-version' value='2' />
-	<preference name="android-targetSdkVersion" value="29" />
+	<preference name="android-targetSdkVersion" value="29" />-->
     
     <!--
     <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
@@ -48,7 +48,9 @@
     
     
     
-    <platform name="android">       
+    <platform name="android">    
+    	<allow-intent href="market:*" />
+    	   
         <preference name="permissions" value="none" />
         <preference name="orientation" value="portrait" />
         <preference name="fullscreen" value="false" />
@@ -96,16 +98,20 @@
 		<splash src="res/screen/android/splash-land-xxhdpi.png" density="land-xxhdpi" />
 		<splash src="res/screen/android/splash-land-xxxhdpi.png" density="land-xxxhdpi" />
         
+        <!-- TODO Rewrite this 
         <config-file parent="/manifest" mode="merge">
 		  <application android:usesCleartextTraffic="true" />
 		</config-file>
-                
+        -->        
          
     </platform>
     
     <platform name="ios">
+    	<allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
     
-    	<preference name='phonegap-version' value='cli-8.0.0' />
+    
+    	<!--<preference name='phonegap-version' value='cli-8.0.0' />-->
         <preference name="permissions" value="none" />
         <preference name="orientation" value="portrait" />
         <preference name="BackupWebStorage" value="none" />
