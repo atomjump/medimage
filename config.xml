@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- config.xml reference: https://build.phonegap.com/docs/config-xml. Note: add 1 to the versioncode each new release -->
+<!-- config.xml reference: Note: add 1 to the versioncode each new release -->
 <widget xmlns     = "http://www.w3.org/ns/widgets"
-        xmlns:cdv="http://cordova.apache.org/ns/1.0"
+        xmlns:cdv= "http://cordova.apache.org/ns/1.0"
         id        = "com.phonegap.medimage"
         version   = "2.0.13"
         versionCode = "459">
@@ -56,9 +56,13 @@
         <preference name="AndroidPersistentFileLocation" value="Internal" />
 
         
-        <uses-permission android:name="android.permission.CAMERA" />
+       <!-- TODO Rewrite these here ? 
+       
+         <uses-permission android:name="android.permission.CAMERA" />
          <uses-feature android:name="android.hardware.camera" />
          <uses-feature android:name="android.hardware.camera.autofocus" />
+         
+         -->
          <icon src="www/res/icon.png" width="128" height="128" />
          
           <!--
@@ -267,7 +271,7 @@
     </platform>
     
   
-    <access origin="*" />
+    <!--<access origin="*" />
     <allow-intent href="*" />
-    <allow-navigation href="*" />
+    <allow-navigation href="*" />-->
 </widget>
