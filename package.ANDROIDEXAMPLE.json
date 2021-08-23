@@ -1,5 +1,5 @@
 {
-  "name": "com.phonegap.medimage",
+  "name": "com.atomjump.medimage",
   "version": "2.0.13",
   "displayName": "MedImage",
   "description": "This app allows a medical doctor to take a photo with their iPhone or Android phone, and transfer the image securely to their desktop system, which has the MedImage Server installed on it.",
