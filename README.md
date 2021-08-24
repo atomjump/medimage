@@ -7,15 +7,30 @@ securely to their desktop system, which has the MedImage Server installed on it.
 
 # Requirements
 
-The project can be built with the PhoneGap Build tool.
+The project was originally built with the PhoneGap Build tool.
+However, since that tool has been removed, a migration has started to occur
+to Apache Cordova, which is fundamentally the same system. The migration
+is not yet complete, however, so this version (24 Aug 2021, ver 2.1.0, will not function correctly.)
+
 The desktop system should have the MedImage Server at https://github.com/atomjump/medimageserv installed first.
+
+
+# Branches and Status
+
+
+The 'master' branch is for Android phones, while the 'master-ios' branch is for iPhones. There are subtle differences (e.g. com.phonegap.medimage for iOS vs com.atomjump.medimage for Android), but care should be taken to keep shared code changes reflected across, as much as possible, between the two code-bases.
+On iOS, you will need distribution keys.
+
+Current status:
+
+* Builds successfully on Android. Sends across a blank 0 byte image. It does not register as being connected to Wifi. Camera incorrectly starts with front-facing camera each time.
+* Build failures on iOS. Seems to be problems with versions of the cordova-plugin-file-transfer library and cordova-plugin-dialogs at this stage.
+* Note for AtomJump internal developers: since we don't have the original Phonegap certificate, a completely new app will need to be released, and old users migrated to it, turning the old app into a 'Legacy' version. We have a placeholder on the Google appstore as "MedImage (Experimental)", which will eventually become "MedImage". 
 
 
 # License
 
-Build tools copyright (c) 2012-2013 Adobe Systems Incorporated. All rights reserved.
-
-Application source code copyright (c) 2018 AtomJump Ltd. (New Zealand). All rights reserved.
+Application source code copyright (c) 2021 AtomJump Ltd. (New Zealand). All rights reserved.
 
 
 Licensed under the Apache License, Version 2.0 (the "License");
