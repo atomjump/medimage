@@ -29,7 +29,7 @@
 	<preference name='pgb-builder-version' value='2' />
 	<preference name="android-targetSdkVersion" value="29" />-->
     
-    <!--
+   
     <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
     <gap:plugin name="cordova-plugin-networkinterface" source="npm" spec="~2.0.0"/>
     
@@ -45,7 +45,7 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your camera, so that you can take patient photos." />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos." />
 	</plugin>
-   -->
+  
     
     
     
