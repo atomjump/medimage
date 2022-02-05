@@ -24,6 +24,8 @@
     <access origin="*" />
 
 	<allow-navigation href="*"/>
+	
+	
 
 	<!--<preference name='phonegap-version' value='cli-9.0.0' />
 	<preference name='pgb-builder-version' value='2' />
@@ -216,7 +218,7 @@
     </platform>
     
   
-    <!--<access origin="*" />
+   <access origin="*" />
     <allow-intent href="*" />
-    <allow-navigation href="*" />-->
+    <allow-navigation href="*" />
 </widget>
