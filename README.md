@@ -52,6 +52,11 @@ if ('srcObject' in video) {
 }
 ```
 
+Currently, the app does not pair due to CORS not be correct. A debugging workaround can be found by running Chromium or Chrome with e.g.
+```
+chromium --disable-web-security --user-data-dir="/hom/tmp/chromium/"
+```
+There are still .js errors, but the camera does show.
 
 
 # License
