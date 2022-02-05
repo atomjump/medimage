@@ -27,6 +27,32 @@ Current status:
 * Build failures on iOS. Seems to be problems with versions of the cordova-plugin-file-transfer library and cordova-plugin-dialogs at this stage.
 * Note for AtomJump internal developers: since we don't have the original Phonegap certificate, a completely new app will need to be released, and old users migrated to it, turning the old app into a 'Legacy' version. We have a placeholder on the Google appstore as "MedImage (Experimental)", which will eventually become "MedImage". 
 
+# Browser branch
+
+Run with 
+```
+cordova build browser; cordova run browser
+```
+You may want to use an Apache Proxy to get port 8000 running from a :443 SSL domain.
+
+```
+./platforms/browser/platform_www/plugins/cordova-plugin-camera/src/browser/CameraProxy.js
+```
+Needs to have the following lines replaced:
+```
+video.src = window.URL.createObjectURL(stream);
+```
+
+with 
+```
+if ('srcObject' in video) {
+  video.srcObject = stream;
+} else {
+  video.src = window.URL.createObjectURL(stream);
+}
+```
+
+
 
 # License
 
