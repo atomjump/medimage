@@ -36,7 +36,7 @@
     
     <plugin name="cordova-plugin-insomnia" version="4.3.0" source="npm" />
 
-	<plugin name="cordova-plugin-camera" source="npm" spec="~2.4.1" >
+	<plugin name="cordova-plugin-camera" source="npm" >
         <variable name="CAMERA_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your camera, so that you can take patient photos." />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos." />
 	</plugin>
