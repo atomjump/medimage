@@ -14,8 +14,8 @@
   "license": "Apache-2.0",
   "cordova": {
     "platforms": [
-      "browser",
-      "android"
+      "android",
+      "browser"
     ],
     "devDependencies": {},
     "plugins": {
@@ -29,7 +29,8 @@
         "CAMERA_USAGE_DESCRIPTION": "AtomJump MedImage would like to access your camera, so that you can take patient photos.",
         "PHOTOLIBRARY_USAGE_DESCRIPTION": "AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos."
       },
-      "cordova-plugin-insomnia": {}
+      "cordova-plugin-insomnia": {},
+      "cordova-plugin-networkinterface": {}
     }
   },
   "dependencies": {},
@@ -45,6 +46,7 @@
     "cordova-plugin-file-transfer": "^1.6.3",
     "cordova-plugin-globalization": "^1.0.5",
     "cordova-plugin-insomnia": "git+https://github.com/tombolaltd/cordova-plugin-insomnia.git",
+    "cordova-plugin-networkinterface": "^2.2.0",
     "cordova-plugin-whitelist": "git+https://github.com/apache/cordova-plugin-whitelist.git"
   }
 }
