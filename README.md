@@ -31,7 +31,7 @@ Current status:
 
 Run with 
 ```
-cordova build browser; cordova run browser
+cordova platform add browser; cordova build browser; cordova run browser
 ```
 You may want to use an Apache Proxy to get port 8000 running from a :443 SSL domain.
 
@@ -54,7 +54,10 @@ if ('srcObject' in video) {
 
 Currently, the app does not pair due to CORS not be correct. A debugging workaround can be found by running Chromium or Chrome with e.g.
 ```
-chromium --disable-web-security --user-data-dir="/hom/tmp/chromium/"
+cd ~
+mkdir tmp
+mkdir tmp/chromium
+chromium --disable-web-security --user-data-dir="/home/[your home folder]/tmp/chromium/"
 ```
 There are still .js errors, but the camera does show.
 
