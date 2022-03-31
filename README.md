@@ -35,10 +35,23 @@ cordova platform add browser; cordova build browser; cordova run browser
 ```
 You may want to use an Apache Proxy to get port 8000 running from a :443 SSL domain.
 
+Currently, the app does not pair due to CORS not be correct. A debugging workaround can be found by running Chromium or Chrome with e.g.
+```
+cd ~
+mkdir tmp
+mkdir tmp/chromium
+chromium --disable-web-security --user-data-dir="/home/[your home folder]/tmp/chromium/"
+```
+There are still .js errors, but the camera does show once paired.
+
+
+## Troubleshooting
+
+A bug that seems to have been fixed but may occur in older versions:
 ```
 ./platforms/browser/platform_www/plugins/cordova-plugin-camera/src/browser/CameraProxy.js
 ```
-Needs to have the following lines replaced:
+May need to have the following lines replaced:
 ```
 video.src = window.URL.createObjectURL(stream);
 ```
@@ -52,14 +65,6 @@ if ('srcObject' in video) {
 }
 ```
 
-Currently, the app does not pair due to CORS not be correct. A debugging workaround can be found by running Chromium or Chrome with e.g.
-```
-cd ~
-mkdir tmp
-mkdir tmp/chromium
-chromium --disable-web-security --user-data-dir="/home/[your home folder]/tmp/chromium/"
-```
-There are still .js errors, but the camera does show.
 
 
 # License
