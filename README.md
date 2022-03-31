@@ -35,7 +35,7 @@ cordova platform add browser; cordova build browser; cordova run browser
 ```
 You may want to use an Apache Proxy to get port 8000 running from a :443 SSL domain.
 
-Currently, the app does not pair due to CORS not be correct. A debugging workaround can be found by running Chromium or Chrome with e.g.
+Currently, the app does not pair due to the CORS setup not being correct. A debugging workaround can be found by running the app in Chromium or Chrome on a desktop with e.g.
 ```
 cd ~
 mkdir tmp
