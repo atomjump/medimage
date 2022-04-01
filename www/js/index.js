@@ -336,12 +336,20 @@ var app = {
 		    context.drawImage(image, 0, 0);
 		    
 		    //canvas.toDataURL("image/jpeg");
-		 	//glbThis.processPictureData(fullBase64);     
+		 	//glbThis.processPictureData(fullBase64); 
+		 	
+		 	
+    	 	
+		 	
+		 	    
 		 };
-		 
 		 image.src = fullBase64png;
-    	 var fullBase64 = canvas.toDataURL("image/jpeg");
-    	 glbThis.processPictureData(fullBase64); 
+		 
+		 setTimeout(function() {
+		 
+		 	var fullBase64 = canvas.toDataURL("image/jpeg");
+    	 	glbThis.processPictureData(fullBase64); 
+    	 }, 1000);		//pause to allow processing time - TODO remove this
 		  	
       		
       		
