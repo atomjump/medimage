@@ -35,6 +35,7 @@
     	<link rel="stylesheet" type="text/css" href="css/ionicons/css/ionicons.css">
     	<link rel="stylesheet" type="text/css" href="css/material-design-iconic-font/css/material-design-iconic-font.css">
     	<script src="js/onsenui.js"></script>
+    	<script src="js/jquery-3.4.0.js"></script>
 		<script>
 		
 	      // This event fires when the keyboard will hide
@@ -137,9 +138,14 @@
         Image to go here - testing
         <img id="myImage">
         <canvas id="myJPG" width="4000" height="4000"></canvas>
+		
+		<form id="myAwesomeForm" method="post" action="/php-code-that-handles-fileupload.php">
+    		<input type="text" id="filename" name="filename" /> <!-- Filename -->
+    		<input type="submit" id="submitButton" name="submitButton" /> <!-- Submit -->
+		</form>
 
         
-        <input type="file" accept="image/*;capture=camera">
+        <!--<input type="file" accept="image/*;capture=camera">-->
         <!-- END TESTING -->
 
         
