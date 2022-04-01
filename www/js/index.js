@@ -333,23 +333,36 @@ var app = {
     	 
 		 var image = new Image();
 		 image.onload = function() {
-		    context.drawImage(image, 0, 0);
-		    
-		    //canvas.toDataURL("image/jpeg");
-		 	//glbThis.processPictureData(fullBase64); 
-		 	
-		 	
-    	 	
-		 	
-		 	    
+		    context.drawImage(image, 0, 0);		 	
 		 };
 		 image.src = fullBase64png;
 		 
 		 setTimeout(function() {
 		 
-		 	var fullBase64 = canvas.toDataURL("image/jpeg");
-    	 	glbThis.processPictureData(fullBase64); 
-    	 }, 1000);		//pause to allow processing time - TODO remove this
+		 	 //Get dimensions of the captured image
+				var img = document.getElementById('myImage'); 
+				//or however you get a handle to the IMG
+				var width = img.clientWidth;
+				var height = img.clientHeight; 	
+				 
+				 alert("Width = " + img.clientWidth);	
+				 	
+				//Create a new resized canvas
+				var resizedCanvas = document.createElement("canvas");
+				var resizedContext = resizedCanvas.getContext("2d");
+
+				resizedCanvas.height = height;
+				resizedCanvas.width = width;
+
+				var canvas = document.getElementById("myJPG");
+
+				resizedContext.drawImage(canvas, 0, 0, width, height);
+				var myResizedData = resizedCanvas.toDataURL(); 
+		 
+		 
+		 		var fullBase64 = resizedCanvas.toDataURL("image/jpeg");
+    	 		glbThis.processPictureData(fullBase64); 
+    	 }, 1000);		//pause to allow processing time - TODO better handling of this
 		  	
       		
       		
