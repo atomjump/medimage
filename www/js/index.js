@@ -322,20 +322,20 @@ var app = {
       navigator.camera.getPicture( function( imageData ) {
       	 
       	 //Testing using the resulting image data
-      	 var image = document.getElementById('myImage');
+      	 var imagePNG = document.getElementById('myImage');
       	 var fullBase64png = "data:image/png;base64," + imageData;
-    	 image.src = fullBase64png;
+    	 imagePNG.src = fullBase64png;
     	 
     	 //Write png into a canvas 
 		 var canvas=document.getElementById("myJPG");
 		 var context=canvas.getContext('2d');
     	 
     	 
-		 var image = new Image();
-		 image.onload = function() {
-		    context.drawImage(image, 0, 0);		 	
+		 var imageJPG = new Image();
+		 imageJPG.onload = function() {
+		    context.drawImage(imageJPG, 0, 0);		 	
 		 };
-		 image.src = fullBase64png;
+		 imageJPG.src = fullBase64png;
 		 
 		 setTimeout(function() {
 		 
@@ -345,9 +345,8 @@ var app = {
 				var width = img.clientWidth;
 				var height = img.clientHeight; 	
 				 
-				 alert("Width = " + img.clientWidth);	
 				 	
-				//Create a new resized canvas
+				//Create a new resized canvas, and copy the original onto it
 				var resizedCanvas = document.createElement("canvas");
 				var resizedContext = resizedCanvas.getContext("2d");
 
