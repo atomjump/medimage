@@ -86,10 +86,6 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
           app.receivedEvent('deviceready');
-          
-          
-        
-          
     },
     
     //TESTING function
@@ -118,6 +114,14 @@ var app = {
     
     processPictureData: function(imageDataLocalFile)
     {
+    
+    	//TODO: Researching best option for storing the cache of recent photos sent/unsent
+    	//IndexedDB seems like the best option: https://www.w3.org/TR/IndexedDB/ 
+    	//https://caniuse.com/indexeddb
+    	//The limits on storage size should be fine - almost no limits, although go past 5MB on some platforms
+    	//and it will give you a warning. See https://stackoverflow.com/questions/5692820/maximum-item-size-in-indexeddb
+        
+        
         var _this = this;
         glbThis = this;
       
@@ -327,19 +331,24 @@ var app = {
     	 imagePNG.src = fullBase64png;
     	 
     	imagePNG.onload = function () {
-           //fill_canvas(imagePNG);       // FILL THE CANVAS WITH THE IMAGE.
             var canvas = document.createElement("canvas");
             var ctx = canvas.getContext('2d');
 
             canvas.width = imagePNG.width;
             canvas.height = imagePNG.height;
 
-            ctx.drawImage(imagePNG, 0, 0);       // DRAW THE IMAGE TO THE CANVAS.
+            ctx.drawImage(imagePNG, 0, 0);       // draw the image to the canvas
             
             var fullBase64 = canvas.toDataURL("image/jpeg");			//Get the actual data in .jpg format
+            
+            
+            
+            
             glbThis.processPictureData(fullBase64); 
         }
-    	 
+    	
+    	
+    	
 
  
       		
