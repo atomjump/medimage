@@ -493,14 +493,14 @@ var app = {
 
 	},
 	
-	removeLocalPhoto: function(imageURI) {
+	removeLocalPhoto: function(imageId) {
 		//Loop through the current array and remove
 		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
 		if(!localPhotos) {
 			localPhotos = [];
 		}
 		for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-    		if(localPhotos[cnt].imageURI === imageURI) {
+    		if(localPhotos[cnt].imageId === imageId) {
     		
     				
     				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
@@ -573,11 +573,11 @@ var app = {
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
-    				//TODO: convert to indexedDB
-    				/*if((newStatus == "onserver")&&(fullData)) {
+    				//TODO: convert to indexedDB?
+    				if((newStatus == "onserver")&&(fullData)) {
     					localPhotos[cnt].fullData = fullData;	
     						
-    				}*/
+    				}
     				
     				//Set back the storage of the array
     				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
@@ -870,7 +870,7 @@ var app = {
         document.getElementById("cancel-trans").innerHTML = msg;
     },
 
-	stopConnecting: function(cancelURI) {
+	stopConnecting: function(cancelId) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
 		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
@@ -890,15 +890,18 @@ var app = {
 		
 	},
 
-	cancelUpload: function(cancelURI) {
+	cancelUpload: function(cancelId) {
 		//Cancel during an upload
-		var ft = fileTransferMap.getItem(cancelURI);
+		
+		var ft = fileTransferMap.getItem(cancelId);
 		if (ft)
 		{
-		    ft.abort(glbThis.win, glbThis.fail);
+			//Abort the upload TODO: ft is an jQuery.AJAX upload object
+			//Old way:
+		    //ft.abort(glbThis.win, glbThis.fail);
 		    
 		    //remove the photo
-		    glbThis.changeLocalPhotoStatus(cancelURI, "cancel");
+		    glbThis.changeLocalPhotoStatus(cancelId, "cancel");
 		}		
 		
 	},
@@ -1223,10 +1226,11 @@ var app = {
 			
 			retryIfNeeded.push(repeatIfNeeded);
 			
+			
 			//Keep the screen awake as we upload
 			window.plugins.insomnia.keepAwake();
 			
-			jQuery.ajax({
+			var ft = jQuery.ajax({
 				url: serverReq,
 				data: formDataToUpload,// Add as Data the Previously create formData
 				type:"POST",
@@ -1265,6 +1269,9 @@ var app = {
 					console.log("Request finished.");
 				}
 			});
+			
+			fileTransferMap.setItem(imageId, ft);		//Make sure we can abort this photo later
+			
 			
 			
 			
