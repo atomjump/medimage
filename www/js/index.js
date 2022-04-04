@@ -918,10 +918,29 @@ var app = {
 				
 				
 				//New code replacing below without data-time TESTING
-				var myNewFileName = myoutFile + '-datetimehere.jpg';	
-				cb(null, myNewFileName);
+				//var myNewFileName = myoutFile + '-datetimehere.jpg';	
+				//(null, myNewFileName);
 
 				//TODO: fix in browser version:
+				var today = new Date();
+				var dd = String(today.getDate()).padStart(2, '0');
+				var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+				var yyyy = today.getFullYear();
+
+				var seconds = today.getSeconds();
+				var hours = today.getHours();
+				var minutes = today.getMinutes();
+
+				mydt = mm + '-' + dd + '-' + yyyy + '-' + hours + "-" + minutes + "-" + seconds;
+				console.log(mydt);
+				var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
+				cb(null, myNewFileName);
+				
+
+				
+				
+				
+				
 				/*navigator.globalization.dateToString(
 					new Date(),
 					function (date) {
