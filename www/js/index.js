@@ -237,103 +237,7 @@ var app = {
 
     
     
-    processPicture: function(imageURIin)
-    {
-        var _this = this;
-        glbThis = this;
-      
-    	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
-          //Reconnect once
-      	  localStorage.removeItem("usingServer");		//This will force a reconnection
-	      localStorage.removeItem("defaultDir");
-      	  
-      	  var thisImageURI = imageURIin;
-      	  var idEntered = document.getElementById("id-entered").value;
-       	 
-        	  	   	 
-		   _this.findServer(function(err) {
-				if(err) {
-					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
-					
-					//Search again in 10 seconds:
-					var passedImageURI = thisImageURI;  
-					var idEnteredB = idEntered;
-					var thisScope = {};
-			
-			
-					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
-	
-	   					
-					   if(err) {
-							//There was a problem getting the filename from the disk file
-							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
-	   
-					   } else {
-		 					thisScope.imageURIin = passedImageURI;
-							thisScope.idEnteredB = idEnteredB;
-							thisScope.newFilename = newFilename;
-							
-							
-		 				  	//Store in case the app quits unexpectably
-						   	_this.recordLocalPhoto( imageURI, idEntered, newFilename);
-							
-							glbThis.continueConnectAttempts = true;
-						    setTimeout(function() {
-						    	if(glbThis.continueConnectAttempts == true) {
-						    		glbThis.notify("Trying to connect again.");
-									localStorage.removeItem("usingServer");		//This will force a reconnection
-									localStorage.removeItem("defaultDir");
-									glbThis.uploadPhoto(passedImageURI, idEnteredB, newFilename);
-								}
-							}, 10000);
-							
-							//Countdown
-							var cntDown = 10;
-							glbThis.cntLoopB = setInterval(function() {
-								cntDown --;
-								if(cntDown <= 0) {
-										clearInterval(glbThis.cntLoopB);				
-								}
-								if((!glbThis.cntLoopA) && (cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {	
-									//Only show if the other loop is not running too
-									glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
-								}
-							},1000);	
-		
-						}
-					});
-					
-					
-			
-					
-					
-				} else {
-					//Now we are connected - so we can get the filename
-					_this.determineFilename(thisImageURI, idEntered, function(err, newFilename, imageURI) {
-	
-	   
-					   if(err) {
-							//There was a problem getting the filename from the disk file
-							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
-	   
-					   } else {
-		 					
-		 				  //Store in case the app quits unexpectably
-						   _this.recordLocalPhoto( imageURI, idEntered, newFilename);
-		
-		
-							//Now we are connected, upload the photo again
-							glbThis.uploadPhoto(imageURI, idEntered, newFilename);
-						}
-					});
-				}
-		  });
-			  
-       	  
-       	  
-      	 
-	},
+ 
 
     takePicture: function() {
       var _this = this;
@@ -462,23 +366,7 @@ var app = {
     },
  
     
-    recordLocalPhoto: function(imageURI, idEntered, fileName) {
-    	 //Save into our localPhotos array, in case the app quits
-    	 
-       	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-       	  if(!localPhotos) {
-       	  	localPhotos = [];
-       	  }
-       	  var newPhoto = {
-       	  					"imageURI" : imageURI,
-       	  					"idEntered" : idEntered,
-       	  					"fileName" : fileName,
-       	  					"status" : "send"
-       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
-       	  localPhotos.push(newPhoto);
-       	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
-    	  return true;
-    },
+
     
     arrayRemoveNulls: function(arr) {
 		var newArray = [];
@@ -665,76 +553,7 @@ var app = {
     }, 
     
     
-    loopLocalPhotos: function() {
-     
-     	//TODO fix for data version
-     	return;
-     	
-     
-      	//Get a photo, one at a time, in the array format:
-      	/* {
-       	  					"imageURI" : imageURI,
-       	  					"idEntered" : idEntered,
-       	  					"fileName" : fileName,
-       	  					"fullData" : fullDataObject - optional
-       	  					"status" : "send"
-       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
-       	
-       	and attempt to upload them.
-       	*/
-      	var photoDetails = null;
-      	
-      	
-    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-    	if(!localPhotos) {
-       	  	localPhotos = [];
-       	}
-       	      	
-       	
-       	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-      		var newPhoto = localPhotos[cnt];
-      		if(newPhoto) {
-      		
-      			if(newPhoto.status == 'onserver') {
-      				
-       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
-      				if(newPhoto.fullData) {
-      					
-      					try {
-      						var fullData = newPhoto.fullData;
-      						if(fullData.details && fullData.details.imageURI) {
-      							fullData.loopCnt = 11;
-      							fullData.slowLoopCnt = null;		//Start again with a quick loop
-		  						checkComplete.push(fullData);
-		  						var thisImageURI = fullData.details.imageURI;
-		  						
-		  						glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
-		  					} else {
-		  						//This is a case where full details are not available. Do nothing.
-			  						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
-		  					}
-      					} catch(err) {
-      						//There was a problem parsing the data.
-       						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
-      					}
-      				} else {
-      					//No fullData was added - resend anyway
-      					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
-      				
-      				}
-      					
-      			
-      			} else {
-        			//Needs to be resent
-        			glbThis.uploadPhoto(newPhoto.imageURI, newPhoto.idEntered, newPhoto.fileName);
-        		}
-        	}    	
-    	}
-    	
-    	
-    	return;
-    
-    }, 
+   
     
     
 
@@ -919,158 +738,57 @@ var app = {
 		//Have connected OK to a server
 		var idEnteredB = idEntered;
 		
-        //window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
-
-				//deleteThisFile = fileEntry; //Store globally
-			
-				//var imageURI = fileEntry.toURL();
+ 				
 				
-				
-				var tempName = idEnteredB;
-				if((tempName == '')||(tempName == null)) {
-					tempName = 'image';
-				}
-				
-				var initialHash = localStorage.getItem("initialHash");
-				if((initialHash)&&(initialHash != null)) {
-					if(initialHash == 'true') {
-						//Prepend the initial hash
-						tempName = "#" + tempName;
-					
-					}
-				} else {
-					//Not set, so prepend the initial hash by default
-					tempName = "#" + tempName;
-				}
-
-				var defaultDir = localStorage.getItem("defaultDir");
-				if((defaultDir)&&(defaultDir != null)) {
-					//A hash code signifies a directory to write to
-					tempName = "#" + defaultDir + " " + tempName;
-				}
-
-				var myoutFile = tempName.replace(/ /g,'-');
-				var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
-				
-				
-
-				//Get a current date/time
-				var today = new Date();
-				var dd = String(today.getDate()).padStart(2, '0');
-				//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-				
-				var mmConvert = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-				var mmm = mmConvert[today.getMonth()];
-				var yyyy = today.getFullYear();
-
-				var seconds = String(today.getSeconds()).padStart(2, '0');
-				var hours = String(today.getHours()).padStart(2, '0');
-				var minutes = String(today.getMinutes()).padStart(2, '0');
-
-				mydt = dd + "-" + mmm + '-' + yyyy + '-' + hours + "-" + minutes + "-" + seconds;
-				var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
-				cb(null, myNewFileName);
-	
-
-
-		/*}, function(evt) {
-			//An error accessing the file
-			//and potentially delete phone version
-			glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
-			cb("Sorry, we could not access the photo file");
-			
-		});		//End of resolveLocalFileSystemURI
-		*/
+		var tempName = idEnteredB;
+		if((tempName == '')||(tempName == null)) {
+			tempName = 'image';
+		}
 		
+		var initialHash = localStorage.getItem("initialHash");
+		if((initialHash)&&(initialHash != null)) {
+			if(initialHash == 'true') {
+				//Prepend the initial hash
+				tempName = "#" + tempName;
+			
+			}
+		} else {
+			//Not set, so prepend the initial hash by default
+			tempName = "#" + tempName;
+		}
+
+		var defaultDir = localStorage.getItem("defaultDir");
+		if((defaultDir)&&(defaultDir != null)) {
+			//A hash code signifies a directory to write to
+			tempName = "#" + defaultDir + " " + tempName;
+		}
+
+		var myoutFile = tempName.replace(/ /g,'-');
+		var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
+		
+		
+
+		//Get a current date/time
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		
+		var mmConvert = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+		var mmm = mmConvert[today.getMonth()];
+		var yyyy = today.getFullYear();
+
+		var seconds = String(today.getSeconds()).padStart(2, '0');
+		var hours = String(today.getHours()).padStart(2, '0');
+		var minutes = String(today.getMinutes()).padStart(2, '0');
+
+		mydt = dd + "-" + mmm + '-' + yyyy + '-' + hours + "-" + minutes + "-" + seconds;
+		var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
+		cb(null, myNewFileName);
 	
 	},
 	
 	
-	determineFilename: function(imageURIin, idEntered, cb) {
-		//Determines the filename to use based on the imageURI of the photo, 
-		//and the id entered into the text field.
-		//Calls back with: cb(err, newFilename, imageURI)
-		//    where err is null for no error, or text of the error,
-		//    and the newFilename as a text string which includes the .jpg at the end
-		//    imageURI is the local filesystem resolved URI
-		//It will use the current date / time from the phone, thought this format varies slightly
-		//phone to phone.
 
-		//Have connected OK to a server
-		var idEnteredB = idEntered;
-		
-        window.resolveLocalFileSystemURI(imageURIin, function(fileEntry) {
-
-				deleteThisFile = fileEntry; //Store globally
-			
-				var imageURI = fileEntry.toURL();
-				
-				
-				var tempName = idEnteredB;
-				if((tempName == '')||(tempName == null)) {
-					tempName = 'image';
-				}
-				
-				var initialHash = localStorage.getItem("initialHash");
-				if((initialHash)&&(initialHash != null)) {
-					if(initialHash == 'true') {
-						//Prepend the initial hash
-						tempName = "#" + tempName;
-					
-					}
-				} else {
-					//Not set, so prepend the initial hash by default
-					tempName = "#" + tempName;
-				}
-
-				var defaultDir = localStorage.getItem("defaultDir");
-				if((defaultDir)&&(defaultDir != null)) {
-					//A hash code signifies a directory to write to
-					tempName = "#" + defaultDir + " " + tempName;
-				}
-
-				var myoutFile = tempName.replace(/ /g,'-');
-				var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
-
-				navigator.globalization.dateToString(
-					new Date(),
-					function (date) {
-						var mydt = date.value.replace(/:/g,'-');
-						mydt = mydt.replace(/ /g,'-');
-						mydt = mydt.replace(/\//g,'-');
-						
-
-						var aDate = new Date();
-						var seconds = aDate.getSeconds();
-						mydt = mydt + "-" + seconds;
-
-						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
-						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
-
-						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
-						cb(null, myNewFileName, imageURI);
-					},
-					function () { 
-						navigator.notification.alert('Sorry, there was an error getting the current date\n');
-						cb("Sorry, there was an error getting the current date");
-					},
-					{ formatLength:'medium', selector:'date and time'}
-				); //End of function in globalization date to string
-
-
-
-
-		}, function(evt) {
-			//An error accessing the file
-			//and potentially delete phone version
-			glbThis.changeLocalPhotoStatus(myImageURIin, 'cancel');
-			cb("Sorry, we could not access the photo file");
-			
-		});		//End of resolveLocalFileSystemURI
-	
-		
-	
-	},
 	
 	/**
 	 * Convert a base64 string in a Blob according to the data and contentType.
