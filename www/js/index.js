@@ -68,6 +68,14 @@ var app = {
         //Initialise the id field
         this.displayIdInput();
         
+        //Get a current photo id that increments after each photo
+        if(localStorage.getItem("currentPhotoId")) {
+        	this.currentPhotoId = parseInt(localStorage.getItem("currentPhotoId"));
+        } else {
+        	this.currentPhotoId = 0;
+        	localStorage.setItem("currentPhotoId", this.currentPhotoId);
+        }
+       
         //Check if there are any residual photos that need to be sent again
         glbThis.loopLocalPhotos();
         
@@ -122,8 +130,15 @@ var app = {
     	//and it will give you a warning. See https://stackoverflow.com/questions/5692820/maximum-item-size-in-indexeddb
         
         
+        
+        
+        
         var _this = this;
         glbThis = this;
+      
+        //Keep a local increment ID of the photo on this browser
+      	_this.currentPhotoId = _this.currentPhotoId + 1;
+        localStorage.setItem("currentPhotoId", _this.currentPhotoId);
       
     	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
           //Reconnect once
@@ -154,13 +169,14 @@ var app = {
 							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
 	   
 					   } else {
-		 					thisScope.imageLocalFileIn = passedImageFile;
+					   		thisScope.imageId = _this.currentPhotoId;
+		 					thisScope.imageLocalFileIn = passedImageFile;		//TODO: store this in a indexeddb database if available
 							thisScope.idEnteredB = idEnteredB;
 							thisScope.newFilename = newFilename;
 							
 							
 		 				  	//Store in case the app quits unexpectably
-						   	_this.recordLocalPhotoData( thisImageLocalFile, idEntered, newFilename);
+						   	_this.recordLocalPhotoData(thisScope.imageId, thisImageLocalFile, idEntered, newFilename);
 							
 							glbThis.continueConnectAttempts = true;
 						    setTimeout(function() {
@@ -168,7 +184,7 @@ var app = {
 						    		glbThis.notify("Trying to connect again.");
 									localStorage.removeItem("usingServer");		//This will force a reconnection
 									localStorage.removeItem("defaultDir");
-									glbThis.uploadPhotoData(passedImageFile, idEnteredB, newFilename);
+									glbThis.uploadPhotoData(thisScope.imageId, passedImageFile, idEnteredB, newFilename);
 								}
 							}, 10000);
 							
@@ -204,11 +220,11 @@ var app = {
 					   } else {
 		 					
 		 				  //Store in case the app quits unexpectably
-						   _this.recordLocalPhotoData( thisImageLocalFile, idEntered, newFilename);
+						   _this.recordLocalPhotoData(_this.currentPhotoId, thisImageLocalFile, idEntered, newFilename);
 		
 		
 							//Now we are connected, upload the photo again
-							glbThis.uploadPhotoData(thisImageLocalFile, idEntered, newFilename);
+							glbThis.uploadPhotoData(_this.currentPhotoId, thisImageLocalFile, idEntered, newFilename);
 						}
 					});
 				}
@@ -424,16 +440,18 @@ var app = {
     },
     
  
-     recordLocalPhotoData: function(imageData, idEntered, fileName) {
+     recordLocalPhotoData: function(imageId, imageData, idEntered, fileName) {
     	 //Save into our localPhotos array, in case the app quits
     	 //Warning: localStorage may not be large enough to support the imageData itself
+    	 //TODO: save imageData to innodb
     	 
        	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
        	  if(!localPhotos) {
        	  	localPhotos = [];
        	  }
        	  var newPhoto = {
-       	  					"imageData" : imageData,
+       	  					"imageId" : imageId,
+       	  					"imageData" : null,
        	  					"idEntered" : idEntered,
        	  					"fileName" : fileName,
        	  					"status" : "send"
@@ -496,9 +514,9 @@ var app = {
     	}
 	},
     
-    changeLocalPhotoStatus: function(imageURI, newStatus, fullData) {
+    changeLocalPhotoStatus: function(imageId, newStatus, fullData) {
     	//Input:
-    	//imageURI  - unique image address on phone filesystem 
+    	//imageId  - unique image ID on browser
     	//newStatus can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
     	//If onserver, the optional parameter 'fullGet', is the URL to call to check if the file is back on the server
     	
@@ -512,19 +530,24 @@ var app = {
        	}
     	
     	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-    		if(localPhotos[cnt].imageURI === imageURI) {
+    		if(localPhotos[cnt].imageId === imageId) {
     	
     			if(newStatus === "cancel") {
     				//Delete the photo
-    				window.resolveLocalFileSystemURI(imageURI, function(fileEntry) {
+    				
+    				glbThis.removeLocalPhoto(imageId);
+    				
+    				/*No longer needed in browser version: 
+    					window.resolveLocalFileSystemURI(imageId, function(fileEntry) {
     					
     					//Remove the file from the phone
     					fileEntry.remove();
     					
     					//Remove entry from the array
-    					glbThis.removeLocalPhoto(imageURI);
+    					glbThis.removeLocalPhoto(imageId);
     					
     				}, function(evt) {
+    				
     				
     				 	//Some form of error case. We likely couldn't find the file, but we still want to remove the entry from the array
     				 	//in this case
@@ -546,14 +569,15 @@ var app = {
     				 		glbThis.removeLocalPhoto(imageURI);
     				 	}
     				 
-    				});
+    				}); */
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
-    				if((newStatus == "onserver")&&(fullData)) {
+    				//TODO: convert to indexedDB
+    				/*if((newStatus == "onserver")&&(fullData)) {
     					localPhotos[cnt].fullData = fullData;	
     						
-    				}
+    				}*/
     				
     				//Set back the storage of the array
     				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
@@ -575,6 +599,7 @@ var app = {
      
       	//Get a photo, one at a time, in the array format:
       	/* {
+      						"imageId" : imageId,
        	  					"imageData" : imageData,
        	  					"idEntered" : idEntered,
        	  					"fileName" : fileName,
@@ -608,28 +633,28 @@ var app = {
       							fullData.loopCnt = 11;
       							fullData.slowLoopCnt = null;		//Start again with a quick loop
 		  						checkComplete.push(fullData);
-		  						var thisImageURI = fullData.details.imageData;
+		  						var thisImageId = fullData.details.imageId;
 		  						
-		  						//TODO correct for Data version
-		  						//glbThis.check(thisImageURI);		//This will only upload again if it finds it hasn't been transferred off the 
+		  						glbThis.check(thisImageId);		//This will only upload again if it finds it hasn't been transferred off the 
 		  					} else {
 		  						//This is a case where full details are not available. Do nothing.
-			  					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+			  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
 		  					}
       					} catch(err) {
       						//There was a problem parsing the data.
-       						glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+       						glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
       					}
       				} else {
       					//No fullData was added - resend anyway
-      					glbThis.changeLocalPhotoStatus(newPhoto.imageURI, "cancel");
+      					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
       				
       				}
       					
       			
       			} else {
         			//Needs to be resent
-        			glbThis.uploadPhotoData(newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
+        			//TODO: get full image data from indexedDb
+        			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
         		}
         	}    	
     	}
@@ -880,12 +905,11 @@ var app = {
 	
 	
 	determineFilenameData: function(idEntered, cb) {
-		//Determines the filename to use based on the imageURI of the photo [removed from 'data' version], 
+		//Determines the filename to use based on the id entered of the photo 
 		//and the id entered into the text field.
 		//Calls back with: cb(err, newFilename)
 		//    where err is null for no error, or text of the error,
 		//    and the newFilename as a text string which includes the .jpg at the end
-		//    imageURI is the local filesystem resolved URI - has been removed
 		//It will use the current date / time from the phone, thought this format varies slightly
 		//phone to phone.
 
@@ -1080,7 +1104,7 @@ var app = {
 
 	
 	
-	uploadPhotoData: function(imageLocalFileIn, idEntered, newFilename) {
+	uploadPhotoData: function(imageId, imageLocalFileIn, idEntered, newFilename) {
   
         var _this = this;
 	
@@ -1096,10 +1120,10 @@ var app = {
 					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
 					
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					//TODO: correct this for data version:
-					//glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageURIin + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageId + "');\"></ons-icon><br/>Cancel");
 					//Search again in 10 seconds:
 					var thisScope = {};
+					thisScope.imageId = imageId;
 					thisScope.imageLocalFileIn = imageLocalFileIn;
 					thisScope.idEnteredB = idEnteredB;
 					thisScope.newFilename = newFilename;
@@ -1121,12 +1145,12 @@ var app = {
 					setTimeout(function() {
 						if(glbThis.continueConnectAttempts == true) {
 							glbThis.notify("Trying to connect again.");
-							glbThis.uploadPhotoData(thisScope.imageLocalFileIn, thisScope.idEnteredB, thisScope.newFilename);
+							glbThis.uploadPhotoData(thisScope.imageId, thisScope.imageLocalFileIn, thisScope.idEnteredB, thisScope.newFilename);
 						}
 					}, 10000);
 				} else {
 					//Now we are connected, upload the photo again
-					glbThis.uploadPhotoData(imageLocalFileIn, idEnteredB, newFilename);
+					glbThis.uploadPhotoData(thisScope.imageId, imageLocalFileIn, idEnteredB, newFilename);
 					return;
 				}
 			});
@@ -1163,14 +1187,10 @@ var app = {
 			//New code TESTING:
 			_this.notify("Uploading " + params.title);
 			var serverReq = usingServer + '/api/photo';
-
-			//alert("New filename = " + newFilename);
-			
-			console.log("Length of imageLocalFileIn:" + imageLocalFile.length);	//TESTING
-			
 			
 			// Get the form element withot jQuery
-			var form = document.getElementById("photo-sending-frm");
+			var form = document.createElement("form");
+			form.setAttribute("id", "photo-sending-frm-" + imageId);
 
 			var ImageURL = imageLocalFileIn;	
 			// Split the base64 string in data and contentType
@@ -1188,6 +1208,23 @@ var app = {
 			
 
 			formDataToUpload.append("file1", blob, newFilename);		//Note: "file1" is required by the MedImage Server.
+			
+			_this.notify("Uploading " + params.title);
+			_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageId + "');\"></ons-icon><br/>Cancel");
+			
+			var repeatIfNeeded = {
+				"imageId" : imageId,
+				"serverReq" : serverReq,
+				"options" :options,
+				"failureCount": 0,
+				"nextAttemptSec": 15
+			};
+			//TODO "imageData" : imageData, removed. Use indexedDB
+			
+			retryIfNeeded.push(repeatIfNeeded);
+			
+			//Keep the screen awake as we upload
+			window.plugins.insomnia.keepAwake();
 			
 			jQuery.ajax({
 				url: serverReq,
@@ -1212,17 +1249,15 @@ var app = {
 					console.error(err);
 					var result = {};
 					result.responseCode = 400;
-					//TODO handle failure
-					_this.notify("Upload failed.");
-					//glbThis.fail(result, myImageURI);
+					glbThis.fail(result, imageId);
+					form.remove();		//Clear up
 				},
 				success:function(data){
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
-					//TODO handle success
-					_this.notify("Uploaded successfully!");
-					//glbThis.win(result, myImageURI);
+					glbThis.win(result, imageId);
+					form.remove();		//Clear up
 					
 				},
 				complete:function(){
@@ -1232,78 +1267,7 @@ var app = {
 			});
 			
 			
-			/*	
-			//Write the file locally TESTING
-           window.requestFileSystem(window.TEMPORARY, 5 * 2024 * 2024, (function(fs) {
-				 var dirEntry, fileName;
-				 console.log('file system open: ' + fs.name);
-				 fileName = newFilename;
-				 dirEntry = fs.root;
-				 return dirEntry.getFile(fileName, {
-				   create: true,
-				   exclusive: false
-				 }, (function(fileEntry) {
-				   	glbThis.writeFile(fileEntry, imageLocalFile, function(fileEntry) {
-				   	
-				   		alert("File written!");		//TESTING
-				   		//console.log(JSON.stringify(fileEntry));	//TESTING
-					 	//Written. Now upload the file				 	
-					 	fileEntry.file(function (file) {
-							var reader = new FileReader();
-							reader.onloadend = function() {
-								// Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-								var blob = new Blob([new Uint8Array(this.result)], { type: "image/jpeg" });
-								var oReq = new XMLHttpRequest();
-								
-								console.log("About to post to " + serverReq + " Length of blob:" + blob.size);	//TESTING
-								oReq.open("POST", serverReq, true);
-								oReq.onload = function (oEvent) {
-									// all done!
-									alert("Uploaded! TEST - Remove me");
-								};
-								// Pass the blob in to XHR's send method
-								oReq.send(blob);		//was blob
-							};
-							// Read the file as an ArrayBuffer
-							reader.readAsArrayBuffer(file);
-						}, function (err) { console.error('error getting fileentry file!' + err); });
-				 	
-				 	
-				   	
-				   	}); // writeFile is a method that would write blob into initialized temp storage.
-				 
-				 	
-				 
-				 }), glbThis.failWriteFile);
-			   }), glbThis.failWriteFile);	
-
-			*/
-		
-
-
-			 /*window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
-				console.log('file system open: ' + fs.name);
-				fs.root.getFile('bot.jpg', { create: true, exclusive: false }, function (fileEntry) {
-					fileEntry.file(function (file) {
-						var reader = new FileReader();
-						reader.onloadend = function() {
-						    // Create a blob based on the FileReader "result", which we asked to be retrieved as an ArrayBuffer
-						    var blob = new Blob([new Uint8Array(this.result)], { type: "image/jpeg" });
-						    var oReq = new XMLHttpRequest();
-						    oReq.open("POST", serverReq, true);
-						    oReq.onload = function (oEvent) {
-						        // all done!
-						        alert("Uploaded! TEST - Remove me");
-						    };
-						    // Pass the blob in to XHR's send method
-						    oReq.send(blob);		//was blob
-						};
-						// Read the file as an ArrayBuffer
-						reader.readAsArrayBuffer(file);
-					}, function (err) { console.error('error getting fileentry file!' + err); });
-				}, function (err) { console.error('error getting file! ' + err); });
-			}, function (err) { console.error('error getting persistent fs! ' + err); });*/
-
+			
 
 			/* To be replaced:
 			var ft = new FileTransfer();
@@ -1562,7 +1526,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageURI, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
+	    			glbThis.uploadPhoto(repeatIfNeeded.imageId, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -1581,20 +1545,25 @@ var app = {
 						repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
 						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);	
-						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageURI + "');\"></ons-icon><br/>Cancel");
+						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageId + "');\"></ons-icon><br/>Cancel");
 					
 						retryIfNeeded.push(repeatIfNeeded);
 					
 						//Keep the screen awake as we upload
 						window.plugins.insomnia.keepAwake();
-						var myImageURI = repeatIfNeeded.imageURI;
+						var myImageId = repeatIfNeeded.imageId;
 						
+						//TODO: new style AJAX call
+						/* Old style:
 						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
 									 function(result) {
 										glbThis.win(result, myImageURI);
 						},function(result) {
 										glbThis.fail(result, myImageURI);
 						}, repeatIfNeeded.options);
+						*/
+						
+						
 					}, timein);											//Wait 10 seconds before trying again	
 				}
 	     	}
@@ -1617,11 +1586,11 @@ var app = {
 	
 	  },
 	
-	  removeRetryIfNeeded: function(imageURI) {
+	  removeRetryIfNeeded: function(imageId) {
 			//Loop through the current array and remove the entries
 	
 			for(var cnt = 0; cnt< retryIfNeeded.length; cnt++) {
-				if(retryIfNeeded[cnt].imageURI === imageURI) {
+				if(retryIfNeeded[cnt].imageId === imageId) {
 						retryIfNeeded[cnt] = null;		//Need the delete first to get rid of subobjects
 				}
 			}
@@ -1632,13 +1601,13 @@ var app = {
 	
 	  },
 
-	  check: function(imageURI){
+	  check: function(imageId){
 	  		//Checks to see if the next photo on the server (in the checkComplete stack) has been sent on to the PC successfully. If not it will keep pinging until is has been dealt with, or it times out.
 	  		
 		  	var startSlowLoop = false;
 	  		var nowChecking = null;
 	  		for(var cnt = 0; cnt < checkComplete.length; cnt++) {
-	  			if(checkComplete[cnt].details.imageURI === imageURI) {
+	  			if(checkComplete[cnt].details.imageId === imageId) {
 	  				nowChecking = JSON.parse(JSON.stringify(checkComplete[cnt]));
 					checkComplete[cnt].loopCnt --;		//Decrement the original
 					if(nowChecking.loopCnt <= 0) {
@@ -1684,9 +1653,9 @@ var app = {
 					
 					//The file exists on the server still - try again in 30 seconds
 					var thisScope = {};
-					thisScope.imageURI = imageURI;
+					thisScope.imageId = imageId;
 					setTimeout(function() {
-						glbThis.check(thisScope.imageURI);						
+						glbThis.check(thisScope.imageId);						
 					}, 30000);
 				} else {
 					//Count down inside the slower checks
@@ -1716,7 +1685,7 @@ var app = {
 								}
 								if(myTitle === "image") myTitle = "Image";
 								
-								glbThis.removeCheckComplete(myNowChecking.details.imageURI);
+								glbThis.removeCheckComplete(myNowChecking.details.imageId);
 								
 								var moreLength = (checkComplete.length + retryIfNeeded.length) - 1;
 								var more = " <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">" + moreLength + " more</a>";	
@@ -1741,7 +1710,7 @@ var app = {
 								
 								//and delete phone version
 								if(myNowChecking.details) {
-									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
+									glbThis.changeLocalPhotoStatus(myNowChecking.details.imageId, 'cancel');
 								} else {
 									document.getElementById("notify").innerHTML = 'Image transferred. Success! ' + more + ' Note: The image will be resent on a restart to verify.';
 								}
@@ -1779,11 +1748,11 @@ var app = {
 								
 								var thisScope = {};
 								if(myNowChecking && myNowChecking.details) {
-									thisScope.imageURI = myNowChecking.details.imageURI;
+									thisScope.imageId = myNowChecking.details.imageId;
 							
 								
 									setTimeout(function() {
-										glbThis.check(thisScope.imageURI);
+										glbThis.check(thisScope.imageId);
 									}, 30000);
 								}
 							} 
@@ -1832,7 +1801,7 @@ var app = {
 						//File no longer exists, success!
 						glbThis.cancelNotify("");		//Remove any transfer icons
 						
-						glbThis.removeCheckComplete(myNowChecking.details.imageURI);
+						glbThis.removeCheckComplete(myNowChecking.details.imageId);
 						
 						var myTitle = "Image";
 						if(myNowChecking.details && myNowChecking.details.options && myNowChecking.details.options.params && myNowChecking.details.options.params.title && myNowChecking.details.options.params.title != "") {
@@ -1863,7 +1832,7 @@ var app = {
 						
 						//and delete phone version
 						if(myNowChecking.details) {
-            						glbThis.changeLocalPhotoStatus(myNowChecking.details.imageURI, 'cancel');
+            						glbThis.changeLocalPhotoStatus(myNowChecking.details.imageId, 'cancel');
             					} else {
             						document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
             					}
@@ -1872,10 +1841,10 @@ var app = {
 						//The file exists on the server still - try again in a few moments
 						var thisScope = {};
 						if(myNowChecking && myNowChecking.details) {
-							thisScope.imageURI = myNowChecking.details.imageURI;
+							thisScope.imageId = myNowChecking.details.imageId;
 						
 							setTimeout(function() {
-								glbThis.check(thisScope.imageURI);
+								glbThis.check(thisScope.imageId);
 							}, 2000);
 						}
 					} 
@@ -1886,7 +1855,7 @@ var app = {
 	},
 						
 
-    win: function(r, imageURI) {
+    win: function(r, imageId) {
     	    
 	    
     	    //Have finished transferring the file to the server
@@ -1914,7 +1883,7 @@ var app = {
             		//and delete phone version of file
 					var repeatIfNeeded = null;
 					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
-						if(retryIfNeeded[cnt].imageURI === imageURI) {
+						if(retryIfNeeded[cnt].imageId === imageId) {
 							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
 						}
 					}	
@@ -1934,7 +1903,7 @@ var app = {
             		
             		if(repeatIfNeeded) {
         
-						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
+						glbThis.removeRetryIfNeeded(repeatIfNeeded.imageId);		
             			
             			
 						if(repeatIfNeeded && repeatIfNeeded.options && repeatIfNeeded.options.params && repeatIfNeeded.options.params.title && repeatIfNeeded.options.params.title != "") {
@@ -1947,7 +1916,7 @@ var app = {
 							document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more;
 						}
             		
-            			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'cancel');
+            			glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageId, 'cancel');
             		} else {
 						//Trying to check, but no file on stack	
 						document.getElementById("notify").innerHTML = 'Image transferred. Success!' + more + ' Note: The image will be resent on a restart to verify.';
@@ -1958,7 +1927,7 @@ var app = {
             		//and delete phone version of file
 					var repeatIfNeeded = null;
 					for(var cnt=0; cnt< retryIfNeeded.length; cnt++) {
-						if(retryIfNeeded[cnt].imageURI === imageURI) {
+						if(retryIfNeeded[cnt].imageId === imageId) {
 							repeatIfNeeded =  JSON.parse(JSON.stringify(retryIfNeeded[cnt]));
 						}
 					}	
@@ -2012,22 +1981,22 @@ var app = {
 							checkComplete.push(nowChecking);
 					
 							//Set an 'onserver' status
-							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
+							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageId, 'onserver', nowChecking);
 					
 							var self = {};
-							self.thisImageURI = repeatIfNeeded.imageURI;
+							self.thisImageId = repeatIfNeeded.imageId;
 							setTimeout(function() {	//Wait two seconds and then do a check
-								glbThis.check(self.thisImageURI);
+								glbThis.check(self.thisImageId);
 							}, 2000);
 					
-							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);		
+							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageId);		
 					
 						
 						
 						} else {
 							//Set an 'onserver' status, and remove this entry
-							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageURI, 'onserver', nowChecking);
-							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageURI);
+							glbThis.changeLocalPhotoStatus(repeatIfNeeded.imageId, 'onserver', nowChecking);
+							glbThis.removeRetryIfNeeded(repeatIfNeeded.imageId);
 						}
 						
 						
@@ -2051,7 +2020,7 @@ var app = {
     },
 
 
-    fail: function(error, imageURI) {
+    fail: function(error, imageId) {
   
   		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
   		
@@ -2065,7 +2034,7 @@ var app = {
                 glbThis.notify("The photo was uploaded.");
                 
                 //Remove the photo from the list
-                glbThis.changeLocalPhotoStatus(imageURI, 'cancel');
+                glbThis.changeLocalPhotoStatus(imageId, 'cancel');
             break;
 
             case 2:
@@ -2096,17 +2065,17 @@ var app = {
     	 glbThis = this;
     	 
   		for(var cnta = 0; cnta < retryIfNeeded.length; cnta++) {
-  			if(retryIfNeeded[cnta].imageURI) {
-  				_this.cancelUpload(retryIfNeeded[cnta].imageURI);
-  				_this.removeRetryIfNeeded(retryIfNeeded[cnta].imageURI);
+  			if(retryIfNeeded[cnta].imageId) {
+  				_this.cancelUpload(retryIfNeeded[cnta].imageId);
+  				_this.removeRetryIfNeeded(retryIfNeeded[cnta].imageId);
   			}
   		
   		}	
   		
   		for(var cntb = 0; cntb < checkComplete.length; cntb++) {
   			
-  			if(checkComplete[cntb].details && checkComplete[cntb].details.imageURI) {
-  				_this.removeCheckComplete(checkComplete[cntb].details.imageURI);
+  			if(checkComplete[cntb].details && checkComplete[cntb].details.imageId) {
+  				_this.removeCheckComplete(checkComplete[cntb].details.imageId);
   			}
   		
   		}
@@ -2116,7 +2085,7 @@ var app = {
   		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
   			if(localPhotos[cntc].imageURI) {
   			
-  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageURI, 'cancel');
+  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageId, 'cancel');
   			}
   		}
    	
@@ -2416,6 +2385,7 @@ var app = {
 		
 		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
 		//to get a .json array of options.
+		//TODO: confirm this is still a valid path!
 		
 		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
 		
