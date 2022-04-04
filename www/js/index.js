@@ -1175,7 +1175,7 @@ var app = {
 			
 			
 			// Get the form element withot jQuery
-			var form = document.getElementById("myAwesomeForm");
+			var form = document.getElementById("photo-sending-frm");
 
 			var ImageURL = imageLocalFileIn;	
 			// Split the base64 string in data and contentType
@@ -1206,7 +1206,9 @@ var app = {
 					xhr.upload.onprogress = function (e) {
 						// For uploads
 						if (e.lengthComputable) {
-						    console.log("Progress: " + (e.loaded / e.total));
+							var percFinished = (e.loaded / e.total) * 100.0;
+							_this.notify("Uploading " + percFinished + "%");
+						    //console.log("Progress: " + );
 						}
 					};
 					return xhr;
@@ -1216,6 +1218,7 @@ var app = {
 					var result = {};
 					result.responseCode = 400;
 					//TODO handle failure
+					_this.notify("Upload failed.");
 					//glbThis.fail(result, myImageURI);
 				},
 				success:function(data){
@@ -1223,10 +1226,12 @@ var app = {
 					var result = {};
 					result.responseCode = 200;
 					//TODO handle success
+					_this.notify("Uploaded successfully!");
 					//glbThis.win(result, myImageURI);
 					
 				},
 				complete:function(){
+
 					console.log("Request finished.");
 				}
 			});

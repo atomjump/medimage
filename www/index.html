@@ -136,12 +136,10 @@
         
         <!-- TESTING  See https://ourcodeworld.com/articles/read/322/how-to-convert-a-base64-image-into-a-image-file-and-upload-it-with-an-asynchronous-form-using-jquery -->
         
-        <img id="myImage">
-        <canvas id="myJPG" width="1000" height="800"></canvas>
+        <img style="display: none;" id="myImage">
 		
-		<form id="myAwesomeForm" method="post" action="/php-code-that-handles-fileupload.php">
-    		<input type="submit" id="submitButton" name="submitButton" /> <!-- Submit -->
-		</form><!--<input type="text" id="filename" name="filename" />
+		<form id="photo-sending-frm" method="post" action="/replaced-dynamically-with-medimage-server-path/">
+		</form>
 
         
         <!--<input type="file" accept="image/*;capture=camera">-->
