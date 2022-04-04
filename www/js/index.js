@@ -139,6 +139,7 @@ var app = {
         //Keep a local increment ID of the photo on this browser
       	_this.currentPhotoId = _this.currentPhotoId + 1;
         localStorage.setItem("currentPhotoId", _this.currentPhotoId);
+        var imageId = _this.currentPhotoId;
       
     	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
           //Reconnect once
@@ -152,8 +153,7 @@ var app = {
 		   _this.findServer(function(err) {
 				if(err) {
 					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					//TODO: change this for Data version, as the stopConnecting will no longer function:
-					//glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + thisImageURI + "');\"></ons-icon><br/>Cancel");
+					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageId + "');\"></ons-icon><br/>Cancel");
 					
 					//Search again in 10 seconds:
 					var passedImageFile = thisImageLocalFile;  
@@ -169,7 +169,7 @@ var app = {
 							glbThis.notify("Sorry, we cannot process the filename of the photo " + idEntered + ". If this happens consistently, please report the problem to medimage.co.nz");
 	   
 					   } else {
-					   		thisScope.imageId = _this.currentPhotoId;
+					   		thisScope.imageId = imageId;
 		 					thisScope.imageLocalFileIn = passedImageFile;		//TODO: store this in a indexeddb database if available
 							thisScope.idEnteredB = idEnteredB;
 							thisScope.newFilename = newFilename;
@@ -220,11 +220,11 @@ var app = {
 					   } else {
 		 					
 		 				  //Store in case the app quits unexpectably
-						   _this.recordLocalPhotoData(_this.currentPhotoId, thisImageLocalFile, idEntered, newFilename);
+						   _this.recordLocalPhotoData(imageId, thisImageLocalFile, idEntered, newFilename);
 		
 		
 							//Now we are connected, upload the photo again
-							glbThis.uploadPhotoData(_this.currentPhotoId, thisImageLocalFile, idEntered, newFilename);
+							glbThis.uploadPhotoData(imageId, thisImageLocalFile, idEntered, newFilename);
 						}
 					});
 				}
