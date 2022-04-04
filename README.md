@@ -66,6 +66,11 @@ if ('srcObject' in video) {
 ```
 
 
+## Notes:
+
+Switching over from filetransfer to HTML5
+https://cordova.apache.org/blog/2017/10/18/from-filetransfer-to-xhr2.html
+
 
 # License
 

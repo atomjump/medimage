@@ -321,48 +321,27 @@ var app = {
 
       navigator.camera.getPicture( function( imageData ) {
       	 
-      	 //Testing using the resulting image data
+      	 //Write the resulting image data into an element
       	 var imagePNG = document.getElementById('myImage');
       	 var fullBase64png = "data:image/png;base64," + imageData;
     	 imagePNG.src = fullBase64png;
     	 
-    	 //Write png into a canvas 
-		 var canvas=document.getElementById("myJPG");
-		 var context=canvas.getContext('2d');
+    	imagePNG.onload = function () {
+           //fill_canvas(imagePNG);       // FILL THE CANVAS WITH THE IMAGE.
+            var canvas = document.createElement("canvas");
+            var ctx = canvas.getContext('2d');
+
+            canvas.width = imagePNG.width;
+            canvas.height = imagePNG.height;
+
+            ctx.drawImage(imagePNG, 0, 0);       // DRAW THE IMAGE TO THE CANVAS.
+            
+            var fullBase64 = canvas.toDataURL("image/jpeg");			//Get the actual data in .jpg format
+            glbThis.processPictureData(fullBase64); 
+        }
     	 
-    	 
-		 var imageJPG = new Image();
-		 imageJPG.onload = function() {
-		    context.drawImage(imageJPG, 0, 0);		 	
-		 };
-		 imageJPG.src = fullBase64png;
-		 
-		 setTimeout(function() {
-		 
-		 	 //Get dimensions of the captured image
-				var img = document.getElementById('myImage'); 
-				//or however you get a handle to the IMG
-				var width = img.clientWidth;
-				var height = img.clientHeight; 	
-				 
-				 	
-				//Create a new resized canvas, and copy the original onto it
-				var resizedCanvas = document.createElement("canvas");
-				var resizedContext = resizedCanvas.getContext("2d");
 
-				resizedCanvas.height = height;
-				resizedCanvas.width = width;
-
-				var canvas = document.getElementById("myJPG");
-
-				resizedContext.drawImage(canvas, 0, 0, width, height);
-				var myResizedData = resizedCanvas.toDataURL(); 
-		 
-		 
-		 		var fullBase64 = resizedCanvas.toDataURL("image/jpeg");
-    	 		glbThis.processPictureData(fullBase64); 
-    	 }, 1000);		//pause to allow processing time - TODO better handling of this
-		  	
+ 
       		
       		
       	  
@@ -1222,6 +1201,16 @@ var app = {
 				contentType:false,
 				processData:false,
 				cache:false,
+				xhr: function () {
+					var xhr = jQuery.ajaxSettings.xhr();
+					xhr.upload.onprogress = function (e) {
+						// For uploads
+						if (e.lengthComputable) {
+						    console.log("Progress: " + (e.loaded / e.total));
+						}
+					};
+					return xhr;
+				},
 				error:function(err){
 					console.error(err);
 					var result = {};
