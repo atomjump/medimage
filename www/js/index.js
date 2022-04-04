@@ -917,57 +917,24 @@ var app = {
 				var idEnteredC = idEnteredB;				//Get a 2nd tier of variable
 				
 				
-				//New code replacing below without data-time TESTING
-				//var myNewFileName = myoutFile + '-datetimehere.jpg';	
-				//(null, myNewFileName);
 
-				//TODO: fix in browser version:
+				//Get a current date/time
 				var today = new Date();
 				var dd = String(today.getDate()).padStart(2, '0');
-				var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+				//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+				
+				var mmConvert = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+				var mmm = mmConvert[today.getMonth()];
 				var yyyy = today.getFullYear();
 
-				var seconds = today.getSeconds();
-				var hours = today.getHours();
-				var minutes = today.getMinutes();
+				var seconds = String(today.getSeconds()).padStart(2, '0');
+				var hours = String(today.getHours()).padStart(2, '0');
+				var minutes = String(today.getMinutes()).padStart(2, '0');
 
-				mydt = mm + '-' + dd + '-' + yyyy + '-' + hours + "-" + minutes + "-" + seconds;
-				console.log(mydt);
+				mydt = dd + "-" + mmm + '-' + yyyy + '-' + hours + "-" + minutes + "-" + seconds;
 				var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
 				cb(null, myNewFileName);
-				
-
-				
-				
-				
-				
-				/*navigator.globalization.dateToString(
-					new Date(),
-					function (date) {
-						var mydt = date.value.replace(/:/g,'-');
-						mydt = mydt.replace(/ /g,'-');
-						mydt = mydt.replace(/\//g,'-');
-						
-
-						var aDate = new Date();
-						var seconds = aDate.getSeconds();
-						mydt = mydt + "-" + seconds;
-
-						mydt = mydt.replace(/,/g,'');  //remove any commas from iphone
-						mydt = mydt.replace(/\./g,'-');  //remove any fullstops
-
-						var myNewFileName = myoutFile + '-' + mydt + '.jpg';	
-						cb(null, myNewFileName);
-					},
-					function () { 
-						navigator.notification.alert('Sorry, there was an error getting the current date\n');
-						cb("Sorry, there was an error getting the current date");
-					}
-				); //End of function in globalization date to string		//Browser only supports 'full' and 'short' format lengths, not 'medium'
-				*/
-				//,
-				//	{ formatLength:'full', selector:'date and time'}
-
+	
 
 
 		/*}, function(evt) {
