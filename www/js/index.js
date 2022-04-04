@@ -1578,11 +1578,11 @@ var app = {
 
 
 
-	  removeCheckComplete: function(imageURI) {
+	  removeCheckComplete: function(imageId) {
 			//Loop through the current array and remove the entries
 	
 			for(var cnt = 0; cnt< checkComplete.length; cnt++) {
-				if(checkComplete[cnt].details && checkComplete[cnt].details.imageURI && checkComplete[cnt].details.imageURI === imageURI) {
+				if(checkComplete[cnt].details && checkComplete[cnt].details.imageId && checkComplete[cnt].details.imageId === imageId) {
 						checkComplete[cnt] = null;		//Need the delete first to get rid of subobjects
 				}
 			}
