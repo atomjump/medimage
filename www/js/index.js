@@ -77,7 +77,7 @@ var app = {
         }
        
         //Check if there are any residual photos that need to be sent again
-        glbThis.loopLocalPhotos();
+        glbThis.loopLocalPhotosData();
         
 
     },
@@ -242,6 +242,11 @@ var app = {
     takePicture: function() {
       var _this = this;
       glbThis = this;
+      
+      if(this.takingPhoto && this.takingPhoto == true) {
+      	return;			//We should only have one camera up at a time.
+      }
+      this.takingPhoto = true;
 
       navigator.camera.getPicture( function( imageData ) {
       	 
@@ -265,6 +270,7 @@ var app = {
             
             
             glbThis.processPictureData(fullBase64); 
+            _this.takingPhoto = false;		//Have finished with the camera
         }
     	
     	
@@ -704,7 +710,7 @@ var app = {
 		clearInterval(glbThis.cntLoopA);
 		clearInterval(glbThis.cntLoopB);
 		
-		glbThis.notify("We have stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotos(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
+		glbThis.notify("We have stopped trying to connect, but the photo has been stored. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.loopLocalPhotosData(); return false;\">Retry</a><br/><br/><a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Forget</a>");
 		glbThis.cancelNotify("");			
 		
 	},
@@ -1858,11 +1864,21 @@ var app = {
            }, 5000);
 
            networkinterface.getWiFiIPAddress(function(ipInfo) {
-                _this.ip = ipInfo.ip;			//note: we could use ipInfo.subnet here but, this could be a 16-bit subnet rather than 24-bit?
-                var len =  ipInfo.ip.lastIndexOf('\.') + 1;
-                _this.lan = ipInfo.ip.substr(0,len);
-                clearTimeout(iptime);
-                cb(null);
+           		if(ipInfo.ip) {
+		            _this.ip = ipInfo.ip;			//note: we could use ipInfo.subnet here but, this could be a 16-bit subnet rather than 24-bit?
+		            var len =  ipInfo.ip.lastIndexOf('\.') + 1;
+		            _this.lan = ipInfo.ip.substr(0,len);
+		            clearTimeout(iptime);
+		            cb(null);
+		        } else {
+		        	//Could be an inet:6 version e.g 2404:4407:27f0:8100:a693:9810:7740:787. For now, just treat as 127.0.0.1. TODO: improve this
+		        	_this.ip = "127.0.0.1";
+		        	var len =  _this.ip.lastIndexOf('\.') + 1;
+		            _this.lan = _this.ip.substr(0,len);
+		            clearTimeout(iptime);
+		            cb(null);
+		        	
+		        }
            },
            function(err) {
            	   var retErr = "Sorry, there was a problem getting your IP address.<br/><br/><a href='javascript:' onclick=\"navigator.notification.alert('Error: " + err + "', function() {}, 'More Details');\">More Details</a>";
