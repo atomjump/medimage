@@ -65,6 +65,32 @@ if ('srcObject' in video) {
 }
 ```
 
+We woudl also recommend improving the error messages in the same file. Replace:
+```
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({ video: true, audio: false }, successCallback, errorCallback);
+    } else {
+        alert('Browser does not support camera :(');
+    }
+```
+with:
+```
+  if(navigator.mediaDevices) {
+		navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+		.then(function(stream) {
+		  /* use the stream */
+		  successCallback(stream);
+		})
+		.catch(function(err) {
+		  /* handle the error */
+		  alert('Sorry, the browser currently has no access to the camera. You can try running this on e.g. a different host.');
+		});
+	} else {
+		 alert('Sorry, the browser currently has no access to the camera. You can try running this on e.g. a different host.');
+	}
+```
+
+
 
 ## Notes:
 

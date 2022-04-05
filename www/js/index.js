@@ -956,7 +956,6 @@ var app = {
 			var serverReq = usingServer + '/api/photo';
 			
 			// Get the form element withot jQuery
-			//TESTING
 			var form = document.createElement("form");
 			form.setAttribute("id", "photo-sending-frm-" + imageId);
 			
