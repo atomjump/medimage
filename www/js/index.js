@@ -96,12 +96,6 @@ var app = {
           app.receivedEvent('deviceready');
     },
     
-    //TESTING function
-    failWriteFile: function(e) {
-    	alert("Failed");
-    	alert("Failed" + e.code);
-    	
-    },	
     
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -610,11 +604,22 @@ var app = {
     scanlan: function(port, cb) {
       var _this = this;
 
+		
+		
+
+
       if(_this.lan) {
 
        var lan = _this.lan;
 
 	   totalScanned = 0;
+	   
+	   if(lan == "127.0.0.") {
+	   		//Use the default 127 address
+	   		var url = 'http://' + lan + '1:' + port;
+	   		cb(url, null);
+	   		return;
+	   }
 	   
        for(var cnt=0; cnt< 255; cnt++){
           var machine = cnt.toString();
@@ -622,8 +627,10 @@ var app = {
           this.get(url, function(goodurl, resp, timeout) {
               
               if(resp) {
+              	
               	//This is a good server
 				totalScanned ++;
+							  
 							  
 				 //Save the first TODO: if more than one, open another screen here
 				 localStorage.setItem("currentWifiServer", goodurl);
@@ -834,6 +841,14 @@ var app = {
 	uploadPhotoData: function(imageId, imageLocalFileIn, idEntered, newFilename) {
   
         var _this = this;
+        
+        if(!imageLocalFileIn) {
+        	//No image data - just return a fail
+        	var result = {};
+			result.responseCode = 400;
+        	glbThis.fail(result, imageId);
+        	return;
+        }
 	
 		var usingServer = localStorage.getItem("usingServer");
 		
@@ -1101,122 +1116,6 @@ var app = {
 	
 	
 
-    uploadPhoto: function(imageURIin, idEntered, newFilename) {
-  
-        var _this = this;
-	
-		var usingServer = localStorage.getItem("usingServer");
-		
-		var idEnteredB = idEntered;
-	
-	
-		if((!usingServer)||(usingServer == null)) {
-			//No remove server already connected to, find the server now. And then call upload again
-			_this.findServer(function(err) {
-				if(err) {
-					window.plugins.insomnia.allowSleepAgain();		//Allow sleeping again
-					
-					glbThis.notify("Sorry, we cannot connect to the server. Trying again in 10 seconds.");
-					glbThis.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.stopConnecting('" + imageURIin + "');\"></ons-icon><br/>Cancel");
-					//Search again in 10 seconds:
-					var thisScope = {};
-					thisScope.imageURIin = imageURIin;
-					thisScope.idEnteredB = idEnteredB;
-					thisScope.newFilename = newFilename;
-					
-					
-					//Countdown
-					var cntDown = 10;
-					glbThis.cntLoopA = setInterval(function() {
-						cntDown --;
-						if(cntDown <= 0) {
-								clearInterval(glbThis.cntLoopA);				
-						}
-						if((cntDown >= 0) && (glbThis.continueConnectAttempts == true)) {
-							glbThis.notify("Sorry, we cannot connect to the server. Trying again in " + cntDown + " seconds.");
-						}
-					},1000);
-					
-					glbThis.continueConnectAttempts = true;
-					setTimeout(function() {
-						if(glbThis.continueConnectAttempts == true) {
-							glbThis.notify("Trying to connect again.");
-							glbThis.uploadPhoto(thisScope.imageURIin, thisScope.idEnteredB, thisScope.newFilename);
-						}
-					}, 10000);
-				} else {
-					//Now we are connected, upload the photo again
-					glbThis.uploadPhoto(imageURIin, idEnteredB, newFilename);
-					return;
-				}
-			});
-			return;
-		} else {
-			//Have connected OK to a server		
-			var myImageURIin = imageURIin;
-			var imageURI = imageURIin;
-
-			var options = new FileUploadOptions();
-			options.fileKey="file1";
-			options.mimeType="image/jpeg";
-
-			var params = new Object();
-			params.title = idEntered; 
-			if((params.title == '')||(params.title == null)) {
-				if((idEnteredB == '')||(idEnteredB == null)) {
-					params.title = 'image';
-				} else {
-					params.title = idEnteredB;
-				}
-				
-			}
-
-			options.fileName = newFilename;
-			options.params = params;
-			options.chunkedMode = false;		//chunkedMode = false does work, but still having some issues. =true may only work on newer systems?
-			options.headers = {
-				Connection: "close"
-			}
-			
-			options.idEntered = idEnteredB;
-
-
-			var ft = new FileTransfer();
-			_this.notify("Uploading " + params.title);
-			_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
-
-			ft.onprogress = _this.progress;
-
-		 
-		 
-			var serverReq = usingServer + '/api/photo';
-
-			var repeatIfNeeded = {
-				"imageURI" : imageURI,
-				"serverReq" : serverReq,
-				"options" :options,
-				"failureCount": 0,
-				"nextAttemptSec": 15
-			};
-			
-			retryIfNeeded.push(repeatIfNeeded);
-			
-			fileTransferMap.setItem(imageURI, ft);		//Make sure we can abort this photo later
-			
-
-			//Keep the screen awake as we upload
-			window.plugins.insomnia.keepAwake();
-			
-			var myImageURI = repeatIfNeeded.imageURI;
-			
-			ft.upload(imageURI, serverReq, function(result) {
-				  				glbThis.win(result, myImageURI);
-				  }, function(result) {
-				  				glbThis.fail(result, myImageURI);
-				  }, options);
-	     
-         }		//End of connected to a server OK
-    },
 	
     progress: function(progressEvent) {
     	var statusDom = document.querySelector('#status');
@@ -1257,7 +1156,7 @@ var app = {
 	    			localStorage.removeItem("usingServer");				//This will force a reconnection
 	    			localStorage.removeItem("defaultDir");
 	    			localStorage.removeItem("serverRemote");
-	    			glbThis.uploadPhoto(repeatIfNeeded.imageId, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
+	    			glbThis.uploadPhotoData(repeatIfNeeded.imageId, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
 	    			
 	    			//Clear any existing timeouts
 	    			if(repeatIfNeeded.retryTimeout) {
@@ -1813,12 +1712,14 @@ var app = {
   		
   		var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
   		
-  		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
-  			if(localPhotos[cntc].imageURI) {
-  			
-  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageId, 'cancel');
-  			}
-  		}
+  		if(localPhotos) {
+	  		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
+	  			if(localPhotos[cntc].imageURI) {
+	  			
+	  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageId, 'cancel');
+	  			}
+	  		}
+	  	}
    	
    		glbThis.notify("All photos have been deleted and forgotten.");
    		glbThis.cancelNotify("");		//Remove any cancel icons
@@ -1864,6 +1765,8 @@ var app = {
            }, 5000);
 
            networkinterface.getWiFiIPAddress(function(ipInfo) {
+           		
+           		
            		if(ipInfo.ip) {
 		            _this.ip = ipInfo.ip;			//note: we could use ipInfo.subnet here but, this could be a 16-bit subnet rather than 24-bit?
 		            var len =  ipInfo.ip.lastIndexOf('\.') + 1;
@@ -1872,7 +1775,14 @@ var app = {
 		            cb(null);
 		        } else {
 		        	//Could be an inet:6 version e.g 2404:4407:27f0:8100:a693:9810:7740:787. For now, just treat as 127.0.0.1. TODO: improve this
-		        	_this.ip = "127.0.0.1";
+		        	_this.ip = "127.0.0.1";			
+		        	var host = window.location.host; 
+		        	host = host.replace("https://", "");
+		        	host = host.substring(0, host.indexOf(':'));
+		        	_this.ip = host.replace("http://", "");
+		        	
+		        	alert("This ip:" + _this.ip);		//TESTING
+		        	
 		        	var len =  _this.ip.lastIndexOf('\.') + 1;
 		            _this.lan = _this.ip.substr(0,len);
 		            clearTimeout(iptime);
@@ -2124,11 +2034,11 @@ var app = {
 		//Input a server dir e.g. uPSE4UWHmJ8XqFUqvf
 		//   where the last part is the guid.
 		
-		//Get a URL like this: https://atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
+		//Get a URL like this: https://medimage-pair.atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
 		//to get a .json array of options.
 		//TODO: confirm this is still a valid path!
 		
-		var settingsUrl = "https://atomjump.com/med-settings.php?type=get&guid=" + guid;
+		var settingsUrl = "https://medimage-pair.atomjump.com/med-settings.php?type=get&guid=" + guid;
 		
 		var myCb = cb;
 		
