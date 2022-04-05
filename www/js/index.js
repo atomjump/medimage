@@ -615,20 +615,15 @@ var app = {
 	   totalScanned = 0;
 	   
 	   if(lan == "127.0.0.") {
-	   		//Use the default 127 address
-	   		var url = 'http://' + lan + '1:' + port;
-	   		cb(url, null);
-	   		return;
-	   }
-	   
-       for(var cnt=0; cnt< 255; cnt++){
-          var machine = cnt.toString();
-          var url = 'http://' + lan + machine + ':' + port;
-          this.get(url, function(goodurl, resp, timeout) {
-              
-              if(resp) {
-              	
-              	//This is a good server
+	   		//Use the default 127.0.0.1 address
+	   		var machine = "1";
+	   		var url = 'http://' + lan + machine + ':' + port;
+	   		
+	   		this.get(url, function(goodurl, resp, timeout) {
+	          
+	          if(resp) {
+	          	
+	          	//This is a good server
 				totalScanned ++;
 							  
 							  
@@ -637,18 +632,48 @@ var app = {
 			 
 				 clearInterval(scanning);
 				 cb(goodurl, null);
-              } else {
-              	
+	          } else {
+	          	
 				totalScanned ++;
 				_this.notify("Scanning Wifi. Responses:" + totalScanned);
-              	
-              }
-              
-              
-          });
+	          	
+	          }
+	          
+	          
+	      });
+	   } else {
+	   
+		   for(var cnt=0; cnt< 255; cnt++){
+			  var machine = cnt.toString();
+			 
+			  var url = 'http://' + lan + machine + ':' + port;
+			  this.get(url, function(goodurl, resp, timeout) {
+			      
+			      if(resp) {
+			      	
+			      	//This is a good server
+					totalScanned ++;
+								  
+								  
+					 //Save the first TODO: if more than one, open another screen here
+					 localStorage.setItem("currentWifiServer", goodurl);
+				 
+					 clearInterval(scanning);
+					 cb(goodurl, null);
+			      } else {
+			      	
+					totalScanned ++;
+					_this.notify("Scanning Wifi. Responses:" + totalScanned);
+			      	
+			      }
+			      
+			      
+			  });
 
 
-       }
+		   }
+	   }
+	   
 
 	   var pausing = false;
        //timeout check every 6 secs
@@ -931,8 +956,12 @@ var app = {
 			var serverReq = usingServer + '/api/photo';
 			
 			// Get the form element withot jQuery
+			//TESTING
 			var form = document.createElement("form");
 			form.setAttribute("id", "photo-sending-frm-" + imageId);
+			
+			//Was:
+			//var form = document.getElementById("photo-sending-frm");
 
 			var ImageURL = imageLocalFileIn;	
 			// Split the base64 string in data and contentType
@@ -993,14 +1022,14 @@ var app = {
 					var result = {};
 					result.responseCode = 400;
 					glbThis.fail(result, imageId);
-					form.remove();		//Clear up
+					//TESTINGform.remove();		//Clear up
 				},
 				success:function(data){
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
 					glbThis.win(result, imageId);
-					form.remove();		//Clear up
+					//TESTINGform.remove();		//Clear up
 					
 				},
 				complete:function(){
@@ -1780,8 +1809,6 @@ var app = {
 		        	host = host.replace("https://", "");
 		        	host = host.substring(0, host.indexOf(':'));
 		        	_this.ip = host.replace("http://", "");
-		        	
-		        	alert("This ip:" + _this.ip);		//TESTING
 		        	
 		        	var len =  _this.ip.lastIndexOf('\.') + 1;
 		            _this.lan = _this.ip.substr(0,len);
