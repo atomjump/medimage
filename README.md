@@ -31,6 +31,7 @@ Current status:
 
 Run with 
 ```
+npm install -g cordova  [in case Cordova is not yet installed. You will need npm and node to be installed also]
 cordova platform add browser; cordova build browser; cordova run browser
 ```
 You may want to use an Apache Proxy to get port 8000 running from a :443 SSL domain.
@@ -65,7 +66,7 @@ if ('srcObject' in video) {
 }
 ```
 
-We woudl also recommend improving the error messages in the same file. Replace:
+We would also recommend improving the error messages in the same file. Replace:
 ```
     if (navigator.getUserMedia) {
         navigator.getUserMedia({ video: true, audio: false }, successCallback, errorCallback);

@@ -339,7 +339,8 @@ var app = {
        },
        {
         quality: 100,
-        destinationType: Camera.DestinationType.DATA_URL
+        destinationType: Camera.DestinationType.DATA_URL,
+        cameraDirection: 0
        });
     },
     
