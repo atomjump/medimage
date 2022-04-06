@@ -1960,10 +1960,7 @@ var app = {
 				);
 		} else {
 			//Ready to take a picture
-			//TESTING:
-			//jquery("#mypic").click();
-			//End TESTING
-			
+	
 		    //Old style:_this.takePicture();
 		    if(dataURL) {
 		    	app.processPictureData(dataURL); 
@@ -1971,7 +1968,6 @@ var app = {
             } else {
             	//Simulate a click on the big button - i.e. start the camera.
             	document.getElementById('mypic').click();
-            	//jquery("#mypic").click();
             }
 		    			
 		}
