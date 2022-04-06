@@ -267,70 +267,7 @@ var app = {
             _this.takingPhoto = false;		//Have finished with the camera
         }
     	
-    	
-    	
-
  
-      		
-      		
-      	  
-      		
-      	/*
-      	//Move picture into persistent storage
-      	  //Grab the file name of the photo in the temporary directory
-		  var currentName = imageURI.replace(/^.*[\\\/]/, '');
-		 
-		  //Create a new name for the photo
-		  var d = new Date(),
-			  n = d.getTime(),
-			  newFileName = n + ".jpg";
-			
-			
-		   window.resolveLocalFileSystemURI( imageURI, function(fileEntry) {
-		 
-		 	  var myFile = fileEntry;
-			 	  
-			 	   try {	
-					  //Try moving the file to permanent storage
-					  window.resolveLocalFileSystemURL( cordova.file.dataDirectory, 
-		                function(directory) {
-					  
-						  try {
-							  myFile.moveTo(directory, newFileName, function(success){
-						 		//Moved it to permanent storage successfully
-								//success.fullPath contains the path to the photo in permanent storage
-								if(success.nativeURL) {
-									glbThis.processPicture(success.nativeURL);
-								} else {
-									glbThis.notify("Sorry we could not find the moved photo on the phone. Please let medimage.co.nz know that a moveFile() has not worked correctly.");
-								}
-								
-								
-							  }, function(err){
-								//an error occured moving file - send anyway, even if it is in the temporary folder
-								glbThis.processPicture(imageURI);
-							  });
-						   } catch(err) {
-						   		//A problem moving the file but send the temp file anyway
-					  			glbThis.processPicture(imageURI);
-						   }
-					   }, function(err) {
-					   		//an error occured moving file - send anyway, even if it is in the temporary folder
-							glbThis.processPicture(imageURI);
-					   
-					   });
-				   } catch(err) {
-				   	  //A proble occured determining if the persistent folder existed
-					  glbThis.processPicture(imageURI);
-				   
-				   }
-
-			},
-			function(err) {
-				//Could not resolve local file
-				glbThis.notify("Sorry we could not find the photo on the phone.");
-			
-		   });*/
     
         },
        function( message ) {
@@ -340,7 +277,9 @@ var app = {
        {
         quality: 100,
         destinationType: Camera.DestinationType.DATA_URL,
-        cameraDirection: 0
+        cameraDirection: 0,
+        targetHeight: 2000,
+        targetWidth: 3000
        });
     },
     
