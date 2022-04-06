@@ -1968,8 +1968,9 @@ var app = {
 		    	app.processPictureData(dataURL); 
             	app.takingPhoto = false;		//Have finished with the camera
             } else {
-            	//Simulate a click on the big button - i.e. start the camera.
-            	document.getElementById('mypic').click();
+            	//TODO: For now do nothing.
+            	//Note: this is wrong: Simulate a click on the big button - i.e. start the camera.
+            	//document.getElementById('mypic').click();
             }
 		    			
 		}
