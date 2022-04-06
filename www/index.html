@@ -94,6 +94,9 @@
         <!--Older method - works on a desktop  <div class="logo" onclick="app.bigButton();">
 			<img  src="img/logo@2x.png" class="logo-img">
         </div>-->
+       	<div class="logo" onclick="app.bigButton();">
+        	<img  src="img/logo@2x.png" class="logo-img">
+        </div>
 
         <div style="text-align:center;">
             <span id="notify" class="notify-text" style="padding-left:4px; padding-right:4px;"></span>
@@ -224,9 +227,8 @@
 		 
 			  img.src = dataURL;
 			  
-			  //var fullBase64 = c.toDataURL("image/jpeg");			//Get the actual data in .jpg format
-              app.processPictureData(dataURL); 
-              app.takingPhoto = false;		//Have finished with the camera
+              app.bigButton(dataURL);
+             
 			  
 			};
 		 

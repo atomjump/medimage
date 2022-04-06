@@ -1932,7 +1932,7 @@ var app = {
 		}
 	},
 
-    bigButton: function() {
+    bigButton: function(dataURL) {
 
         //Called when pushing the big button
         
@@ -1964,7 +1964,16 @@ var app = {
 			//jquery("#mypic").click();
 			//End TESTING
 			
-		    _this.takePicture();			
+		    //Old style:_this.takePicture();
+		    if(dataURL) {
+		    	app.processPictureData(dataURL); 
+            	app.takingPhoto = false;		//Have finished with the camera
+            } else {
+            	//Simulate a click on the big button - i.e. start the camera.
+            	document.getElementById('mypic').click();
+            	//jquery("#mypic").click();
+            }
+		    			
 		}
 
 		
