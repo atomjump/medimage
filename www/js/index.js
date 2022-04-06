@@ -279,7 +279,7 @@ var app = {
         destinationType: Camera.DestinationType.DATA_URL,
         cameraDirection: 0,
         targetHeight: 2000,
-        targetWidth: 3000
+        targetWidth: 3555
        });
     },
     
