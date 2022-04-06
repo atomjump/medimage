@@ -1938,6 +1938,8 @@ var app = {
         
         var _this = this;
 
+		//TODO: record this current photo immediately.
+
        var foundRemoteServer = null;
        var foundWifiServer = null;
 	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
