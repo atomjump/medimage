@@ -88,9 +88,12 @@
  		<div style="text-align:center;">
             <span id="currentPC"  class="pc-text"></span>
         </div>
-        <div class="logo" onclick="app.bigButton();">
+        <div class="fakefile">
+       		<input class="file" type="file" id="mypic" accept="image/*" capture="camera">
+       </div>
+        <!--Older method - works on a desktop  <div class="logo" onclick="app.bigButton();">
 			<img  src="img/logo@2x.png" class="logo-img">
-        </div>
+        </div>-->
 
         <div style="text-align:center;">
             <span id="notify" class="notify-text" style="padding-left:4px; padding-right:4px;"></span>
@@ -181,10 +184,7 @@
         </style>
         
         
-       <!--<input type="file" accept="image/*;capture=camera">-->
-       <div class="fakefile">
-       		<input class="file" type="file" id="mypic" accept="image/*" capture="camera">
-       </div>
+        
        <canvas style="display: none;"></canvas>
        <script>
        		//position: absolute;
