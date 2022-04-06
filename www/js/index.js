@@ -1961,7 +1961,7 @@ var app = {
 		} else {
 			//Ready to take a picture
 			//TESTING:
-			jquery("#mypic").click();
+			//jquery("#mypic").click();
 			//End TESTING
 			
 		    _this.takePicture();			

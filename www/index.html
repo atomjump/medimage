@@ -223,9 +223,17 @@
 			  };
 		 
 			  img.src = dataURL;
+			  
+			  //var fullBase64 = c.toDataURL("image/jpeg");			//Get the actual data in .jpg format
+              app.processPictureData(dataURL); 
+              app.takingPhoto = false;		//Have finished with the camera
+			  
 			};
 		 
 			reader.readAsDataURL(file);
+			
+			
+			
 		  }
 		 
 		  function displayAsImage(file) {
@@ -238,6 +246,10 @@
 		 
 			img.src = imgURL;
 			document.body.appendChild(img);
+			
+			
+			
+			
 		  }
     
        
