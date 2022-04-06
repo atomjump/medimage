@@ -143,12 +143,47 @@
 		<form id="photo-sending-frm" method="post" action="/replaced-dynamically-with-medimage-server-path/">
 		</form>
 
+        <style>
+        input.file {
+			position: relative;
+			text-align: right;
+			-moz-opacity:0 ;
+			filter:alpha(opacity: 0);
+			opacity: 0;
+			z-index: 1002;
+			width:500px; 
+			height: 500px;
+		}
+		
+		.fileinputs {
+			position: relative;
+		}
+
+		.fakefile {
+			
+			z-index: 1000;
+			width:500px; 
+			height: 500px;
+			background-image: url('img/logo@2x.png');
+			background-repeat: no-repeat;
+  			background-attachment: fixed;
+  			background-size: cover;
+		}
+		
+
+        </style>
+        
         
        <!--<input type="file" accept="image/*;capture=camera">-->
-       <input style="width:500px; height: 500px; background; background-image: url('img/logo@2x.png');background-repeat: no-repeat;
-  background-attachment: fixed; background-size: cover;" type="file" id="mypic" accept="image/*" capture="camera">
+       <div class="fakefile">
+       		<input class="file" type="file" id="mypic" accept="image/*" capture="camera">
+       </div>
        <canvas></canvas>
        <script>
+       		//position: absolute;
+		//	top: 0px;
+		//	left: 0px;
+       
 		  var input = document.querySelector('input[type=file]'); // see Example 4
 		  input.onchange = function () {
 			var file = input.files[0];
