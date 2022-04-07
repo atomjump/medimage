@@ -26,6 +26,8 @@ var retryIfNeeded = [];	//A global pushable list with the repeat attempts
 var checkComplete = [];	//A global pushable list with the repeat checks to see if image is on PC
 var checkConnected = 0;		//Global count of checking photos taken before we are connected
 var retryNum = 0;
+var currentPhotoData = "";		//A temporary store for the current photo
+
 
 
 //See: https://stackoverflow.com/questions/14787705/phonegap-cordova-filetransfer-abort-not-working-as-expected
@@ -94,6 +96,12 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
           app.receivedEvent('deviceready');
+          
+          
+        
+    	 
+          
+          
     },
     
     
@@ -122,7 +130,7 @@ var app = {
     	//https://caniuse.com/indexeddb
     	//The limits on storage size should be fine - almost no limits, although go past 5MB on some platforms
     	//and it will give you a warning. See https://stackoverflow.com/questions/5692820/maximum-item-size-in-indexeddb
-        
+ 
         
         
         
@@ -289,7 +297,19 @@ var app = {
     	 //Warning: localStorage may not be large enough to support the imageData itself
     	 //TODO: save imageData to innodb
     	 
-       	  var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+ 
+    	 glbThis.tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		 var store = glbThis.tx.objectStore("images");
+
+		store.put({ imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send"});
+
+		glbThis.tx.oncomplete = function() {
+		  // All requests have succeeded and the transaction has committed.
+		  //alert("Transaction Committed");	//TESTING - remove me
+		  //Note needed: glbThis.medImageSendCacheDb.close();
+		};
+	 
+       	  /*Old way: var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
        	  if(!localPhotos) {
        	  	localPhotos = [];
        	  }
@@ -302,6 +322,7 @@ var app = {
        	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
        	  localPhotos.push(newPhoto);
        	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
+       	  */
     	  return true;
     },
  
@@ -323,6 +344,21 @@ var app = {
 	
 	removeLocalPhoto: function(imageId) {
 		//Loop through the current array and remove
+		
+		 var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		 var store = tx.objectStore("images");
+		
+		store.delete(imageId);
+		
+		tx.oncomplete = function() {
+		  // All requests have succeeded and the transaction has committed.
+		  if(imageId) {
+		  	//alert("Image deleted " + imageId);	//TESTING - remove me
+		  } else {
+		  	//alert("Image deleted. No known id");
+		  }
+		};
+		/* Old way:
 		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
 		if(!localPhotos) {
 			localPhotos = [];
@@ -340,6 +376,7 @@ var app = {
     				return;
     		}
     	}
+    	*/
 	},
     
     changeLocalPhotoStatus: function(imageId, newStatus, fullData) {
@@ -352,7 +389,46 @@ var app = {
     	//so the removeLocalPhoto does a sync load, delete from array, and write back.
     	
     	
-    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+  		 var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		 var store = tx.objectStore("images");
+		
+		var toUpdate = store.get(imageId);
+		
+		toUpdate.onsuccess = function() {
+			toUpdate.result.status = newStatus;
+			
+			if((newStatus == "onserver")&&(fullData)) {
+				toUpdate.result.fullData = fullData;			
+			}
+			
+			store.put(toUpdate.result);
+			//alert("Change complete image " + imageId);	//TESTING - remove me
+		}
+					
+		if(newStatus === "cancel") {
+			//Now remove local photo
+			glbThis.removeLocalPhoto(imageId);
+		}
+		
+		
+				
+		
+		
+	
+		
+    	
+    	
+    	
+    	
+    	
+    	
+    	tx.oncomplete = function() {
+		  // All requests have succeeded and the transaction has committed.
+		  //alert("Transaction for change complete image " + imageId);	//TESTING - remove me
+		};
+    	
+    	
+    	/*var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
        	  	localPhotos = [];
        	}
@@ -397,7 +473,7 @@ var app = {
     				 		glbThis.removeLocalPhoto(imageURI);
     				 	}
     				 
-    				}); */
+    				}); 
     			} else {
     				localPhotos[cnt].status = newStatus;
     				
@@ -413,7 +489,7 @@ var app = {
     			}
     		}
     	
-    	}
+    	}*/
     	
     	//Note: don't put any post proccessing down here. The resolveLocalFileSystem is async.
 
@@ -439,7 +515,66 @@ var app = {
        	*/
       	var photoDetails = null;
       	
+      	var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		var store = tx.objectStore("images");
+		
+		
+		var request = tx.objectStore("images").openCursor();
+	 	request.onsuccess = function(e) {   
+		   var cursor = request.result || e.result;             
+		   if(cursor && cursor.value){             
+		         
+		      
+		      var newPhoto = cursor.value;
+		      
+		      //Now our logic
+		      if(newPhoto.status == 'onserver') {
+      				
+       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
+      				if(newPhoto.fullData) {
+      					
+      					try {
+      						var fullData = newPhoto.fullData;
+      						if(fullData.details && fullData.details.imageData) {
+      							fullData.loopCnt = 11;
+      							fullData.slowLoopCnt = null;		//Start again with a quick loop
+		  						checkComplete.push(fullData);
+		  						var thisImageId = fullData.details.imageId;
+		  						
+		  						glbThis.check(thisImageId);		//This will only upload again if it finds it hasn't been transferred off the 
+		  					} else {
+		  						//This is a case where full details are not available. Do nothing.
+			  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+		  					}
+      					} catch(err) {
+      						//There was a problem parsing the data.
+       						glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+      					}
+      				} else {
+      					//No fullData was added - resend anyway
+      					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+      				
+      				}
+      					
+      			
+      			} else {
+        			//Needs to be resent
+        			//TODO: get full image data from indexedDb
+        			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
+        		}
+        		
+        		
+		      cursor.continue();
+		   }
+	   } 
       	
+      	tx.oncomplete = function(e) {
+      	 	 //alert("Loop complete");  	//TESTING 
+        	//callback(); 
+   		}
+    	
+    	//Old way:
+    	/*
     	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
     	if(!localPhotos) {
        	  	localPhotos = [];
@@ -486,6 +621,7 @@ var app = {
         		}
         	}    	
     	}
+    	*/
     	
     	
     	return;
@@ -670,11 +806,27 @@ var app = {
 	stopConnecting: function(cancelId) {
 		//Similar to cancelUpload, but before the upload has started
 		glbThis.continueConnectAttempts = false;
-		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
+		
+		
+		//Untested:
+		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		var store = tx.objectStore("images");
+		
+		var photoCountRequest =  store.count();
+		
+		photoCountRequest.onsuccess = function() {
+  			//Set global
+  			checkConnected = photoCountRequest.result;
+		}
+		
+		
+				
+		/*Old way:var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
        	if(!localPhotos) {
        	 	localPhotos = [];
        	}
        	checkConnected = localPhotos.length;
+       	*/
        	 
 		
 		
@@ -1678,8 +1830,30 @@ var app = {
   		
   		}
   		
-  		var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
   		
+  		//Go through storage and clear out each entry
+  		//Old way:var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
+  		
+  		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		var store = tx.objectStore("images");
+		
+		
+		var request = tx.objectStore("images").openCursor();
+	 	request.onsuccess = function(e) {   
+		   var cursor = request.result || e.result;             
+		   if(cursor && cursor.value){             
+		         
+		      
+		      var newPhoto = cursor.value;
+  		      if(newPhoto.imageId) {
+  		      	_this.changeLocalPhotoStatus(newPhoto.imageId, 'cancel');
+  		      }
+  				
+  			}
+  		}
+  		
+  		//Old way:
+  		/*
   		if(localPhotos) {
 	  		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
 	  			if(localPhotos[cntc].imageURI) {
@@ -1687,7 +1861,7 @@ var app = {
 	  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageId, 'cancel');
 	  			}
 	  		}
-	  	}
+	  	}*/
    	
    		glbThis.notify("All photos have been deleted and forgotten.");
    		glbThis.cancelNotify("");		//Remove any cancel icons
@@ -1827,7 +2001,7 @@ var app = {
     },
 
 
-	connect: function(results) {
+	connect: function(results, photoData) {
 		
     	//Save the server with a name
     	//Get existing settings array    	
@@ -1871,6 +2045,7 @@ var app = {
 													//An error finding wifi
 													glbThis.notify(err);
 													glbThis.bigButton();
+													//Send off current 
 												} else {
 													//Ready to take a picture, rerun with this
 													//wifi server
@@ -1932,14 +2107,21 @@ var app = {
 		}
 	},
 
-    bigButton: function(dataURL) {
+    bigButton: function(photoData) {
 
         //Called when pushing the big button
         
         var _this = this;
 
-		//TODO: record this current photo immediately.
-
+		//Record this current photo immediately for future reference.
+	   if(photoData) {
+			currentPhotoData = photoData;
+	   } else {
+	   		if(currentPhotoData) {
+	   			//Otherwise use the RAM stored version
+	   			photoData = currentPhotoData;
+	   		}   	
+	   }
        var foundRemoteServer = null;
        var foundWifiServer = null;
 	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
@@ -1964,14 +2146,10 @@ var app = {
 			//Ready to take a picture
 	
 		    //Old style:_this.takePicture();
-		    if(dataURL) {
-		    	app.processPictureData(dataURL); 
+		    	app.processPictureData(photoData); 
             	app.takingPhoto = false;		//Have finished with the camera
-            } else {
-            	//TODO: For now do nothing.
-            	//Note: this is wrong: Simulate a click on the big button - i.e. start the camera.
-            	//document.getElementById('mypic').click();
-            }
+           
+       
 		    			
 		}
 

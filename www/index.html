@@ -225,9 +225,8 @@
 			
 		  }
 		 
-		  
-    
-       
+		 
+
        </script>
        
        
@@ -239,8 +238,96 @@
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
             ons.ready(function() {
-	        // Init code here
-	        app.initialize();
+	        	
+	        
+	        
+	        		  //Global databases
+			  	var idbSupported = false;		//Whether we can store photos in an indexeddb database within this browser, or not
+			  	var sendCacheRam = [];			//If we cannot use an indexeddb database within this browser, store photos temporarily in RAM memory
+			  	app.medImageSendCacheDb = {};
+			 
+			 
+			  	//document.addEventListener("DOMContentLoaded", function(){
+				  	//Set up the indexedDb database
+					if("indexedDB" in window) {
+						idbSupported = true;
+					} 
+					
+					if(idbSupported == true) {
+						//Seem to have support for indexDB
+						app.medImageSendCacheDb = indexedDB.open("sendCache");
+						/*if(!request.onsuccess) {
+							idbSupported = false;
+							alert("Sorry, additional storage is not fully supported, and unsent photos will not be remembered when you revisit this app. You may be in a private window? Try a non-private window.");
+						}*/
+					} else {
+						alert("Sorry, additional storage is not supported, and unsent photos will not be remembered when you revisit this app.");
+						app.medImageSendCacheDb = {};
+						
+						//TODO: Now store in our temporary array storage sendCacheRam[]
+					}
+
+					app.medImageSendCacheDb.onupgradeneeded = function() {
+					  // The database did not previously exist, so create object stores and indexes.
+					  app.medImageSendCacheDb = app.medImageSendCacheDb.result;
+					  var store = app.medImageSendCacheDb.createObjectStore("images", {keyPath: "imageId"});
+
+					  // Populate with initial data.
+					  //store.put({imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send" });
+					  			//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
+					  //alert("Init'ed db");		//TESTING - remove me
+					  
+					  
+					};
+
+					
+					app.medImageSendCacheDb.onsuccess = function() {
+					  	app.medImageSendCacheDb = this.result;
+					  	
+					  	//alert("Database successfully started");	//TESTING
+					   /* Example addition
+					  	var tx = medImageSendCacheDb.transaction("sendCache", "readwrite");
+						var store = tx.objectStore("sendCache");
+
+						store.put({imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send"});
+
+						tx.oncomplete = function() {
+						  // All requests have succeeded and the transaction has committed.
+						  alert("Transaction Committed");	//TESTING - remove me
+						};
+						
+						*/
+
+						/* Example retrieval
+						var tx = medImageSendCacheDb.transaction("sendCache", "readonly");
+						var store = tx.objectStore("sendCache");
+						var index = store.index("imageId");
+
+						var request = index.get(imageId);
+						request.onsuccess = function() {
+						  var matching = request.result;
+						  if (matching !== undefined) {
+							// A match was found.
+							//report(matching.isbn, matching.title, matching.author);
+							alert("Image: " + matching.imageId + " idEnteredB:" + matching.idEnteredB);
+							//" Data: " + matching.imageLocalFileIn
+						  } else {
+							// No match was found.
+							//report(null);
+							alert("No match found");
+						  }
+						};
+						*/
+					  
+					  	// Init code here
+	        			app.initialize();
+					};
+			
+			
+					//},false);		//End of db setup
+		   		
+			   
+	        
 	      });
 	      
           
