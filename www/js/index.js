@@ -922,15 +922,6 @@ var app = {
 				xhr: function () {
 					var xhr = jQuery.ajaxSettings.xhr();
 					xhr.upload.onprogress = glbThis.progress;
-					
-					/*Old style: function (e) {
-						// For uploads
-						if (e.lengthComputable) {
-							var percFinished = Math.round((e.loaded / e.total) * 100.0);
-							_this.notify("Uploading " + percFinished + "%");
-						    //console.log("Progress: " + );
-						}
-					};*/
 					return xhr;
 				},
 				error: function(err) {
@@ -992,9 +983,7 @@ var app = {
     
     
     writeFile: function(fileEntry, base64, cb) {
-	   //var canvasObject = document.getElementById('myImage');
-	   //base64 = canvasObject.toDataURL("image/jpeg"); // Base64 string
-	   
+
 	   
 	   var _this = this;
 	   
