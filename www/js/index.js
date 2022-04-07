@@ -125,11 +125,6 @@ var app = {
     processPictureData: function(imageDataLocalFile)
     {
     
-    	//TODO: Researching best option for storing the cache of recent photos sent/unsent
-    	//IndexedDB seems like the best option: https://www.w3.org/TR/IndexedDB/ 
-    	//https://caniuse.com/indexeddb
-    	//The limits on storage size should be fine - almost no limits, although go past 5MB on some platforms
-    	//and it will give you a warning. See https://stackoverflow.com/questions/5692820/maximum-item-size-in-indexeddb
  
         
         
@@ -294,6 +289,13 @@ var app = {
  
      recordLocalPhotoData: function(imageId, imageData, idEntered, fileName) {
     	 //Save into our local indexDb array, in case the app quits
+    	 
+    	 //Storing the cache of recent photos sent/unsent
+    	 //IndexedDB seems like the best option: https://www.w3.org/TR/IndexedDB/ 
+    	 //https://caniuse.com/indexeddb
+    	 //The limits on storage size should be fine - almost no limits, although go past 5MB on some platforms
+    	 //and it will give you a warning. See https://stackoverflow.com/questions/5692820/maximum-item-size-in-indexeddb
+ 
      	 
  		if(glbThis.idbSupported == true) {
 			 glbThis.tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
@@ -303,26 +305,10 @@ var app = {
 
 			glbThis.tx.oncomplete = function() {
 			  // All requests have succeeded and the transaction has committed.
-			  //alert("Transaction Committed");	//TESTING - remove me
-			  //Note needed: glbThis.medImageSendCacheDb.close();
-			};
+			}
 		}
 	 
-       	  /*Old way: var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-       	  if(!localPhotos) {
-       	  	localPhotos = [];
-       	  }
-       	  var newPhoto = {
-       	  					"imageId" : imageId,
-       	  					"imageData" : null,
-       	  					"idEntered" : idEntered,
-       	  					"fileName" : fileName,
-       	  					"status" : "send"
-       	  					};		//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
-       	  localPhotos.push(newPhoto);
-       	  glbThis.setArrayLocalStorage("localPhotos", localPhotos);
-       	  */
-    	  return true;
+    	return true;
     },
  
     
@@ -352,34 +338,10 @@ var app = {
 		
 			tx.oncomplete = function() {
 			  // All requests have succeeded and the transaction has committed.
-			  if(imageId) {
-			  	//alert("Image deleted " + imageId);	//TESTING - remove me
-			  } else {
-			  	//alert("Image deleted. No known id");
-			  }
 			};
 		}
 		
-		
-		/* Old way:
-		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-		if(!localPhotos) {
-			localPhotos = [];
-		}
-		for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-    		if(localPhotos[cnt].imageId === imageId) {
-    		
-    				
-    				localPhotos[cnt] = null;		//Need the delete first to get rid of subobjects
-    				localPhotos = glbThis.arrayRemoveNulls(localPhotos);
-    					
-    					
-    				//Set back the storage of the array
-    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
-    				return;
-    		}
-    	}
-    	*/
+	
 	},
     
     changeLocalPhotoStatus: function(imageId, newStatus, fullData) {
@@ -405,7 +367,6 @@ var app = {
 				}
 				
 				store.put(toUpdate.result);
-				//alert("Change complete image " + imageId);	//TESTING - remove me
 			}
 		}
 					
@@ -413,93 +374,12 @@ var app = {
 			//Now remove local photo
 			glbThis.removeLocalPhoto(imageId);
 		}
-		
-		
-				
-		
-		
-	
-		
-    	
-    	
-    	
-    	
-    	
+ 	
     	
     	tx.oncomplete = function() {
 		  // All requests have succeeded and the transaction has committed.
-		  //alert("Transaction for change complete image " + imageId);	//TESTING - remove me
 		};
-    	
-    	
-    	/*var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-    	if(!localPhotos) {
-       	  	localPhotos = [];
-       	}
-    	
-    	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-    		if(localPhotos[cnt].imageId === imageId) {
-    	
-    			if(newStatus === "cancel") {
-    				//Delete the photo
-    				
-    				glbThis.removeLocalPhoto(imageId);
-    				
-    				/*No longer needed in browser version: 
-    					window.resolveLocalFileSystemURI(imageId, function(fileEntry) {
-    					
-    					//Remove the file from the phone
-    					fileEntry.remove();
-    					
-    					//Remove entry from the array
-    					glbThis.removeLocalPhoto(imageId);
-    					
-    				}, function(evt) {
-    				
-    				
-    				 	//Some form of error case. We likely couldn't find the file, but we still want to remove the entry from the array
-    				 	//in this case
-    				 	var errorCode = null; 
-    				 	if(evt.code) {
-    				 		errorCode = evt.code;
-    				 	}
-    				 	if(evt.target && evt.target.error.code) {
-    				 		errorCode = evt.target.error.code;
-    				 	}
-     				 	if(errorCode === 1) {
-    				 		//The photo is not there. Remove anyway    				 		
-    				 		//Remove entry from the array    				 		
-    				 		glbThis.removeLocalPhoto(imageURI);
-    				 	} else {
-    				 	
-    				 		glbThis.notify("Sorry, there was a problem removing the photo on the phone. Error code: " + evt.target.error.code);
-    				 		//Remove entry from the array
-    				 		glbThis.removeLocalPhoto(imageURI);
-    				 	}
-    				 
-    				}); 
-    			} else {
-    				localPhotos[cnt].status = newStatus;
-    				
-    				//TODO: convert to indexedDB?
-    				if((newStatus == "onserver")&&(fullData)) {
-    					localPhotos[cnt].fullData = fullData;	
-    						
-    				}
-    				
-    				//Set back the storage of the array
-    				glbThis.setArrayLocalStorage("localPhotos", localPhotos);
-    				
-    			}
-    		}
-    	
-    	}*/
-    	
-    	//Note: don't put any post proccessing down here. The resolveLocalFileSystem is async.
-
-    	
-    	
-    
+      
     },
     
     
@@ -565,7 +445,6 @@ var app = {
 		  			
 		  			} else {
 		    			//Needs to be resent
-		    			//TODO: get full image data from indexedDb
 		    			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
 		    		}
 		    		
@@ -575,61 +454,10 @@ var app = {
 		   } 
 		  	
 		  	tx.oncomplete = function(e) {
-		  	 	 //alert("Loop complete");  	//TESTING 
-		    	//callback(); 
 	   		}
 	   	}	//End of idbSupported check
     	
-    	//Old way:
-    	/*
-    	var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-    	if(!localPhotos) {
-       	  	localPhotos = [];
-       	}
-       	      	
-       	
-       	for(var cnt = 0; cnt< localPhotos.length; cnt++) {
-      		var newPhoto = localPhotos[cnt];
-      		if(newPhoto) {
-      		
-      			if(newPhoto.status == 'onserver') {
-      				
-       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
-      				if(newPhoto.fullData) {
-      					
-      					try {
-      						var fullData = newPhoto.fullData;
-      						if(fullData.details && fullData.details.imageData) {
-      							fullData.loopCnt = 11;
-      							fullData.slowLoopCnt = null;		//Start again with a quick loop
-		  						checkComplete.push(fullData);
-		  						var thisImageId = fullData.details.imageId;
-		  						
-		  						glbThis.check(thisImageId);		//This will only upload again if it finds it hasn't been transferred off the 
-		  					} else {
-		  						//This is a case where full details are not available. Do nothing.
-			  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-		  					}
-      					} catch(err) {
-      						//There was a problem parsing the data.
-       						glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-      					}
-      				} else {
-      					//No fullData was added - resend anyway
-      					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-      				
-      				}
-      					
-      			
-      			} else {
-        			//Needs to be resent
-        			//TODO: get full image data from indexedDb
-        			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
-        		}
-        	}    	
-    	}
-    	*/
-    	
+     	
     	
     	return;
     
@@ -827,14 +655,6 @@ var app = {
 			}
 		}
 		
-		
-				
-		/*Old way:var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
-       	if(!localPhotos) {
-       	 	localPhotos = [];
-       	}
-       	checkConnected = localPhotos.length;
-       	*/
        	 
 		
 		
@@ -853,9 +673,7 @@ var app = {
 		var ft = fileTransferMap.getItem(cancelId);
 		if (ft)
 		{
-			//Abort the upload TODO: ft is an jQuery.AJAX upload object
-			//Old way:
-		    //ft.abort(glbThis.win, glbThis.fail);
+			//Abort the upload TODO: we may need to cancel the Query.AJAX upload object
 		    
 		    //remove the photo
 		    glbThis.changeLocalPhotoStatus(cancelId, "cancel");
@@ -909,7 +727,6 @@ var app = {
 		//Get a current date/time
 		var today = new Date();
 		var dd = String(today.getDate()).padStart(2, '0');
-		//var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
 		
 		var mmConvert = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
 		var mmm = mmConvert[today.getMonth()];
@@ -1051,7 +868,6 @@ var app = {
 			
 			options.idEntered = idEnteredB;
 
-			//New code TESTING:
 			_this.notify("Uploading " + params.title);
 			var serverReq = usingServer + '/api/photo';
 			
@@ -1059,9 +875,6 @@ var app = {
 			var form = document.createElement("form");
 			form.setAttribute("id", "photo-sending-frm-" + imageId);
 			
-			//Was:
-			//var form = document.getElementById("photo-sending-frm");
-
 			var ImageURL = imageLocalFileIn;	
 			// Split the base64 string in data and contentType
 			var block = ImageURL.split(";");
@@ -1084,12 +897,14 @@ var app = {
 			
 			var repeatIfNeeded = {
 				"imageId" : imageId,
+				"imageData" : imageLocalFileIn,
 				"serverReq" : serverReq,
 				"options" :options,
 				"failureCount": 0,
 				"nextAttemptSec": 15
-			};
-			//TODO "imageData" : imageData, removed. Use indexedDB
+			};		//TODO: confirm this is working correctly. We had removed the imageData, but I think it is still needed
+			//as it is a RAM-based store, so it is back in.
+			
 			
 			retryIfNeeded.push(repeatIfNeeded);
 			
@@ -1121,14 +936,14 @@ var app = {
 					var result = {};
 					result.responseCode = 400;
 					glbThis.fail(result, imageId);
-					//TESTINGform.remove();		//Clear up
+					//TESTING without for now: form.remove();		//Clear up
 				},
 				success:function(data){
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
 					glbThis.win(result, imageId);
-					//TESTINGform.remove();		//Clear up
+					//TESTING without for now: form.remove();		//Clear up
 					
 				},
 				complete:function(){
@@ -1143,42 +958,6 @@ var app = {
 			
 			
 
-			/* To be replaced:
-			var ft = new FileTransfer();
-			_this.notify("Uploading " + params.title);
-			//TODO: correct for data version:
-			//_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageURI + "');\"></ons-icon><br/>Cancel");
-
-			ft.onprogress = _this.progress;
-
-		 
-		 
-			var serverReq = usingServer + '/api/photo';
-
-			var repeatIfNeeded = {
-				"imageData" : imageData,
-				"serverReq" : serverReq,
-				"options" :options,
-				"failureCount": 0,
-				"nextAttemptSec": 15
-			};
-			
-			retryIfNeeded.push(repeatIfNeeded);
-			
-			fileTransferMap.setItem(imageData, ft);		//Make sure we can abort this photo later
-			
-
-			//Keep the screen awake as we upload
-			window.plugins.insomnia.keepAwake();
-			
-			var myImageData = repeatIfNeeded.imageData;
-			
-			ft.upload(imageURI, serverReq, function(result) {
-				  				glbThis.win(result, myImageURI);
-				  }, function(result) {
-				  				glbThis.fail(result, myImageURI);
-				  }, options);
-			*/
 	     
          }		//End of connected to a server OK
     },
@@ -1840,8 +1619,7 @@ var app = {
   		
   		
   		//Go through storage and clear out each entry
-  		//Old way:var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
-  		if(glbThis.idbSupported == true) {
+   		if(glbThis.idbSupported == true) {
 	  		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
 			var store = tx.objectStore("images");
 			
@@ -1860,17 +1638,6 @@ var app = {
 	  			}
 	  		}
 	  	}
-  		
-  		//Old way:
-  		/*
-  		if(localPhotos) {
-	  		for(var cntc = 0; cntc < localPhotos.length; cntc++) {
-	  			if(localPhotos[cntc].imageURI) {
-	  			
-	  				_this.changeLocalPhotoStatus(localPhotos[cntc].imageId, 'cancel');
-	  			}
-	  		}
-	  	}*/
    	
    		glbThis.notify("All photos have been deleted and forgotten.");
    		glbThis.cancelNotify("");		//Remove any cancel icons
@@ -1952,9 +1719,7 @@ var app = {
     
     factoryReset: function() {
         //We have connected to a server OK
-        
-
-        
+       
         var _this = this;
         
     		navigator.notification.confirm(
@@ -2119,7 +1884,6 @@ var app = {
     bigButton: function(photoData) {
 
         //Called when pushing the big button
-        
         var _this = this;
 
 		//Record this current photo immediately for future reference.
@@ -2152,19 +1916,11 @@ var app = {
 					''                 											// defaultText
 				);
 		} else {
-			//Ready to take a picture
-	
-		    //Old style:_this.takePicture();
-		    	app.processPictureData(photoData); 
-            	app.takingPhoto = false;		//Have finished with the camera
+			//Process the picture
+	    	app.processPictureData(photoData); 
+           	app.takingPhoto = false;		//Have finished with the camera
            
-       
-		    			
 		}
-
-		
-
-
 
     },
 
@@ -2201,7 +1957,6 @@ var app = {
 		
 		//Get a URL like this: https://medimage-pair.atomjump.com/med-settings.php?type=get&guid=uPSE4UWHmJ8XqFUqvf
 		//to get a .json array of options.
-		//TODO: confirm this is still a valid path!
 		
 		var settingsUrl = "https://medimage-pair.atomjump.com/med-settings.php?type=get&guid=" + guid;
 		
