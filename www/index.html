@@ -89,7 +89,7 @@
             <span id="currentPC"  class="pc-text"></span>
         </div>
         <div class="fakefile">
-       		<input class="file" type="file" id="mypic" accept="image/*" capture="camera">
+       		<input class="file" type="file" id="mypic" accept="image/jpeg, application/pdf" capture="camera">
        </div>
         <!--Older method - works on a desktop  <div class="logo" onclick="app.bigButton();">
 			<img  src="img/logo@2x.png" class="logo-img">
@@ -243,6 +243,7 @@
 	        
 	        		  //Global databases
 			  	var idbSupported = false;		//Whether we can store photos in an indexeddb database within this browser, or not
+			  	app.idbSupported = false;
 			  	var sendCacheRam = [];			//If we cannot use an indexeddb database within this browser, store photos temporarily in RAM memory
 			  	app.medImageSendCacheDb = {};
 			 
@@ -251,6 +252,7 @@
 				  	//Set up the indexedDb database
 					if("indexedDB" in window) {
 						idbSupported = true;
+						app.idbSupported = true;
 					} 
 					
 					if(idbSupported == true) {

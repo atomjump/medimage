@@ -293,21 +293,20 @@ var app = {
     
  
      recordLocalPhotoData: function(imageId, imageData, idEntered, fileName) {
-    	 //Save into our localPhotos array, in case the app quits
-    	 //Warning: localStorage may not be large enough to support the imageData itself
-    	 //TODO: save imageData to innodb
-    	 
- 
-    	 glbThis.tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		 var store = glbThis.tx.objectStore("images");
+    	 //Save into our local indexDb array, in case the app quits
+     	 
+ 		if(glbThis.idbSupported == true) {
+			 glbThis.tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+			 var store = glbThis.tx.objectStore("images");
 
-		store.put({ imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send"});
+			store.put({ imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send"});
 
-		glbThis.tx.oncomplete = function() {
-		  // All requests have succeeded and the transaction has committed.
-		  //alert("Transaction Committed");	//TESTING - remove me
-		  //Note needed: glbThis.medImageSendCacheDb.close();
-		};
+			glbThis.tx.oncomplete = function() {
+			  // All requests have succeeded and the transaction has committed.
+			  //alert("Transaction Committed");	//TESTING - remove me
+			  //Note needed: glbThis.medImageSendCacheDb.close();
+			};
+		}
 	 
        	  /*Old way: var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
        	  if(!localPhotos) {
@@ -345,19 +344,23 @@ var app = {
 	removeLocalPhoto: function(imageId) {
 		//Loop through the current array and remove
 		
-		 var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		 var store = tx.objectStore("images");
+		if(glbThis.idbSupported == true) {
+		 	var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+		 	var store = tx.objectStore("images");
 		
-		store.delete(imageId);
+			store.delete(imageId);
 		
-		tx.oncomplete = function() {
-		  // All requests have succeeded and the transaction has committed.
-		  if(imageId) {
-		  	//alert("Image deleted " + imageId);	//TESTING - remove me
-		  } else {
-		  	//alert("Image deleted. No known id");
-		  }
-		};
+			tx.oncomplete = function() {
+			  // All requests have succeeded and the transaction has committed.
+			  if(imageId) {
+			  	//alert("Image deleted " + imageId);	//TESTING - remove me
+			  } else {
+			  	//alert("Image deleted. No known id");
+			  }
+			};
+		}
+		
+		
 		/* Old way:
 		var localPhotos = glbThis.getArrayLocalStorage("localPhotos");
 		if(!localPhotos) {
@@ -388,21 +391,22 @@ var app = {
     	//Note: during the cancel, each removeLocalPhoto could occur at any time (async) depending on the filesystem speed,
     	//so the removeLocalPhoto does a sync load, delete from array, and write back.
     	
-    	
-  		 var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		 var store = tx.objectStore("images");
-		
-		var toUpdate = store.get(imageId);
-		
-		toUpdate.onsuccess = function() {
-			toUpdate.result.status = newStatus;
+    	if(glbThis.idbSupported == true) {
+	  		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+			var store = tx.objectStore("images");
 			
-			if((newStatus == "onserver")&&(fullData)) {
-				toUpdate.result.fullData = fullData;			
+			var toUpdate = store.get(imageId);
+			
+			toUpdate.onsuccess = function() {
+				toUpdate.result.status = newStatus;
+				
+				if((newStatus == "onserver")&&(fullData)) {
+					toUpdate.result.fullData = fullData;			
+				}
+				
+				store.put(toUpdate.result);
+				//alert("Change complete image " + imageId);	//TESTING - remove me
 			}
-			
-			store.put(toUpdate.result);
-			//alert("Change complete image " + imageId);	//TESTING - remove me
 		}
 					
 		if(newStatus === "cancel") {
@@ -515,63 +519,66 @@ var app = {
        	*/
       	var photoDetails = null;
       	
-      	var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		var store = tx.objectStore("images");
-		
-		
-		var request = tx.objectStore("images").openCursor();
-	 	request.onsuccess = function(e) {   
-		   var cursor = request.result || e.result;             
-		   if(cursor && cursor.value){             
-		         
-		      
-		      var newPhoto = cursor.value;
-		      
-		      //Now our logic
-		      if(newPhoto.status == 'onserver') {
-      				
-       				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
-      				if(newPhoto.fullData) {
-      					
-      					try {
-      						var fullData = newPhoto.fullData;
-      						if(fullData.details && fullData.details.imageData) {
-      							fullData.loopCnt = 11;
-      							fullData.slowLoopCnt = null;		//Start again with a quick loop
-		  						checkComplete.push(fullData);
-		  						var thisImageId = fullData.details.imageId;
-		  						
-		  						glbThis.check(thisImageId);		//This will only upload again if it finds it hasn't been transferred off the 
-		  					} else {
-		  						//This is a case where full details are not available. Do nothing.
-			  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-		  					}
-      					} catch(err) {
-      						//There was a problem parsing the data.
-       						glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-      					}
-      				} else {
-      					//No fullData was added - resend anyway
-      					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
-      				
-      				}
-      					
-      			
-      			} else {
-        			//Needs to be resent
-        			//TODO: get full image data from indexedDb
-        			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
-        		}
-        		
-        		
-		      cursor.continue();
-		   }
-	   } 
+      	if(glbThis.idbSupported == true) {
       	
-      	tx.oncomplete = function(e) {
-      	 	 //alert("Loop complete");  	//TESTING 
-        	//callback(); 
-   		}
+		  	var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+			var store = tx.objectStore("images");
+			
+			
+			var request = tx.objectStore("images").openCursor();
+		 	request.onsuccess = function(e) {   
+			   var cursor = request.result || e.result;             
+			   if(cursor && cursor.value){             
+				     
+				  
+				  var newPhoto = cursor.value;
+				  
+				  //Now our logic
+				  if(newPhoto.status == 'onserver') {
+		  				
+		   				//OK - so it was successfully put onto the server. Recheck to see if it needs to be uploaded again
+		  				if(newPhoto.fullData) {
+		  					
+		  					try {
+		  						var fullData = newPhoto.fullData;
+		  						if(fullData.details && fullData.details.imageData) {
+		  							fullData.loopCnt = 11;
+		  							fullData.slowLoopCnt = null;		//Start again with a quick loop
+			  						checkComplete.push(fullData);
+			  						var thisImageId = fullData.details.imageId;
+			  						
+			  						glbThis.check(thisImageId);		//This will only upload again if it finds it hasn't been transferred off the 
+			  					} else {
+			  						//This is a case where full details are not available. Do nothing.
+				  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+			  					}
+		  					} catch(err) {
+		  						//There was a problem parsing the data.
+		   						glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+		  					}
+		  				} else {
+		  					//No fullData was added - resend anyway
+		  					glbThis.changeLocalPhotoStatus(newPhoto.imageId, "cancel");
+		  				
+		  				}
+		  					
+		  			
+		  			} else {
+		    			//Needs to be resent
+		    			//TODO: get full image data from indexedDb
+		    			glbThis.uploadPhotoData(newPhoto.imageId, newPhoto.imageData, newPhoto.idEntered, newPhoto.fileName);
+		    		}
+		    		
+		    		
+				  cursor.continue();
+			   }
+		   } 
+		  	
+		  	tx.oncomplete = function(e) {
+		  	 	 //alert("Loop complete");  	//TESTING 
+		    	//callback(); 
+	   		}
+	   	}	//End of idbSupported check
     	
     	//Old way:
     	/*
@@ -808,15 +815,16 @@ var app = {
 		glbThis.continueConnectAttempts = false;
 		
 		
-		//Untested:
-		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		var store = tx.objectStore("images");
-		
-		var photoCountRequest =  store.count();
-		
-		photoCountRequest.onsuccess = function() {
-  			//Set global
-  			checkConnected = photoCountRequest.result;
+		if(glbThis.idbSupported == true) {
+			var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+			var store = tx.objectStore("images");
+			
+			var photoCountRequest =  store.count();
+			
+			photoCountRequest.onsuccess = function() {
+	  			//Set global
+	  			checkConnected = photoCountRequest.result;
+			}
 		}
 		
 		
@@ -1833,24 +1841,25 @@ var app = {
   		
   		//Go through storage and clear out each entry
   		//Old way:var localPhotos = _this.getArrayLocalStorage("localPhotos");  		
-  		
-  		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
-		var store = tx.objectStore("images");
-		
-		
-		var request = tx.objectStore("images").openCursor();
-	 	request.onsuccess = function(e) {   
-		   var cursor = request.result || e.result;             
-		   if(cursor && cursor.value){             
-		         
-		      
-		      var newPhoto = cursor.value;
-  		      if(newPhoto.imageId) {
-  		      	_this.changeLocalPhotoStatus(newPhoto.imageId, 'cancel');
-  		      }
-  				
-  			}
-  		}
+  		if(glbThis.idbSupported == true) {
+	  		var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+			var store = tx.objectStore("images");
+			
+			
+			var request = tx.objectStore("images").openCursor();
+		 	request.onsuccess = function(e) {   
+			   var cursor = request.result || e.result;             
+			   if(cursor && cursor.value){             
+				     
+				  
+				  var newPhoto = cursor.value;
+	  		      if(newPhoto.imageId) {
+	  		      	_this.changeLocalPhotoStatus(newPhoto.imageId, 'cancel');
+	  		      }
+	  				
+	  			}
+	  		}
+	  	}
   		
   		//Old way:
   		/*
