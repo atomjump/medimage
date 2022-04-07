@@ -1109,7 +1109,7 @@ var app = {
 					xhr.upload.onprogress = function (e) {
 						// For uploads
 						if (e.lengthComputable) {
-							var percFinished = (e.loaded / e.total) * 100.0;
+							var percFinished = Math.round((e.loaded / e.total) * 100.0);
 							_this.notify("Uploading " + percFinished + "%");
 						    //console.log("Progress: " + );
 						}
