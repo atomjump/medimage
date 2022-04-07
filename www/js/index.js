@@ -921,24 +921,26 @@ var app = {
 				cache:false,
 				xhr: function () {
 					var xhr = jQuery.ajaxSettings.xhr();
-					xhr.upload.onprogress = function (e) {
+					xhr.upload.onprogress = glbThis.progress;
+					
+					/*Old style: function (e) {
 						// For uploads
 						if (e.lengthComputable) {
 							var percFinished = Math.round((e.loaded / e.total) * 100.0);
 							_this.notify("Uploading " + percFinished + "%");
 						    //console.log("Progress: " + );
 						}
-					};
+					};*/
 					return xhr;
 				},
-				error:function(err){
+				error: function(err) {
 					console.error(err);
 					var result = {};
 					result.responseCode = 400;
 					glbThis.fail(result, imageId);
 					form.remove();		//Clear up
 				},
-				success:function(data){
+				success: function(data) {
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
@@ -1038,6 +1040,9 @@ var app = {
 			}
 		}
 	},
+	
+	
+	
 			
     retry: function(existingText) {
     	    
@@ -1077,9 +1082,9 @@ var app = {
 	    			//OK in the first few attempts - keep the current connection and try again
 	    			//Wait 10 seconds+ here before trying the next upload					
 					repeatIfNeeded.retryTimeout = setTimeout(function() {
-						repeatIfNeeded.ft = new FileTransfer();
+						//repeatIfNeeded.ft = new FileTransfer();
 					
-						repeatIfNeeded.ft.onprogress = glbThis.progress;
+						//repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
 						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);	
 						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageId + "');\"></ons-icon><br/>Cancel");
@@ -1090,7 +1095,9 @@ var app = {
 						window.plugins.insomnia.keepAwake();
 						var myImageId = repeatIfNeeded.imageId;
 						
-						//TODO: new style AJAX call
+						//TODO: complete this func
+						//glbThis.upload(repeatIfNeeded);
+						
 						/* Old style:
 						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
 									 function(result) {
