@@ -936,14 +936,14 @@ var app = {
 					var result = {};
 					result.responseCode = 400;
 					glbThis.fail(result, imageId);
-					//TESTING without for now: form.remove();		//Clear up
+					form.remove();		//Clear up
 				},
 				success:function(data){
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
 					glbThis.win(result, imageId);
-					//TESTING without for now: form.remove();		//Clear up
+					form.remove();		//Clear up
 					
 				},
 				complete:function(){
