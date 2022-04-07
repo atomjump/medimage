@@ -928,14 +928,14 @@ var app = {
 					var result = {};
 					result.responseCode = 400;
 					glbThis.fail(result, imageId);
-					form.remove();		//Clear up
+					form.remove();		//Clear up the DOM interface entry
 				},
 				success: function(data) {
 					console.log(data);
 					var result = {};
 					result.responseCode = 200;
 					glbThis.win(result, imageId);
-					form.remove();		//Clear up
+					form.remove();		//Clear up the DOM interface entry
 					
 				},
 				complete:function(){
@@ -1146,7 +1146,8 @@ var app = {
 	    			}
 	    			
 	    			//Clear the current transfer too
-	    			repeatIfNeeded.ft.abort();
+	    			//TODO: clear the AJAX call
+	    			//Old style: repeatIfNeeded.ft.abort();
 	    			return;
 	    		} else {
 	    			//OK in the first few attempts - keep the current connection and try again
@@ -1471,9 +1472,9 @@ var app = {
  
     	    //Check if this was a transfer to the remote server
             console.log("Code = " + r.responseCode);
-            console.log("Response = " + r.response);
-            console.log("Sent = " + r.bytesSent);
-            if((r.responseCode == 200)||(r.response.indexOf("200") != -1)) {
+            //console.log("Response = " + r.response);
+            //console.log("Sent = " + r.bytesSent);
+            if((r.responseCode == 200)||((r.response) && (r.response.indexOf("200") != -1))) {
             
             	var remoteServer = localStorage.getItem("serverRemote");
             	if(remoteServer == 'false') {
