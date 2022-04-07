@@ -871,13 +871,13 @@ var app = {
 			_this.notify("Uploading " + params.title);
 			var serverReq = usingServer + '/api/photo';
 			
-			// Get the form element withot jQuery
+			// Get the form element without jQuery
 			var form = document.createElement("form");
 			form.setAttribute("id", "photo-sending-frm-" + imageId);
 			
-			var ImageURL = imageLocalFileIn;	
+			var imageData = imageLocalFileIn;	
 			// Split the base64 string in data and contentType
-			var block = ImageURL.split(";");
+			var block = imageData.split(";");
 			// Get the content type of the image
 			var contentType = block[0].split(":")[1];// In this case "image/gif"
 			// get the real base64 content of the file
@@ -892,7 +892,6 @@ var app = {
 
 			formDataToUpload.append("file1", blob, newFilename);		//Note: "file1" is required by the MedImage Server.
 			
-			_this.notify("Uploading " + params.title);
 			_this.cancelNotify("<ons-icon style=\"vertical-align: middle; color:#f7afbb;\" size=\"30px\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + imageId + "');\"></ons-icon><br/>Cancel");
 			
 			var repeatIfNeeded = {
@@ -1031,6 +1030,88 @@ var app = {
 	},
 	
 	
+	upload: function(repeatIfNeeded) {
+	
+		/* Structure:
+			var repeatIfNeeded = {
+				"imageId" : imageId,
+				"imageData" : imageLocalFileIn,
+				"serverReq" : serverReq,
+				"options" :options,
+				"failureCount": 0,
+				"nextAttemptSec": 15
+			};		//TODO: confirm this is working correctly. We had removed the imageData, but I think it is still needed
+			//as it is a RAM-based store, so it is back in.
+			
+		*/
+		var serverReq = repeatIfNeeded.serverReq;
+		var imageId = repeatIfNeeded.imageId;
+		var title = repeatIfNeeded.options.params.title; 
+		var newFilename = repeatIfNeeded.options.fileName; //TODO
+		
+		// Get the form element without jQuery
+		var form = document.createElement("form");
+		form.setAttribute("id", "photo-sending-frm-" + imageId);
+		
+		var imageData = repeatIfNeeded.imageData;	
+		// Split the base64 string in data and contentType
+		var block = imageData.split(";");
+		// Get the content type of the image
+		var contentType = block[0].split(":")[1];// In this case "image/gif"
+		// get the real base64 content of the file
+		var realData = block[1].split(",")[1];// In this case "R0lGODlhPQBEAPeoAJosM...."
+
+		// Convert it to a blob to upload
+		var blob = glbThis.b64toBlob(realData, contentType);
+
+		// Create a FormData and append the file with "image" as parameter name
+		var formDataToUpload = new FormData(form);
+		
+
+		formDataToUpload.append("file1", blob, newFilename);		//Note: "file1" is required by the MedImage Server.
+			
+		glbThis.notify("Uploading " + title);
+	
+		
+		
+		
+		
+		
+	
+		var ft = jQuery.ajax({
+			url: serverReq,
+			data: formDataToUpload,// Add as Data the Previously create formData
+			type:"POST",
+			contentType:false,
+			processData:false,
+			cache:false,
+			xhr: function () {
+				var xhr = jQuery.ajaxSettings.xhr();
+				xhr.upload.onprogress = glbThis.progress;
+				return xhr;
+			},
+			error: function(err) {
+				console.error(err);
+				var result = {};
+				result.responseCode = 400;
+				glbThis.fail(result, imageId);
+				form.remove();		//Clear up
+			},
+			success: function(data) {
+				console.log(data);
+				var result = {};
+				result.responseCode = 200;
+				glbThis.win(result, imageId);
+				form.remove();		//Clear up
+				
+			},
+			complete:function(){
+
+				console.log("Request finished.");
+			}
+		});
+	
+	},
 	
 			
     retry: function(existingText) {
@@ -1071,9 +1152,6 @@ var app = {
 	    			//OK in the first few attempts - keep the current connection and try again
 	    			//Wait 10 seconds+ here before trying the next upload					
 					repeatIfNeeded.retryTimeout = setTimeout(function() {
-						//repeatIfNeeded.ft = new FileTransfer();
-					
-						//repeatIfNeeded.ft.onprogress = glbThis.progress;
 					
 						glbThis.notify("Trying to upload " + repeatIfNeeded.options.params.title);	
 						glbThis.cancelNotify("<ons-icon size=\"30px\" style=\"vertical-align: middle; color:#f7afbb;\" icon=\"fa-close\" href=\"#javascript\" onclick=\"app.cancelUpload('" + repeatIfNeeded.imageId + "');\"></ons-icon><br/>Cancel");
@@ -1084,17 +1162,8 @@ var app = {
 						window.plugins.insomnia.keepAwake();
 						var myImageId = repeatIfNeeded.imageId;
 						
-						//TODO: complete this func
-						//glbThis.upload(repeatIfNeeded);
-						
-						/* Old style:
-						repeatIfNeeded.ft.upload(repeatIfNeeded.imageURI, repeatIfNeeded.serverReq,
-									 function(result) {
-										glbThis.win(result, myImageURI);
-						},function(result) {
-										glbThis.fail(result, myImageURI);
-						}, repeatIfNeeded.options);
-						*/
+						//Carry out the upload
+						glbThis.upload(repeatIfNeeded);
 						
 						
 					}, timein);											//Wait 10 seconds before trying again	
