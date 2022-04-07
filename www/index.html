@@ -22,17 +22,12 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width, viewport-fit=cover" />
-		 <!--<meta http-equiv="Content-Security-Policy" content="default-src data: gap: https://ssl.gstatic.com  'unsafe-inline' *;  style-src 'self' 'unsafe-inline' 'unsafe-eval' *; media-src *; img-src 'self' data: content: *;">-->
-		 <!-- Live version<meta http-equiv="Content-Security-Policy" content="default-src https://atomjump.com https://medimage-pair.atomjump.com data: gap: https://ssl.gstatic.com  'unsafe-inline' *;  style-src 'self' 'unsafe-inline' 'unsafe-eval' *; media-src *; img-src 'self' data: content: *; connect-src *"> -->
-		<!--Local testing: <meta http-equiv="Content-Security-Policy" content="default-src * https://medimage-pair.atomjump.com http://staging.atomjump.com:8000; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:; connect-src *;">-->
-	    <meta http-equiv="Content-Security-Policy" content="default-src * https://medimage-pair.atomjump.com http://192.168.1.186:8000 http://192.168.1.186:5566 http://127.0.0.1:5566 http://localhost:5566;  script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src * blob; img-src 'self' data:; connect-src *;">
+		
 	    
-	    
-	    	<!--<meta http-equiv="Content-Security-Policy" content="default-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data:">-->
-	    
-	    
-	<link rel="stylesheet" href="css/onsenui.css"/>
-	<link rel="stylesheet" href="css/onsen-css-components-purple-theme.css">
+	    <meta http-equiv="Content-Security-Policy" content="default-src * https://medimage-pair.atomjump.com http://127.0.0.1:5566 http://localhost:5566;  script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src * blob; img-src 'self' data:; connect-src *;">
+	     
+		<link rel="stylesheet" href="css/onsenui.css"/>
+		<link rel="stylesheet" href="css/onsen-css-components-purple-theme.css">
     	
     	<link rel="stylesheet" type="text/css" href="css/ionicons/css/ionicons.css">
     	<link rel="stylesheet" type="text/css" href="css/material-design-iconic-font/css/material-design-iconic-font.css">
@@ -95,9 +90,7 @@
        		Worth putting on an option though!
        		-->
        </div>
-        <!--Older method - works on a desktop  <div class="logo" onclick="app.bigButton();">
-			<img  src="img/logo@2x.png" class="logo-img">
-        </div>-->
+       
  
         <div style="text-align:center;">
             <span id="notify" class="notify-text" style="padding-left:4px; padding-right:4px;"></span>
@@ -143,7 +136,7 @@
 			</div>
         </div>
         
-        <!-- TESTING  See https://ourcodeworld.com/articles/read/322/how-to-convert-a-base64-image-into-a-image-file-and-upload-it-with-an-asynchronous-form-using-jquery -->
+        <!-- See https://ourcodeworld.com/articles/read/322/how-to-convert-a-base64-image-into-a-image-file-and-upload-it-with-an-asynchronous-form-using-jquery -->
         
         <img style="display: none;" id="myImage">
 		
@@ -189,22 +182,18 @@
 
         </style>
         
-        <!-- Cache these icons now for later dynamic use. These are hidden -->
+        <!-- Cache these icons now for later dynamic use. These are hidden via their opacity -->
         <ons-icon style="vertical-align: middle; color:#f7afbb; filter:alpha(opacity: 0); opacity: 0; -moz-opacity:0;" size="30px" icon="fa-close"></ons-icon>
         <ons-icon style="vertical-align: middle; color:#DDD; filter:alpha(opacity: 0); opacity: 0; -moz-opacity:0;" size="20px" spin icon="fa-spinner"></ons-icon>
         
        <canvas style="display: none;"></canvas>
        <script>
-       		//position: absolute;
-		//	top: 0px;
-		//	left: 0px;
+ 
        
-		  var input = document.querySelector('input[type=file]'); // see Example 4
+		  var input = document.querySelector('input[type=file]'); 
 		  input.onchange = function () {
 			var file = input.files[0];
-			//upload(file);
-			drawOnCanvas(file);   // see Example 6
-			//displayAsImage(file); // see Example 7
+			drawOnCanvas(file);   
 		  };
 		 
 		 
@@ -212,7 +201,7 @@
 			var reader = new FileReader();
 			reader.onload = function (e) {
 			  var dataURL = e.target.result,
-				  c = document.querySelector('canvas'), // see Example 4
+				  c = document.querySelector('canvas'), 
 				  ctx = c.getContext('2d'),
 				  img = new Image();
 		 
@@ -238,18 +227,17 @@
        </script>
        
        
-        <!-- END TESTING -->
 
         
         
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
-            ons.ready(function() {
+          ons.ready(function() {
 	        	
 	        
 	        
-	        		  //Global databases
+	        	//Global databases
 			  	var idbSupported = false;		//Whether we can store photos in an indexeddb database within this browser, or not
 			  	app.idbSupported = false;
 			  	var sendCacheRam = [];			//If we cannot use an indexeddb database within this browser, store photos temporarily in RAM memory
@@ -257,109 +245,53 @@
 			 
 			 
 			  	//document.addEventListener("DOMContentLoaded", function(){
-				  	//Set up the indexedDb database
-					if("indexedDB" in window) {
-						idbSupported = true;
-						app.idbSupported = true;
-					} 
+			  	//Set up the indexedDb database
+				if("indexedDB" in window) {
+					idbSupported = true;
+					app.idbSupported = true;
+				} 
+				
+				if(idbSupported == true) {
+					//Seem to have support for indexDB
+					app.medImageSendCacheDb = indexedDB.open("sendCache");
 					
-					if(idbSupported == true) {
-						//Seem to have support for indexDB
-						app.medImageSendCacheDb = indexedDB.open("sendCache");
-						/*if(!request.onsuccess) {
-							idbSupported = false;
-							alert("Sorry, additional storage is not fully supported, and unsent photos will not be remembered when you revisit this app. You may be in a private window? Try a non-private window.");
-						}*/
-					} else {
-						alert("Sorry, additional storage is not supported, and unsent photos will not be remembered when you revisit this app.");
-						app.medImageSendCacheDb = {};
-						
-						//TODO: Now store in our temporary array storage sendCacheRam[]
-					}
-
-					app.medImageSendCacheDb.onupgradeneeded = function() {
-					  // The database did not previously exist, so create object stores and indexes.
-					  app.medImageSendCacheDb = app.medImageSendCacheDb.result;
-					  var store = app.medImageSendCacheDb.createObjectStore("images", {keyPath: "imageId"});
-
-					  // Populate with initial data.
-					  //store.put({imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send" });
-					  			//Status can be 'send', 'onserver', 'sent' (usually deleted from the array), or 'cancel' 
-					  //alert("Init'ed db");		//TESTING - remove me
-					  
-					  
-					};
-
+				} else {
+					alert("Sorry, additional storage is not supported, and unsent photos will not be remembered when you revisit this app.");
+					app.medImageSendCacheDb = {};
 					
-					app.medImageSendCacheDb.onsuccess = function() {
-					  	app.medImageSendCacheDb = this.result;
-					  	
-					  	//alert("Database successfully started");	//TESTING
-					   /* Example addition
-					  	var tx = medImageSendCacheDb.transaction("sendCache", "readwrite");
-						var store = tx.objectStore("sendCache");
+				}
 
-						store.put({imageId: imageId, imageData: imageData, idEntered: idEntered, fileName: fileName, status: "send"});
+				app.medImageSendCacheDb.onupgradeneeded = function() {
+				  // The database did not previously exist, so create object stores and indexes.
+				  app.medImageSendCacheDb = app.medImageSendCacheDb.result;
+				  var store = app.medImageSendCacheDb.createObjectStore("images", {keyPath: "imageId"});
+			  
+				};
 
-						tx.oncomplete = function() {
-						  // All requests have succeeded and the transaction has committed.
-						  alert("Transaction Committed");	//TESTING - remove me
-						};
-						
-						*/
+				
+				app.medImageSendCacheDb.onsuccess = function() {
+				  	app.medImageSendCacheDb = this.result;
+				  	
 
-						/* Example retrieval
-						var tx = medImageSendCacheDb.transaction("sendCache", "readonly");
-						var store = tx.objectStore("sendCache");
-						var index = store.index("imageId");
-
-						var request = index.get(imageId);
-						request.onsuccess = function() {
-						  var matching = request.result;
-						  if (matching !== undefined) {
-							// A match was found.
-							//report(matching.isbn, matching.title, matching.author);
-							alert("Image: " + matching.imageId + " idEnteredB:" + matching.idEnteredB);
-							//" Data: " + matching.imageLocalFileIn
-						  } else {
-							// No match was found.
-							//report(null);
-							alert("No match found");
-						  }
-						};
-						*/
-					  
-					  	// Init code here
-	        			app.initialize();
-					};
-			
-			
-					//},false);		//End of db setup
+				  
+				  	// Init code here
+        			app.initialize();
+				};
+		
+		
+				//End of db setup
 		   		
 			   
 	        
-	      });
+	    });
 	      
-          
+        var mySwitch = document.getElementById("always-create-folder");
+        
+		mySwitch.addEventListener('change', function(event) {
+			app.saveIdInput(document.getElementById("always-create-folder").checked);
+		}); 
           
 		</script>
-		<script>
-	      
-	   
-			
-			var mySwitch = document.getElementById("always-create-folder");
-        
-			mySwitch.addEventListener('change', function(event) {
-				app.saveIdInput(document.getElementById("always-create-folder").checked);
-			});
-			
-		
-
-			
-		
-
-	      
-	    </script>
 		
 		
 		
