@@ -674,6 +674,7 @@ var app = {
 		if (ft)
 		{
 			//Abort the upload TODO: we may need to cancel the Query.AJAX upload object
+		    ft.abort();
 		    
 		    //remove the photo
 		    glbThis.changeLocalPhotoStatus(cancelId, "cancel");
@@ -1110,6 +1111,8 @@ var app = {
 				console.log("Request finished.");
 			}
 		});
+		
+		repeatIfNeeded.ft = ft;
 	
 	},
 	
@@ -1145,9 +1148,9 @@ var app = {
 	    				clearTimeout(repeatIfNeeded.retryTimeout);
 	    			}
 	    			
-	    			//Clear the current transfer too
-	    			//TODO: clear the AJAX call
-	    			//Old style: repeatIfNeeded.ft.abort();
+	    			//Clear the current transfer too i.e.
+	    			//clear the AJAX call
+	    			repeatIfNeeded.ft.abort();
 	    			return;
 	    		} else {
 	    			//OK in the first few attempts - keep the current connection and try again
