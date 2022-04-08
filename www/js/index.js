@@ -167,7 +167,7 @@ var app = {
 	   
 					   } else {
 					   		thisScope.imageId = imageId;
-		 					thisScope.imageLocalFileIn = passedImageFile;		//TODO: store this in a indexeddb database if available
+		 					thisScope.imageData = passedImageFile;		
 							thisScope.idEnteredB = idEnteredB;
 							thisScope.newFilename = newFilename;
 							
@@ -673,7 +673,7 @@ var app = {
 		var ft = fileTransferMap.getItem(cancelId);
 		if (ft)
 		{
-			//Abort the upload TODO: we may need to cancel the Query.AJAX upload object
+			//Abort the upload. Cancel the Query.AJAX upload object TODO: test this.
 		    ft.abort();
 		    
 		    //remove the photo
@@ -1041,14 +1041,13 @@ var app = {
 				"options" :options,
 				"failureCount": 0,
 				"nextAttemptSec": 15
-			};		//TODO: confirm this is working correctly. We had removed the imageData, but I think it is still needed
-			//as it is a RAM-based store, so it is back in.
+			};		
 			
 		*/
 		var serverReq = repeatIfNeeded.serverReq;
 		var imageId = repeatIfNeeded.imageId;
 		var title = repeatIfNeeded.options.params.title; 
-		var newFilename = repeatIfNeeded.options.fileName; //TODO
+		var newFilename = repeatIfNeeded.options.fileName; 
 		
 		// Get the form element without jQuery
 		var form = document.createElement("form");
