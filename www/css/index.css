@@ -156,6 +156,25 @@ li {
 	 
 }
 
+.highlighted {
+  	 background-color: #eeddee;
+}
+
+#install-box {
+	
+	padding: 20px;
+	-moz-opacity:1.0;
+	filter:alpha(opacity: 1.0);
+	opacity: 1.0;
+
+	
+}
+
+#install-box-background {
+	position: relative;
+	top: -70px;
+	background-color: #eee;
+}
 
 @media screen and (max-aspect-ratio: 9/16) and (max-height:667px) {
 
