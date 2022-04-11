@@ -163,17 +163,14 @@ li {
 #install-box {
 	
 	padding: 20px;
-	-moz-opacity:1.0;
-	filter:alpha(opacity: 1.0);
-	opacity: 1.0;
-
 	
 }
 
 #install-box-background {
 	position: relative;
-	top: -40px;
+	top: -140px;
 	background-color: #eee;
+	z-index: 1900;
 }
 
 @media screen and (max-aspect-ratio: 9/16) and (max-height:667px) {
