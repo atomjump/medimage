@@ -17,7 +17,7 @@ The desktop system should have the MedImage Server at https://github.com/atomjum
 # Branches and Status
 
 
-# Browser version
+## Browser version
 
 This is now the primary version of the app, and the app-store versions have been depreciated.
 
@@ -43,7 +43,7 @@ Optional: You may want to use an Apache Proxy to get port 8000 running from a :4
 
 
 
-# App-store apps
+## App-store apps
 
 These have now been depreciated.
 
@@ -55,7 +55,6 @@ Current status:
 * Builds successfully on Android. Sends across a blank 0 byte image. It does not register as being connected to Wifi. Camera incorrectly starts with front-facing camera each time.
 * Build failures on iOS. Seems to be problems with versions of the cordova-plugin-file-transfer library and cordova-plugin-dialogs at this stage.
 * Note for AtomJump internal developers: since we don't have the original Phonegap certificate, a completely new app will need to be released, and old users migrated to it, turning the old app into a 'Legacy' version. We have a placeholder on the Google appstore as "MedImage (Experimental)", which will eventually become "MedImage". 
-
 
 
 ## Notes
