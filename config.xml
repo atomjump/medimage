@@ -24,28 +24,30 @@
     <access origin="*" />
 
 	<allow-navigation href="*"/>
+	
+	
 
 	<!--<preference name='phonegap-version' value='cli-9.0.0' />
 	<preference name='pgb-builder-version' value='2' />
 	<preference name="android-targetSdkVersion" value="29" />-->
     
-    <!--
+   
     <gap:plugin name="cordova-plugin-whitelist" source="npm"/>
     <gap:plugin name="cordova-plugin-networkinterface" source="npm" spec="~2.0.0"/>
     
     <plugin name="cordova-plugin-file-transfer" spec="~1.6.1" />
     <plugin name="cordova-plugin-dialogs" source="npm" spec="~1.3.1" />
     <plugin name="cordova-plugin-globalization" spec="1.0.5" />
-    <plugin name="cordova-plugin-file" spec="~6.0.1" />
+    <plugin name="cordova-plugin-file" />
  	<plugin name="cordova-plugin-cleartext" />
     
     <plugin name="cordova-plugin-insomnia" version="4.3.0" source="npm" />
 
-	<plugin name="cordova-plugin-camera" source="npm" spec="~2.4.1" >
+	<plugin name="cordova-plugin-camera" source="npm" >
         <variable name="CAMERA_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your camera, so that you can take patient photos." />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="AtomJump MedImage would like to access your photo library, so that you can see any existing patient photos." />
 	</plugin>
-   -->
+  
     
     
     
@@ -216,7 +218,7 @@
     </platform>
     
   
-    <!--<access origin="*" />
+   <access origin="*" />
     <allow-intent href="*" />
-    <allow-navigation href="*" />-->
+    <allow-navigation href="*" />
 </widget>

@@ -156,6 +156,22 @@ li {
 	 
 }
 
+.highlighted {
+  	 background-color: #eeddee;
+}
+
+#install-box {
+	
+	padding: 20px;
+	
+}
+
+#install-box-background {
+	position: relative;
+	top: -140px;
+	background-color: #eee;
+	z-index: 1900;
+}
 
 @media screen and (max-aspect-ratio: 9/16) and (max-height:667px) {
 

@@ -22,14 +22,46 @@
         <meta charset="utf-8" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="viewport" content="user-scalable=no, initial-scale=1, width=device-width, viewport-fit=cover" />
-		 <meta http-equiv="Content-Security-Policy" content="default-src data: gap: https://ssl.gstatic.com  'unsafe-inline' *;  style-src 'self' 'unsafe-inline' 'unsafe-eval' *; media-src *; img-src 'self' data: content: *;">
-		 
-	<link rel="stylesheet" href="css/onsenui.css"/>
-	<link rel="stylesheet" href="css/onsen-css-components-purple-theme.css">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
+		
+	    
+	    <link rel="apple-touch-icon" href="icons/apple-icon-152x152.png" />	
+		<link rel="apple-touch-icon" sizes="128x128" href="icon.png">	
+		<link rel="icon" type="image/x-icon" href="icons/favicon-16x16.png" />
+		
+		<!--<link rel="icon" href="favicon.ico">-->
+		<link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192"  href="icons/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="48x48" href="icons/windows-icon-48x48.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+		<link rel="icon" type="image/png" sizes="256x256" href="icons/windows-icon-256x256.png">
+		<link rel="icon" type="image/png" sizes="24x24" href="icons/windows-icon-24x24.png">
+		<link rel="manifest" href="icons/manifest.json">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+	    
+	    
+	    <meta http-equiv="Content-Security-Policy" content="default-src * https://medimage-pair.atomjump.com http://127.0.0.1:5566 http://localhost:5566;  script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src * blob; img-src 'self' data:; connect-src *;">
+	     
+		<link rel="stylesheet" href="css/onsenui.css"/>
+		<link rel="stylesheet" href="css/onsen-css-components-purple-theme.css">
     	
     	<link rel="stylesheet" type="text/css" href="css/ionicons/css/ionicons.css">
     	<link rel="stylesheet" type="text/css" href="css/material-design-iconic-font/css/material-design-iconic-font.css">
     	<script src="js/onsenui.js"></script>
+    	<script src="js/jquery-3.4.0.js"></script>
 		<script>
 		
 	      // This event fires when the keyboard will hide
@@ -56,6 +88,94 @@
 					}, 100);
 			}
 			
+			
+			function checkPlatform() {
+				var platform = "Desktop";	//Assume this to begin with
+				
+				var isiOSLike = navigator.platform.match(/(iPhone|iPod|iPad)/i) ? true:false;				
+				if(isiOSLike) platform = "iOS";
+				
+				var userAgent = navigator.userAgent.toLowerCase();
+				var android = userAgent.indexOf("android") > -1;
+				if(android) platform = "Android";
+						
+				return platform;
+
+			}
+			
+			
+			var platformGuideIndex = {
+				"iOS": "ios-guide",
+				"Android": "android-guide",
+				"Desktop": "desktop-guide"           
+			};
+			
+			var platformButtonIndex = {
+				"iOS": "ios-button",
+				"Android": "android-button",
+				"Desktop": "desktop-button"           
+			};
+			
+			function selectGuide(detectedPlatform) {
+			
+				//Show the relevant text block
+				jQuery("#" + platformGuideIndex[detectedPlatform]).toggle();
+				if(detectedPlatform != "iOS") {
+					$('#ios-guide').hide(); 
+				}
+				if(detectedPlatform != "Android") {
+					$('#android-guide').hide(); 
+				}
+				if(detectedPlatform != "Desktop") {
+					$('#desktop-guide').hide();
+				}
+			
+				if(jQuery("#" + platformButtonIndex[detectedPlatform]).hasClass("highlighted")) {
+					jQuery("#" + platformButtonIndex[detectedPlatform]).removeClass("highlighted");
+				} else {
+					jQuery("#" + platformButtonIndex[detectedPlatform]).addClass("highlighted");
+				}
+				
+				if(detectedPlatform != "iOS") {
+					$('#ios-button').removeClass("highlighted");
+				}
+				if(detectedPlatform != "Android") {
+					$('#android-button').removeClass("highlighted"); 
+				}
+				if(detectedPlatform != "Desktop") {
+					$('#desktop-button').removeClass("highlighted");
+				}
+				
+				
+				
+			}
+			
+			function showDefaultPlatform() {
+				//Decide on active class based on platform used:
+				$('#ios-guide').hide(); 
+				$('#android-guide').hide(); 
+				$('#desktop-guide').hide();
+				$('#ios-button').removeClass("highlighted");
+				$('#android-button').removeClass("highlighted"); 
+				$('#desktop-button').removeClass("highlighted");
+				
+				if($('#add-to-home').is(":hidden")) {
+					$('#add-to-home').show(); 
+					$('#install-box-background').show();
+					var detectedPlatform = checkPlatform();
+			
+					selectGuide(detectedPlatform);
+				} else {
+					//Leave everything unhighlighted
+					$('#add-to-home').hide(); 
+					$('#install-box-background').hide();
+				}
+				
+				
+				
+				return false;
+			}
+			
 		</script>
 
         <link rel="stylesheet" type="text/css" href="css/index.css" />
@@ -70,6 +190,10 @@
 		      <ons-icon icon="md-menu" ></ons-icon>
 		    </ons-fab>
 		    
+		    <ons-fab style="z-index: 800;" position="bottom left" onclick="showDefaultPlatform();">
+		      <ons-icon icon="md-bookmark" ></ons-icon>
+		    </ons-fab>
+		    
 		
 	
  
@@ -80,20 +204,48 @@
  		<div style="text-align:center;">
             <span id="currentPC"  class="pc-text"></span>
         </div>
-        <div class="logo" onclick="app.bigButton();">
-			<img  src="img/logo@2x.png" class="logo-img">
-        </div>
-
+        <div class="fakefile">
+       		<input class="file" type="file" id="mypic" accept="image/jpeg" capture="camera">
+       		<!-- For future improvement: you can add accept: accept="image/jpeg, application/pdf" on an option. This allows pdf uploads (though it
+       		currently calls it xyz.jpg.pdf) However, each photo gives you a choice of using the camera or the file manager, so it is a slower interface)
+       		Worth putting on an option though!
+       		-->
+       </div>
+       
+ 
         <div style="text-align:center;">
             <span id="notify" class="notify-text" style="padding-left:4px; padding-right:4px;"></span>
             &nbsp;<span id="status" class="notify-text"></span>
             <br/><br/><span id="cancel-trans" class="cancel-text"></span>
         </div>
         
-        <br/>
-       
+        <!--Was in here - needed still?: <br/>-->
         
+        
+       <div id="install-box-background" style="display: none;">
+        	<div id="install-box" >
+        
+        		
+				<div id="add-to-home" style="display:none;">
+					<small>Add app to your Homescreen <span style="float: right;"><a href="javascript:" onclick="return showDefaultPlatform();" ><ons-icon size="30px" style="color: black;" icon="md-close"></ons-icon></a></span><br/><a id="ios-button" class='button' style='margin:4px;' onclick="return selectGuide('iOS');" href='javascript:'>iOS</a>&nbsp;<a id="android-button" class='button' style='margin:4px;' onclick="return selectGuide('Android');" href='javascript:'>Android</a>&nbsp;<a id="desktop-button" class='button' style='margin:4px;' onclick="return selectGuide('Desktop');" href='javascript:'>Desktop</a></small><br/><br/>
+				</div>
+				
+				<div id="ios-guide" style="display:none;">Tap <img src="img/safari-add.png" width="25" height="30">, usually along the bottom of the screen, then swipe up, and tap 'Add to Home Screen'. <a href="javascript:" onclick="$('#ios-more-info').toggle();">More Info</a><br/><br/>
+					<div id="ios-more-info" style="display:none;">
+						<small><strong>Troubleshooting:</strong> if you don't see the 'Add to Home Screen' option, scroll to the bottom and tap 'Edit Actions', then tap 'Add' next to the 'Add to Home Screen'. After that, try again.</small> Or see <a href="https://support.apple.com/en-nz/guide/iphone/iph42ab2f3a7/ios#iph4f9a47bbc" target="_blank">Apple's Guide</a><br/><br/>								
+						
+					</div>
+				</div>
+				
+				<div id="android-guide" style="display:none;">Tap the <img src="img/chrome-menu.png"width="20" height="20"> in the top right corner of the screen, and then choose 'Add to Home Screen'. <a href="https://www.wikihow.com/Set-a-Bookmark-Shortcut-in-Your-Home-Screen-on-Android">More Details</a><br/><br/>
+				</div>
+				
+				<div id="desktop-guide" style="display:none;">Click the <img src="img/firefox-drag-desktop.png"> or <img src="img/chrome-desktop-drag.png"> or <img src="img/lock.png"> style icon in the address bar, to the left of the address, and depending on the browser, drag this onto your desktop. <a href="https://www.hellotech.com/guide/for/how-to-create-a-desktop-shortcut-to-a-website">More Details</a><br/><br/>In Edge on Windows, use <img src="img/edge-menu.png" width="30" height="20"> > "Apps" > "Install this site as an app".<br/>
+				</div>
 
+        	</div>
+        </div>
+		
         
         <div id="settings-popup" style="display:none;">
         	<div id="inner-popup">
@@ -119,43 +271,177 @@
 						<ons-switch style="color: #7c5599;" id="always-create-folder" checked></ons-switch>
 					  </div>
 					</ons-list-item>
+					<ons-list-item>
+						<div class="right">
+								<a class="small-text" target="_blank" href="http://medimage.co.nz/guide/#professional">Version: 2.2.0.alpha<a/>
+						</div>
+					</ons-list-item>
 				  </ons-list>
 	        	
 	        	
 				<p>
 					<a class="small-text" href="javascript" onclick="return app.factoryReset();">Reset Factory Settings</a>
+					
 				</p>
 			</div>
         </div>
         
+        <!-- See https://ourcodeworld.com/articles/read/322/how-to-convert-a-base64-image-into-a-image-file-and-upload-it-with-an-asynchronous-form-using-jquery -->
+        
+        <img style="display: none;" id="myImage">
+		
+		<form id="photo-sending-frm" method="post" action="/replaced-dynamically-with-medimage-server-path/">
+		</form>
+
+        <style>
+        input.file {
+			position: relative;
+			text-align: right;
+			-moz-opacity:0 ;
+			filter:alpha(opacity: 0);
+			opacity: 0;
+			z-index: 1002;
+			width: 300px; 
+			height: 300px;
+			
+			margin-left: auto; 
+			margin-right: auto;
+			margin-bottom:10px;
+			margin-top:6px;
+		}
+		
+
+		.fakefile {
+			position: relative;
+			z-index: 1000;
+			width: 300px; 
+			height: 300px;
+			background: url('img/logo@2x.png') no-repeat center center fixed;
+			-webkit-background-size: cover;
+      		-moz-background-size: cover;
+      		-o-background-size: cover;
+      		background-size: cover;
+      		background-attachment:scroll;
+  			
+  			margin-left: auto; 
+			margin-right: auto;
+			margin-bottom:10px;
+			margin-top:6px;
+		}
+		
+
+        </style>
+        
+        <!-- Cache these icons now for later dynamic use. These are hidden via their opacity -->
+        <ons-icon style="vertical-align: middle; color:#f7afbb; filter:alpha(opacity: 0); opacity: 0; -moz-opacity:0;" size="30px" icon="fa-close"></ons-icon>
+        <ons-icon style="vertical-align: middle; color:#DDD; filter:alpha(opacity: 0); opacity: 0; -moz-opacity:0;" size="20px" spin icon="fa-spinner"></ons-icon>
+        
+       <canvas style="display: none;"></canvas>
+       <script>
+ 
+       
+		  var input = document.querySelector('input[type=file]'); 
+		  input.onchange = function () {
+			var file = input.files[0];
+			drawOnCanvas(file);   
+		  };
+		 
+		 
+		  function drawOnCanvas(file) {
+			var reader = new FileReader();
+			reader.onload = function (e) {
+			  var dataURL = e.target.result,
+				  c = document.querySelector('canvas'), 
+				  ctx = c.getContext('2d'),
+				  img = new Image();
+		 
+			  img.onload = function() {
+				c.width = img.width;
+				c.height = img.height;
+				ctx.drawImage(img, 0, 0);
+			  };
+		 
+			  img.src = dataURL;
+			  
+			  //Click the big button and pass in the image data as jpeg
+              app.bigButton(dataURL);
+			  
+			};
+		 
+			reader.readAsDataURL(file);
+			
+		  }
+		 
+		 
+
+       </script>
+       
+       
 
         
         
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
-            ons.ready(function() {
-	        // Init code here
-	        app.initialize();
-	      });
+          ons.ready(function() {
+	        	
+	        
+	        
+	        	//Global databases
+			  	var idbSupported = false;		//Whether we can store photos in an indexeddb database within this browser, or not
+			  	app.idbSupported = false;
+			  	var sendCacheRam = [];			//If we cannot use an indexeddb database within this browser, store photos temporarily in RAM memory
+			  	app.medImageSendCacheDb = {};
+			 
+			 
+			  	//document.addEventListener("DOMContentLoaded", function(){
+			  	//Set up the indexedDb database
+				if("indexedDB" in window) {
+					idbSupported = true;
+					app.idbSupported = true;
+				} 
+				
+				if(idbSupported == true) {
+					//Seem to have support for indexDB
+					app.medImageSendCacheDb = indexedDB.open("sendCache");
+					
+				} else {
+					alert("Sorry, additional storage is not supported, and unsent photos will not be remembered when you revisit this app.");
+					app.medImageSendCacheDb = {};
+					
+				}
+
+				app.medImageSendCacheDb.onupgradeneeded = function() {
+				  // The database did not previously exist, so create object stores and indexes.
+				  app.medImageSendCacheDb = app.medImageSendCacheDb.result;
+				  var store = app.medImageSendCacheDb.createObjectStore("images", {keyPath: "imageId"});
+			  
+				};
+
+				
+				app.medImageSendCacheDb.onsuccess = function() {
+				  	app.medImageSendCacheDb = this.result;
+				  	
+
+				  
+				  	// Init code here
+        			app.initialize();
+				};
+		
+		
+				//End of db setup
+		   		
+			   
+	        
+	    });
 	      
-          
+        var mySwitch = document.getElementById("always-create-folder");
+        
+		mySwitch.addEventListener('change', function(event) {
+			app.saveIdInput(document.getElementById("always-create-folder").checked);
+		}); 
           
 		</script>
-		<script>
-	      
-	   
-			
-			var mySwitch = document.getElementById("always-create-folder");
-        
-			mySwitch.addEventListener('change', function(event) {
-				app.saveIdInput(document.getElementById("always-create-folder").checked);
-			});
-			
-
-			
-	      
-	    </script>
 		
 		
 		
