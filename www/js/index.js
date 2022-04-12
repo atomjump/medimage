@@ -525,10 +525,13 @@ var app = {
 
 	   totalScanned = 0;
 	   
+	 
 	   if(lan == "127.0.0.") {
-	   		//Use the default 127.0.0.1 address
+	   		//Use the default 127.0.0.1 address, or there is no IP address e.g. a domain like localhost
 	   		var machine = "1";
 	   		var url = 'http://' + lan + machine + ':' + port;
+	   		var scanMessage = lan;
+	   		var waitForScan = 2000;
 	   		
 	   		this.get(url, function(goodurl, resp, timeout) {
 	          
@@ -554,12 +557,27 @@ var app = {
 	      });
 	   } else {
 	   
-		   for(var cnt=0; cnt< 255; cnt++){
-			  var machine = cnt.toString();
-			 
-			  var url = 'http://' + lan + machine + ':' + port;
-			  this.get(url, function(goodurl, resp, timeout) {
-			      
+	   	   var re = /^[A-Za-z]+$/;		//Regular expression for testing if letters
+	   	  	
+	   	   if( re.test(lan) == true) {
+	   	   	 	//A letter-based domain e.g. localhost, mydomain.com.
+	   	   	 	
+	   	   	 	
+	   	   	 	//Only want to scan this machine itself on the 5566 port
+	   	   	 	var host = window.location.host;
+	   	   	 	host = host.substring(0, host.indexOf(':'));		//Remove port
+	   	   	 	var url = host + ':' + port;
+	   	   	 	if(location.protocol) {
+	   	   	 		if(url.indexOf(location.protocol) != true) {
+	   	   	 			//Add http or https to the start
+	   	   	 			url = location.protocol + "//" + url;
+	   	   	 		}
+	   	   	 	}
+	   	   	 	var scanMessage = lan;
+	   	   	 	var waitForScan = 2000;
+	   	   	 	
+	   	   	 	this.get(url, function(goodurl, resp, timeout) {
+	          
 			      if(resp) {
 			      	
 			      	//This is a good server
@@ -577,11 +595,49 @@ var app = {
 					_this.notify("Scanning Wifi. Responses:" + totalScanned);
 			      	
 			      }
-			      
-			      
-			  });
+			   });
+	   	   
+	   	   } else {
+	   	   
+	   	   	   //Do a full LAN scan
+	   	   	   
+	   	   	   var scanMessage = "http://" + lan + "[range of 0-255]:" + port;
+	   	   	   var waitForScan = 8000;
+	   	   	   var goodFound = false;
+	   	   	   
+			   for(var cnt=0; cnt< 255; cnt++){
+				  var machine = cnt.toString();
+				 
+				  var url = 'http://' + lan + machine + ':' + port;
+				  this.get(url, function(goodurl, resp, timeout) {
+					  
+					  if(resp) {
+					  	
+					  	//This is a good server
+						totalScanned ++;
+									  
+									  
+						 //Save the first TODO: if more than one, open another screen here
+						 localStorage.setItem("currentWifiServer", goodurl);
+					 
+						 clearInterval(scanning);
+						 cb(goodurl, null);
+						 goodFound = true;
+					  } else {
+					  	
+						totalScanned ++;
+						
+						if(goodFound == false) {
+							_this.notify("Scanning Wifi. Responses:" + totalScanned);
+						}
+					  	
+					  }
+					  
+					  
+				  });
 
 
+			   }
 		   }
 	   }
 	   
@@ -596,25 +652,25 @@ var app = {
        			
        			if(pausing == false) {
        				pausing = true;		//Pausing prevents it from opening up more windows
-					if(confirm("Timeout finding your Wifi server. Note: you have scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
+					if(confirm("Timeout finding your Wifi server. Note: you have scanned for " + scanMessage + ", and received " + totalScanned + " responses. Do you wish to keep scanning?")) {
 								//Yes, do nothing and wait.
 								pausing = false;		//Can start asking again
 						
 					} else {
 								//Exit out of here
 								clearInterval(scanning);  
-								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
+								cb(null, "Timeout finding your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for " + scanMessage + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 					}
 				}
 	
 			} else {	//Total scanned is complete
 				//Have scanned the full range, error out of here.   
 				clearInterval(scanning);     		 		
-				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for http://" + lan + "[range of 0-255]:" + port + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
+				cb(null, "We couldn't see your Wifi server.</br></br><a href='javascript:' onclick=\"app.enterServerManually('We scanned for " + scanMessage + ", and received " + totalScanned + " responses, but found no servers. You can enter this manually below:');\">More Details</a>");
 			}
             
            
-       }, 8000);
+       }, waitForScan);
 
 		
 
@@ -673,7 +729,7 @@ var app = {
 		var ft = fileTransferMap.getItem(cancelId);
 		if (ft)
 		{
-			//Abort the upload. Cancel the Query.AJAX upload object TODO: test this.
+			//Abort the upload. Cancel the Query.AJAX upload object 
 		    ft.abort();
 		    
 		    //remove the photo
@@ -928,13 +984,15 @@ var app = {
 					console.error(err);
 					var result = {};
 					result.responseCode = 400;
+					result.code = err;
 					glbThis.fail(result, imageId);
 					form.remove();		//Clear up the DOM interface entry
 				},
 				success: function(data) {
 					console.log(data);
 					var result = {};
-					result.responseCode = 200;
+					
+					result.responseCode = 200;	
 					glbThis.win(result, imageId);
 					form.remove();		//Clear up the DOM interface entry
 					
@@ -1763,12 +1821,17 @@ var app = {
 		        	//Could be an inet:6 version e.g 2404:4407:27f0:8100:a693:9810:7740:787. For now, just treat as 127.0.0.1. TODO: improve this
 		        	_this.ip = "127.0.0.1";			
 		        	var host = window.location.host; 
+		       
 		        	host = host.replace("https://", "");
-		        	host = host.substring(0, host.indexOf(':'));
+		        	host = host.substring(0, host.indexOf(':'));		//Remove port
 		        	_this.ip = host.replace("http://", "");
 		        	
 		        	var len =  _this.ip.lastIndexOf('\.') + 1;
-		            _this.lan = _this.ip.substr(0,len);
+		            if(len > 0) {
+		            	_this.lan = _this.ip.substr(0,len);
+		            } else {
+		            	_this.lan = _this.ip;	//E.g. "localhost" or some other domain
+		            }
 		            clearTimeout(iptime);
 		            cb(null);
 		        	
@@ -1808,11 +1871,54 @@ var app = {
 						//Now refresh the current server display
     					document.getElementById("currentPC").innerHTML = "";
     		
-						alert("Cleared all saved PCs.");
+    					
+    					alert("Cleared all saved PCs.");
+    					
+    					
+    					//Check if we have existing photos
+    					if(glbThis.idbSupported == true) {
+      						
+      						var imageIds = [];
+      						
+		  					var tx = glbThis.medImageSendCacheDb.transaction("images", "readwrite");
+							var store = tx.objectStore("images");
+							var request = tx.objectStore("images").openCursor();
+						 	request.onsuccess = function(e) {   
+							   var cursor = request.result || e.result;             
+							   if(cursor && cursor.value){ 
+							   	  //We have some existing photos
+								  var newPhoto = cursor.value;
+								  
+								  
+								  imageIds.push(newPhoto.imageId);
+						  	   }
+						  	}
+						  	
+						  	if(imageIds.length > 0) {
+						 
+								 navigator.notification.confirm(
+									'Do you wish to clear the existing photos, also?',  // message
+									function(buttonIndex) {
+										if(buttonIndex == 1) {
+											for(var cnt = 0; cnt< imageIds.length; cnt++) {
+												glbThis.removeLocalPhoto(imageIds[cnt]);
+											}
+										}
+									},                			 	// callback to invoke
+									'Clear Photos',            	// title
+									['Ok','Cancel']             	// buttonLabels
+										
+								); 	
+						  	
+						  	} 
+						}
+    					
+						
+								
 		
 						glbThis.openSettings();
 						
-					}
+					}	//End of btnindex = 1
 	    		
 	    		},                 			 	// callback to invoke
 	    		'Clear Settings',            	// title
@@ -2482,13 +2588,46 @@ var app = {
         var _this = this;
         
         
+        if(_this.lan) {
+
+		   var lan = _this.lan;
+		   
+		 
+		   if(lan == "127.0.0.") {
+		   		var dispLan = "http://127.0.0.1";
+		   } else {
+			  
+		   	   var re = /^[A-Za-z]+$/;		//Regular expression for testing if letters
+		   	   
+		   	   if( re.test(lan) == true) {
+		   	   	 	//A letter-based domain e.g. localhost, mydomain.com.
+		   	   	 	var dispLan = window.location.host;
+		   	   	 	dispLan = dispLan.substring(0, dispLan.indexOf(':'));		//Remove port
+		   	   	 	
+		   	   	 	if(location.protocol) {
+		   	   	 		if(dispLan.indexOf(location.protocol) != true) {
+		   	   	 			//Add http or https to the start
+		   	   	 			dispLan = location.protocol + "//" + dispLan;
+		   	   	 		}
+		   	   	 	}
+		   	   } else {
+		   	   		var dispLan = "http://" + lan + "0";	//Put a default '0' in there as an example
+		   	   
+		   	   }
+		   }    
+		} else {
+		
+			var dispLan = "http://127.0.0.1";
+		}   
+       
+        
         //Ask for a name of the current Server:
 		navigator.notification.prompt(
 			message,  					// message
 			_this.saveServerAddress,                  					// callback to invoke
 			'Set Server Manually',            									// title
 			['Ok','Cancel'],             							// buttonLabels
-			'http://' + _this.lan + '0:5566'                									// defaultText
+			dispLan + ':5566'                									// defaultText
 		);
         
     	
