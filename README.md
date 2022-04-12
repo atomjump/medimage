@@ -7,9 +7,17 @@ securely to their desktop system, which has the MedImage Server installed on it.
 
 # Requirements
 
+<<<<<<< HEAD
+The project was originally built with the PhoneGap Build tool and released as Android and iPhone app-store apps.
+
+However, since Phonegap has been removed, a migration has occurred to Apache Cordova, which is fundamentally the same system. 
+
+We have also now migrated away from app-store apps, and our browser app is the primary version.
+=======
 The project was originally built with the PhoneGap Build tool.
 However, since that tool has been removed, a migration has started to occur
 to Apache Cordova, which is fundamentally the same system. 
+>>>>>>> browser-test
 
 The desktop system should have the MedImage Server at https://github.com/atomjump/medimageserv installed first.
 
@@ -17,9 +25,15 @@ The desktop system should have the MedImage Server at https://github.com/atomjum
 # Branches and Status
 
 
+<<<<<<< HEAD
+## Browser version
+
+This is now the primary version of the app ('master' branch, and 'browser'), and the app-store versions have been depreciated.
+=======
 # Browser version
 
 This is now the primary version of the app, and the app-store versions have been depreciated.
+>>>>>>> browser-test
 
 Required: You will need "npm" and "nodejs" to be installed, which should be there after a MedImage Server Windows installation
 
@@ -43,7 +57,11 @@ Optional: You may want to use an Apache Proxy to get port 8000 running from a :4
 
 
 
+<<<<<<< HEAD
+## App-store apps
+=======
 # App-store apps
+>>>>>>> browser-test
 
 These have now been depreciated.
 
@@ -57,6 +75,14 @@ Current status:
 * Note for AtomJump internal developers: since we don't have the original Phonegap certificate, a completely new app will need to be released, and old users migrated to it, turning the old app into a 'Legacy' version. We have a placeholder on the Google appstore as "MedImage (Experimental)", which will eventually become "MedImage". 
 
 
+<<<<<<< HEAD
+## Development work
+
+On the browser version, test changes on the 'browser-test' branch before merging into the 'browser' branch (which is our AtomJump publication branch),
+before merging into the 'master' branch, which is what the public use.
+
+=======
+>>>>>>> browser-test
 
 ## Notes
 
