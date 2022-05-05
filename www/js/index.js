@@ -1984,7 +1984,7 @@ var app = {
 
 
 								  navigator.notification.confirm(
-									'Do you want to connect via WiFi, if it is available, also?',  // message
+									'Do you want to connect via WiFi directly, if it is available, also?',  // message
 									function(buttonIndex) {
 										if(buttonIndex == 1) {
 											//yes, we also want to connect via wifi
