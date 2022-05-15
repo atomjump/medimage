@@ -841,11 +841,14 @@ var app = {
   
         var _this = this;
         
+        
         if(!imageLocalFileIn) {
         	//No image data - just return a fail
         	var result = {};
 			result.responseCode = 400;
-        	glbThis.fail(result, imageId);
+			var textStatus = "error";
+			result.statusText = "Sorry there was no image to send. Please try again.";
+        	glbThis.fail(result, textStatus, imageId);
         	return;
         }
 	
@@ -980,12 +983,12 @@ var app = {
 					xhr.upload.onprogress = glbThis.progress;
 					return xhr;
 				},
-				error: function(err) {
+				error: function(err, textStatus) {
 					console.error(err);
-					var result = {};
+					var result = err;
 					result.responseCode = 400;
-					result.code = err;
-					glbThis.fail(result, imageId);
+					
+					glbThis.fail(result, textStatus, imageId);
 					form.remove();		//Clear up the DOM interface entry
 				},
 				success: function(data) {
@@ -1148,11 +1151,11 @@ var app = {
 				xhr.upload.onprogress = glbThis.progress;
 				return xhr;
 			},
-			error: function(err) {
+			error: function(err, textStatus) {
 				console.error(err);
-				var result = {};
+				var result = err;
 				result.responseCode = 400;
-				glbThis.fail(result, imageId);
+				glbThis.fail(result, textStatus, imageId);
 				form.remove();		//Clear up
 			},
 			success: function(data) {
@@ -1683,7 +1686,7 @@ var app = {
     },
 
 
-    fail: function(error, imageId) {
+    fail: function(error, textStatus, imageId) {
   
   		window.plugins.insomnia.allowSleepAgain();			//Allow the screen to sleep
   		
@@ -1691,32 +1694,43 @@ var app = {
   
   		glbThis.cancelNotify("");		//Remove any cancel icons
   		
-        switch(error.code)
-        {
-            case 1:
-                glbThis.notify("The photo was uploaded.");
-                
-                //Remove the photo from the list
-                glbThis.changeLocalPhotoStatus(imageId, 'cancel');
-            break;
 
-            case 2:
-                glbThis.notify("Sorry you have tried to send it to an invalid URL.");
-            break;
+		if(error.statusText) {
+			var errorMessage = error.statusText;
+		} else {
+			var errorMessage = "Please contact medimage.co.nz for assistance.";
+		}
+  		
+  		
+  		if(error.status == 503) {
+  			//Server not available
+  			glbThis.notify("Sorry you have tried to send it to an invalid URL.");
+  		} else {
+  		
+		    switch(textStatus)
+		    {
+		        case "cancel":
+		            glbThis.notify("The photo was uploaded.");
+		            
+		            //Remove the photo from the list
+		            glbThis.changeLocalPhotoStatus(imageId, 'cancel');
+		        break;
 
-            case 3:
-                glbThis.notify("Waiting for better reception..");
-                glbThis.retry("Waiting for better reception...</br>");
-            break;
+		        case "timeout":
+		            glbThis.notify("Waiting for better reception..");
+		            glbThis.retry("Waiting for better reception...</br>");
+		        break;
 
-            case 4:
-                glbThis.notify("Your image transfer was aborted.");
-                //No need to retry here: glbThis.retry("Sorry, your image transfer was aborted.</br>");
-            break;
+		        case "abort":
+		            glbThis.notify("Your image transfer was aborted. <a style=\"color:#f7afbb; text-decoration: none;\" href=\"javascript:\" onclick=\"app.askForgetAllPhotos(); return false;\">Remove Permanently</a>");
+		            //No need to retry here: glbThis.retry("Sorry, your image transfer was aborted.</br>");
+		             
+		        break;
 
-            default:
-                glbThis.notify("An error has occurred: Code = " + error.code);
-            break;
+		        default:  		
+		            glbThis.notify("An error has occurred: " + errorMessage);
+		        break;
+		    }
         }
     },
     

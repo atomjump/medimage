@@ -3,8 +3,8 @@
 <widget xmlns     = "http://www.w3.org/ns/widgets"
         xmlns:cdv= "http://cordova.apache.org/ns/1.0"
         id        = "com.atomjump.medimage"
-        version   = "2.1.0"
-        versionCode = "460">
+        version   = "2.2.3"
+        versionCode = "461">
 
 	<!-- config.xml reference: Note: add 1 to the versioncode each new release -->
 
