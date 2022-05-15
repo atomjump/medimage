@@ -5,8 +5,8 @@
         xmlns:gap = "http://phonegap.com/ns/1.0"
         xmlns:android   = "http://schemas.android.com/apk/res/android"
         id        = "com.atomjump.medimage"
-        version   = "2.2.3"
-        versionCode = "461">
+        version   = "2.2.4"
+        versionCode = "462">
 
 
 
