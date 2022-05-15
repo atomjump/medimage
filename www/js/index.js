@@ -677,7 +677,7 @@ var app = {
       } else {
 		  //No lan detected
 		  		  
-         cb(null,"Local Wifi not detected.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Sorry, we could not detect the LAN. You can enter the server address manually below:');\">More Details</a>");
+         cb(null,"Local Wifi not detected. Note: If this app is streamed directly from medimage.co.nz, local 'direct Wifi' will not be available.<br/><br/><a href='javascript:' onclick=\"app.enterServerManually('Sorry, we could not detect the LAN. You can either install a local MedImage app server on the LAN, or you can enter the server address manually below:');\">More Details</a>");
          
         
       }
