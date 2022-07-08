@@ -31,6 +31,8 @@ Required: You will need "npm" and "nodejs" to be installed, which should be ther
 
 Install in a command box with:
 ```
+git clone https://github.com/atomjump/medimage.git
+cd medimage
 npm install -g cordova  
 cordova platform add browser
 cordova build browser
@@ -77,8 +79,6 @@ before merging into the 'master' branch, which is what the public use.
 https://cordova.apache.org/blog/2017/10/18/from-filetransfer-to-xhr2.html
 
 ## Future work
-
-* Update the MedImage app icon on the browser edition.
 
 * Package this up into a MedImage add-on as a .zip or .exe file.
 
