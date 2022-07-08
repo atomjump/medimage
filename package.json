@@ -45,7 +45,7 @@
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-file-transfer": "^1.7.1",
     "cordova-plugin-globalization": "^1.11.0",
-    "cordova-plugin-insomnia": "git+https://github.com/tombolaltd/cordova-plugin-insomnia.git",
+    "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-networkinterface": "^2.2.0",
     "cordova-plugin-whitelist": "git+https://github.com/apache/cordova-plugin-whitelist.git"
   }
