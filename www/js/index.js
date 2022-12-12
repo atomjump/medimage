@@ -71,11 +71,11 @@ var app = {
         this.displayIdInput();
         
         //Get a current photo id that increments after each photo
-        if(localStorage.getItem("currentPhotoId")) {
-        	this.currentPhotoId = parseInt(localStorage.getItem("currentPhotoId"));
+        if(localStorageGetItem("currentPhotoId")) {
+        	this.currentPhotoId = parseInt(localStorageGetItem("currentPhotoId"));
         } else {
         	this.currentPhotoId = 0;
-        	localStorage.setItem("currentPhotoId", this.currentPhotoId);
+        	localStorageSetItem("currentPhotoId", this.currentPhotoId);
         }
        
         //Check if there are any residual photos that need to be sent again
@@ -135,13 +135,13 @@ var app = {
       
         //Keep a local increment ID of the photo on this browser
       	_this.currentPhotoId = _this.currentPhotoId + 1;
-        localStorage.setItem("currentPhotoId", _this.currentPhotoId);
+        localStorageSetItem("currentPhotoId", _this.currentPhotoId);
         var imageId = _this.currentPhotoId;
       
     	  //Called from takePicture(), after the image file URI has been shifted into a persistent file
           //Reconnect once
-      	  localStorage.removeItem("usingServer");		//This will force a reconnection
-	      localStorage.removeItem("defaultDir");
+      	  localStorageRemoveItem("usingServer");		//This will force a reconnection
+	      localStorageRemoveItem("defaultDir");
       	  
       	  var thisImageLocalFile = imageDataLocalFile;
       	  var idEntered = document.getElementById("id-entered").value;
@@ -179,8 +179,8 @@ var app = {
 						    setTimeout(function() {
 						    	if(glbThis.continueConnectAttempts == true) {
 						    		glbThis.notify("Trying to connect again.");
-									localStorage.removeItem("usingServer");		//This will force a reconnection
-									localStorage.removeItem("defaultDir");
+									localStorageRemoveItem("usingServer");		//This will force a reconnection
+									localStorageRemoveItem("defaultDir");
 									glbThis.uploadPhotoData(thisScope.imageId, passedImageFile, idEnteredB, newFilename);
 								}
 							}, 10000);
@@ -542,7 +542,7 @@ var app = {
 							  
 							  
 				 //Save the first TODO: if more than one, open another screen here
-				 localStorage.setItem("currentWifiServer", goodurl);
+				 localStorageSetItem("currentWifiServer", goodurl);
 			 
 				 clearInterval(scanning);
 				 cb(goodurl, null);
@@ -585,7 +585,7 @@ var app = {
 								  
 								  
 					 //Save the first TODO: if more than one, open another screen here
-					 localStorage.setItem("currentWifiServer", goodurl);
+					 localStorageSetItem("currentWifiServer", goodurl);
 				 
 					 clearInterval(scanning);
 					 cb(goodurl, null);
@@ -618,7 +618,7 @@ var app = {
 									  
 									  
 						 //Save the first TODO: if more than one, open another screen here
-						 localStorage.setItem("currentWifiServer", goodurl);
+						 localStorageSetItem("currentWifiServer", goodurl);
 					 
 						 clearInterval(scanning);
 						 cb(goodurl, null);
@@ -758,7 +758,7 @@ var app = {
 			tempName = 'image';
 		}
 		
-		var initialHash = localStorage.getItem("initialHash");
+		var initialHash = localStorageGetItem("initialHash");
 		if((initialHash)&&(initialHash != null)) {
 			if(initialHash == 'true') {
 				//Prepend the initial hash
@@ -770,7 +770,7 @@ var app = {
 			tempName = "#" + tempName;
 		}
 
-		var defaultDir = localStorage.getItem("defaultDir");
+		var defaultDir = localStorageGetItem("defaultDir");
 		if((defaultDir)&&(defaultDir != null)) {
 			//A hash code signifies a directory to write to
 			tempName = "#" + defaultDir + " " + tempName;
@@ -852,7 +852,7 @@ var app = {
         	return;
         }
 	
-		var usingServer = localStorage.getItem("usingServer");
+		var usingServer = localStorageGetItem("usingServer");
 		
 		var idEnteredB = idEntered;
 	
@@ -1198,9 +1198,9 @@ var app = {
 	    		if(repeatIfNeeded.failureCount > 2) {
 	    			//Have tried too many attempts - try to reconnect completely (i.e. go
 	    			//from wifi to network and vica versa
-	    			localStorage.removeItem("usingServer");				//This will force a reconnection
-	    			localStorage.removeItem("defaultDir");
-	    			localStorage.removeItem("serverRemote");
+	    			localStorageRemoveItem("usingServer");				//This will force a reconnection
+	    			localStorageRemoveItem("defaultDir");
+	    			localStorageRemoveItem("serverRemote");
 	    			glbThis.uploadPhotoData(repeatIfNeeded.imageId, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.idEntered, repeatIfNeeded.options.fileName);
 	    			
 	    			//Clear any existing timeouts
@@ -1539,7 +1539,7 @@ var app = {
             //console.log("Sent = " + r.bytesSent);
             if((r.responseCode == 200)||((r.response) && (r.response.indexOf("200") != -1))) {
             
-            	var remoteServer = localStorage.getItem("serverRemote");
+            	var remoteServer = localStorageGetItem("serverRemote");
             	if(remoteServer == 'false') {
             		//i.e. Wifi case
             		
@@ -1633,7 +1633,7 @@ var app = {
 	     	
 					if(repeatIfNeeded) {
 						var thisFile = repeatIfNeeded.options.fileName;
-						var usingServer = localStorage.getItem("usingServer");
+						var usingServer = localStorageGetItem("usingServer");
 					
 						if(usingServer) {	//Note, we have had a case of a null server here. In this case
 											//simply don't do any follow on checks.
@@ -1871,14 +1871,14 @@ var app = {
 	    		'Are you sure? All your saved PCs and other settings will be cleared.',  // message
 	    		function(buttonIndex) {
 	    			if(buttonIndex == 1) {
-						localStorage.clear();
+						localStorageClear();
 						
-						localStorage.removeItem("usingServer");							//Init it
-						localStorage.removeItem("defaultDir");							//Init it
-						localStorage.removeItem("currentRemoteServer");
-	   					localStorage.removeItem("currentWifiServer");
+						localStorageRemoveItem("usingServer");							//Init it
+						localStorageRemoveItem("defaultDir");							//Init it
+						localStorageRemoveItem("currentRemoteServer");
+	   					localStorageRemoveItem("currentWifiServer");
 	   					
-	   					localStorage.setItem("initialHash", 'true');					//Default to write a folder
+	   					localStorageSetItem("initialHash", 'true');					//Default to write a folder
 						document.getElementById("always-create-folder").checked = true;
 						
 						
@@ -1991,10 +1991,10 @@ var app = {
 								glbThis.notify("Pairing success.");
 								
 								//And save this server
-								localStorage.setItem("currentRemoteServer",server);
-								localStorage.removeItem("currentWifiServer");  				//Clear the wifi
-								localStorage.removeItem("usingServer");						//Init it
-								localStorage.removeItem("defaultDir");						//Init it
+								localStorageSetItem("currentRemoteServer",server);
+								localStorageRemoveItem("currentWifiServer");  				//Clear the wifi
+								localStorageRemoveItem("usingServer");						//Init it
+								localStorageRemoveItem("defaultDir");						//Init it
 
 
 								  navigator.notification.confirm(
@@ -2041,10 +2041,10 @@ var app = {
     		case 2:
     			//Clicked on 'Wifi only'
     			//Otherwise, first time we are running the app this session	
-    			localStorage.removeItem("currentWifiServer");  			//Clear the wifi
-				localStorage.removeItem("currentRemoteServer");  		//Clear the wifi
-				localStorage.removeItem("usingServer");					//Init it
-				localStorage.removeItem("defaultDir");					//Init it
+    			localStorageRemoveItem("currentWifiServer");  			//Clear the wifi
+				localStorageRemoveItem("currentRemoteServer");  		//Clear the wifi
+				localStorageRemoveItem("usingServer");					//Init it
+				localStorageRemoveItem("defaultDir");					//Init it
 				
 				glbThis.checkWifi(function(err) {
 					if(err) {
@@ -2085,8 +2085,8 @@ var app = {
 	   }
        var foundRemoteServer = null;
        var foundWifiServer = null;
-	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
-	   foundWifiServer = localStorage.getItem("currentWifiServer");
+	   foundRemoteServer = localStorageGetItem("currentRemoteServer");
+	   foundWifiServer = localStorageGetItem("currentWifiServer");
 
 
 		if(((foundRemoteServer == null)||(foundRemoteServer == ""))&&
@@ -2158,8 +2158,8 @@ var app = {
 				
 				if(options) {
 					//Set local storage
-					//localStorage.removeItem("serverOptions");
-					localStorage.setItem("serverOptions", options);
+					//localStorageRemoveItem("serverOptions");
+					localStorageSetItem("serverOptions", options);
 					myCb(null);
 				} else {
 					myCb("No options");
@@ -2172,7 +2172,7 @@ var app = {
 	},
 	
 	clearOptions: function() {
-		localStorage.removeItem("serverOptions");
+		localStorageRemoveItem("serverOptions");
 	},
 
     findServer: function(cb) {
@@ -2196,7 +2196,7 @@ var app = {
        this.clearOptions();
        
        //Early out
-       usingServer = localStorage.getItem("usingServer");
+       usingServer = localStorageGetItem("usingServer");
        
        
        
@@ -2208,8 +2208,8 @@ var app = {
        }
        
 
-	   foundRemoteServer = localStorage.getItem("currentRemoteServer");
-	   foundWifiServer = localStorage.getItem("currentWifiServer");
+	   foundRemoteServer = localStorageGetItem("currentRemoteServer");
+	   foundWifiServer = localStorageGetItem("currentWifiServer");
 	   
 	   
 	   if((foundRemoteServer)&&(foundRemoteServer != null)&&(foundRemoteServer != "")) {
@@ -2263,9 +2263,9 @@ var app = {
 	   	  	  		var scanningB = setTimeout(function() {
 	   	  	  			//Timed out connecting to the remote server - that was the
 	   	  	  			//last option.
-	   	  	  			localStorage.removeItem("usingServer");
-	   	  	  			localStorage.removeItem("defaultDir");
-	   	  	  			localStorage.removeItem("serverRemote");
+	   	  	  			localStorageRemoveItem("usingServer");
+	   	  	  			localStorageRemoveItem("defaultDir");
+	   	  	  			localStorageRemoveItem("serverRemote");
 	   	  	  			
 	   	  	  			if(alreadyReturned == false) {
 	   	  	  				alreadyReturned = true;
@@ -2280,9 +2280,9 @@ var app = {
 							//Success, got a connection to the remote server
 							
 							clearTimeout(scanningB);		//Ensure we don't error out
-							localStorage.setItem("usingServer", foundRemoteServer);
-							localStorage.setItem("serverRemote", 'true');
-							localStorage.setItem("defaultDir", foundRemoteDir);
+							localStorageSetItem("usingServer", foundRemoteServer);
+							localStorageSetItem("serverRemote", 'true');
+							localStorageSetItem("defaultDir", foundRemoteDir);
 						
 				
 							 if(alreadyReturned == false) {
@@ -2302,9 +2302,9 @@ var app = {
 	   	  	  		
 	   	  	  	} else {
                 	//Only wifi existed	   	  	  			
-                	localStorage.removeItem("usingServer");
-                	localStorage.removeItem("defaultDir");
-                	localStorage.removeItem("serverRemote");
+                	localStorageRemoveItem("usingServer");
+                	localStorageRemoveItem("defaultDir");
+                	localStorageRemoveItem("serverRemote");
                 	if(alreadyReturned == false) {
                 		alreadyReturned = true;
                 		cb('No server found');
@@ -2321,9 +2321,9 @@ var app = {
 	   	  	  
 				  //Success, got a connection to the wifi
 				  clearTimeout(scanning);		//Ensure we don't error out
-				  localStorage.setItem("usingServer", foundWifiServer);
-				  localStorage.setItem("defaultDir", foundWifiDir);	
-				  localStorage.setItem("serverRemote", 'false');				
+				  localStorageSetItem("usingServer", foundWifiServer);
+				  localStorageSetItem("defaultDir", foundWifiDir);	
+				  localStorageSetItem("serverRemote", 'false');				
 		  
 				   	
 		  
@@ -2344,9 +2344,9 @@ var app = {
 	   		var scanning = setTimeout(function() {
 	   	  	  			//Timed out connecting to the remote server - that was the
 	   	  	  			//last option.
-	   	  	  			localStorage.removeItem("usingServer");
-	   	  	  			localStorage.removeItem("defaultDir");
-	   	  	  			localStorage.removeItem("serverRemote");
+	   	  	  			localStorageRemoveItem("usingServer");
+	   	  	  			localStorageRemoveItem("defaultDir");
+	   	  	  			localStorageRemoveItem("serverRemote");
 	   	  	  			
 	   	  	  			if(alreadyReturned == false) {
 	   	  	  				alreadyReturned = true;
@@ -2359,9 +2359,9 @@ var app = {
 				
 				if(resp != "") {
 					//Success, got a connection to the remote server
-					localStorage.setItem("usingServer", foundRemoteServer);
-					localStorage.setItem("defaultDir", foundRemoteDir);
-				    localStorage.setItem("serverRemote", 'true');
+					localStorageSetItem("usingServer", foundRemoteServer);
+					localStorageSetItem("defaultDir", foundRemoteDir);
+				    localStorageSetItem("serverRemote", 'true');
 				
 				    
         			
@@ -2440,26 +2440,26 @@ var app = {
     	var currentRemoteServer = settings[serverId].currentRemoteServer;			
         var currentWifiServer = settings[serverId].currentWifiServer;	
  
-        localStorage.removeItem("usingServer"); //reset the currently used server
+        localStorageRemoveItem("usingServer"); //reset the currently used server
        
         //Save the current server
-        localStorage.removeItem("defaultDir");
+        localStorageRemoveItem("defaultDir");
         
         //Remove if one of these doesn't exist, and use the other.
         if((!currentWifiServer)||(currentWifiServer == null)||(currentWifiServer =="")) {
-        	localStorage.removeItem("currentWifiServer");
+        	localStorageRemoveItem("currentWifiServer");
         } else {
-        	localStorage.setItem("currentWifiServer", currentWifiServer);
+        	localStorageSetItem("currentWifiServer", currentWifiServer);
         }
         
         if((!currentRemoteServer)||(currentRemoteServer == null)||(currentRemoteServer == "")) {
-        	localStorage.removeItem("currentRemoteServer");
+        	localStorageRemoveItem("currentRemoteServer");
         } else {
-        	localStorage.setItem("currentRemoteServer", currentRemoteServer);
+        	localStorageSetItem("currentRemoteServer", currentRemoteServer);
         }
         
         //Set the localstorage
-        localStorage.setItem("currentServerName", settings[serverId].name);
+        localStorageSetItem("currentServerName", settings[serverId].name);
  	
     	
     	navigator.notification.alert("Switched to: " +  settings[serverId].name, function() {}, "Changing PC");
@@ -2475,11 +2475,11 @@ var app = {
     newServer: function() {
     	//Create a new server. 
     	//This is actually effectively resetting, and we will allow the normal functions to input a new one
-    	localStorage.removeItem("usingServer");
+    	localStorageRemoveItem("usingServer");
         
         //Remove the current one
-       	localStorage.removeItem("currentRemoteServer");
-        localStorage.removeItem("currentWifiServer");
+       	localStorageRemoveItem("currentRemoteServer");
+        localStorageRemoveItem("currentWifiServer");
 
 		this.notify("Tap above to activate.");						//Clear off old notifications
         
@@ -2513,14 +2513,14 @@ var app = {
 						
 							//Check if it is deleting the current entry
 							var deleteName = settings[glbThis.myServerId].name;
-							var currentServerName = localStorage.getItem("currentServerName");
+							var currentServerName = localStorageGetItem("currentServerName");
     	
     						if((currentServerName) && (deleteName) && (currentServerName == deleteName)) {
     							//Now refresh the current server display
     							document.getElementById("currentPC").innerHTML = "";
-    							localStorage.removeItem("currentRemoteServer");
-    							localStorage.removeItem("currentWifiServer");
-    							localStorage.removeItem("currentServerName");
+    							localStorageRemoveItem("currentRemoteServer");
+    							localStorageRemoveItem("currentWifiServer");
+    							localStorageRemoveItem("currentServerName");
     						}
 
 						
@@ -2549,7 +2549,7 @@ var app = {
     	if(results.buttonIndex == 1) {
     		//Clicked on 'Ok'
     		
-    		localStorage.setItem("currentServerName", results.input1);
+    		localStorageSetItem("currentServerName", results.input1);
  
     		//Now refresh the current server display
     		document.getElementById("currentPC").innerHTML = results.input1;
@@ -2566,7 +2566,7 @@ var app = {
     
     displayServerName: function() {
     	//Call this during initialisation on app startup
-    	var currentServerName = localStorage.getItem("currentServerName");
+    	var currentServerName = localStorageGetItem("currentServerName");
     	
     	if((currentServerName) && (currentServerName != null)) {
     		//Now refresh the current server display
@@ -2587,11 +2587,11 @@ var app = {
     	//Get existing settings array
     	if(status == true) {
     		//Show a hash by default    		
-    		localStorage.setItem("initialHash", "true");
+    		localStorageSetItem("initialHash", "true");
     		
     	} else {
     		//Remove the hash by default
-     		localStorage.setItem("initialHash", "false");
+     		localStorageSetItem("initialHash", "false");
     		
     	}
     },
@@ -2664,8 +2664,8 @@ var app = {
     			currentWifiServer =  result.input1;
     			usingServer = result.input1;
     			var item = String(result.input1);
-    			localStorage.setItem("currentWifiServer", item);
-    			localStorage.setItem("usingServer", "");
+    			localStorageSetItem("currentWifiServer", item);
+    			localStorageSetItem("usingServer", "");
     			
     			
     			//Now try to connect
@@ -2673,9 +2673,9 @@ var app = {
  					if(err) {
 						glbThis.notify("Sorry, we cannot connect to the server");
 						
-						localStorage.removeItem("usingServer");		//This will force a reconnection
-						localStorage.removeItem("defaultDir");
-						localStorage.removeItem("currentWifiServer");
+						localStorageRemoveItem("usingServer");		//This will force a reconnection
+						localStorageRemoveItem("defaultDir");
+						localStorageRemoveItem("currentWifiServer");
 					} else {
 						//Now we are connected - so we can get the photo
 						glbThis.bigButton();
@@ -2701,7 +2701,7 @@ var app = {
     
     displayIdInput: function() {
     	//Call this during initialisation on app startup
-    	var initialHash = localStorage.getItem("initialHash");
+    	var initialHash = localStorageGetItem("initialHash");
     		
     	if((initialHash) && (initialHash != null)) {
     		//Now refresh the current ID field
@@ -2720,9 +2720,9 @@ var app = {
         	//Run this after a successful upload
         	
         	
-        	var currentServerName = localStorage.getItem("currentServerName");        	
-        	var currentRemoteServer = localStorage.getItem("currentRemoteServer");
-    		var currentWifiServer = localStorage.getItem("currentWifiServer");
+        	var currentServerName = localStorageGetItem("currentServerName");        	
+        	var currentRemoteServer = localStorageGetItem("currentRemoteServer");
+    		var currentWifiServer = localStorageGetItem("currentWifiServer");
    			
    			if((!currentServerName) ||(currentServerName == null)) currentServerName = "Default";
    			if((!currentRemoteServer) ||(currentRemoteServer == null)) currentRemoteServer = "";
@@ -2768,11 +2768,53 @@ var app = {
     
     //Array storage for app permanent settings (see http://inflagrantedelicto.memoryspiral.com/2013/05/phonegap-saving-arrays-in-local-storage/)
     setArrayLocalStorage: function(mykey, myobj) {
-	    return localStorage.setItem(mykey, JSON.stringify(myobj));
+	    return localStorageSetItem(mykey, JSON.stringify(myobj));
     },
     
     getArrayLocalStorage: function(mykey) {
-	    return JSON.parse(localStorage.getItem(mykey));
+	    return JSON.parse(localStorageGetItem(mykey));
+    },
+    
+    //Syncronous usage of foragestorage
+    localStorageGetItem: function(mykey) {
+    	localforage.getItem(mykey, function(err, value) {
+    		if(err) {
+    			return null;
+    		} else {
+    			return value;
+    		}    		
+    	});
+    },
+    
+    localStorageSetItem: function(mykey, value) {
+    	localforage.setItem(mykey, value, function(err, value) {
+    		if(err) {
+    			return false;
+    		} else {
+    			return true;
+    		}    		
+    	});
+    },
+    
+    localStorageRemoveItem: function(mykey) {
+    	localforage.removeItem(mykey, function(err, value) {
+    		if(err) {
+    			return false;
+    		} else {
+    			return true;
+    		}    		
+    	});
+    },
+    
+    localStorageClear: function() {
+    	localforage.clear(function(err, value) {
+    		if(err) {
+    			return false;
+    		} else {
+    			return true;
+    		}    		
+    	});
     }
+    
 
 };
