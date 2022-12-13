@@ -1,6 +1,6 @@
 {
   "name": "com.atomjump.medimage",
-  "version": "2.2.2",
+  "version": "2.2.5",
   "displayName": "MedImage",
   "description": "This app allows a medical doctor to take a photo with their iPhone or Android phone, and transfer the image securely to their desktop system, which has the MedImage Server installed on it.",
   "main": "index.js",
