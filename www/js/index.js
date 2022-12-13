@@ -2851,21 +2851,20 @@ var app = {
     
     checkTransitioningData: function() {
     	var transitioned = null;
-    	
+    	   	
     	transitioned = glbThis.localStorageGetItem("tr");
     	if(!transitioned) {
     		//We haven't dealt with this before
     		if(localStorage.getItem("currentServerName")) {
     			//We have some form of localStorage data already stored. Transfer old storage into new method i.e. cookies
-				glbThis.localStorageSetItem("currentServerName", localStorage.getItem("currentServerName"));
-				glbThis.localStorageSetItem("currentRemoteServer", localStorage.getItem("currentRemoteServer"));
-				glbThis.localStorageSetItem("currentWifiServer", localStorage.getItem("currentWifiServer"));
-				glbThis.localStorageSetItem("currentPhotoId", localStorage.getItem("currentPhotoId"));
-				glbThis.localStorageSetItem("initialHash", localStorage.getItem("initialHash"));
-				glbThis.localStorageSetItem("usingServer", localStorage.getItem("usingServer"));
-				glbThis.localStorageSetItem("defaultDir", localStorage.getItem("defaultDir"));
-				glbThis.localStorageSetItem("serverOptions", localStorage.getItem("serverOptions"));
-				glbThis.localStorageSetItem("settings", localStorage.getItem("settings"));
+				var items = [ "currentServerName", "currentRemoteServer", "currentWifiServer", "currentPhotoId", "initialHash", "usingServer", "defaultDir", "serverOptions", "settings"];
+				for(var cnt=0; cnt < items.length; cnt++) {
+				
+					var item = localStorage.getItem(items[cnt]);
+					if(item) {
+						glbThis.localStorageSetItem(items[cnt], item);
+					}
+				}
 				
 				localStorage.clear();	//Clear it all out
 				glbThis.localStorageSetItem("tr", "1");	//But leave a note to say it has been transitioned
