@@ -75,7 +75,7 @@ function cookieOffset()
   //Should output: Thu,31-Dec-2020 00:00:00 GMT
   var cdate = new Date;
   var expirydate=new Date();
-  expirydate.setTime(expirydate.getTime()+(365*3*60*60*24*1000))
+  expirydate.setTime(expirydate.getTime()+(365*3*60*60*24*1000));	//3 years, although 2 years may be the limit on some browsers
   var write = expirydate.toGMTString();
   
   return write;
