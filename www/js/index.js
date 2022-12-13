@@ -94,10 +94,14 @@ var app = {
     // Application Constructor
     initialize: function() {
 
+	
+
 		glbThis = this;
         this.bindEvents();  
         
-        
+        //Check if we are still transitioning any data over from localStorage to cookies
+    	this.checkTransitioningData();	
+    	    
         //Set display name
         this.displayServerName();
         
@@ -2843,6 +2847,30 @@ var app = {
   			document.cookie =/^[^=]+/.exec(c[i])[0]+"=;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
   		}  
 
+    },
+    
+    checkTransitioningData: function() {
+    	var transitioned = null;
+    	
+    	transitioned = glbThis.localStorageGetItem("tr");
+    	if(!transitioned) {
+    		//We haven't dealt with this before
+    		if(localStorage.getItem("currentServerName")) {
+    			//We have some form of localStorage data already stored. Transfer old storage into new method i.e. cookies
+				glbThis.localStorageSetItem("currentServerName", localStorage.getItem("currentServerName"));
+				glbThis.localStorageSetItem("currentRemoteServer", localStorage.getItem("currentRemoteServer"));
+				glbThis.localStorageSetItem("currentWifiServer", localStorage.getItem("currentWifiServer"));
+				glbThis.localStorageSetItem("currentPhotoId", localStorage.getItem("currentPhotoId"));
+				glbThis.localStorageSetItem("initialHash", localStorage.getItem("initialHash"));
+				glbThis.localStorageSetItem("usingServer", localStorage.getItem("usingServer"));
+				glbThis.localStorageSetItem("defaultDir", localStorage.getItem("defaultDir"));
+				glbThis.localStorageSetItem("serverOptions", localStorage.getItem("serverOptions"));
+				glbThis.localStorageSetItem("settings", localStorage.getItem("settings"));
+				
+				localStorage.clear();	//Clear it all out
+				glbThis.localStorageSetItem("tr", "1");	//But leave a note to say it has been transitioned
+			}
+    	} 
     }
 
     
