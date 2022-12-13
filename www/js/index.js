@@ -2869,6 +2869,8 @@ var app = {
 				
 				localStorage.clear();	//Clear it all out
 				glbThis.localStorageSetItem("tr", "1");	//But leave a note to say it has been transitioned
+			} else {
+				glbThis.localStorageSetItem("tr", "1");	//But leave a note to say it has been transitioned
 			}
     	} 
     }
