@@ -59,12 +59,14 @@ function myTrim(x)
 
 function getCookie(cname)
 {
-	var name = cname + "=";
-	var ca = document.cookie.split(';');
-	for(var i=0; i<ca.length; i++)
-	{
-		var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
-		if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+	if(document && document.cookie) {
+		var name = cname + "=";
+		var ca = document.cookie.split(';');
+		for(var i=0; i<ca.length; i++)
+		{
+			var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
+			if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+		}
 	}
 	return "";
 }
@@ -101,6 +103,7 @@ var app = {
         
         //Check if we are still transitioning any data over from localStorage to cookies
     	this.checkTransitioningData();	
+    	
     	    
         //Set display name
         this.displayServerName();
@@ -2833,7 +2836,7 @@ var app = {
 	
     
 	localStorageSetItem: function(mykey, value) {
-		document.cookie = mykey + '=' + encodeURIComponent(value) + '; path=/; expires=' + cookieOffset() + ';';
+		document.cookie = mykey + '=' + encodeURIComponent(value) + '; path=/; SameSite=Strict; expires=' + cookieOffset() + ';';		//Note: strict means cookies only used by this site
 	},
     
 	localStorageRemoveItem: function(mykey) {
@@ -2848,6 +2851,7 @@ var app = {
   		}  
 
     },
+    
     
     checkTransitioningData: function() {
     	var transitioned = null;
