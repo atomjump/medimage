@@ -106,6 +106,19 @@
 				function localStorageSetItem(mykey, value) {
 					document.cookie = mykey + '=' + encodeURIComponent(value) + '; path=/; SameSite=Strict; expires=' + cookieOffset() + ';';		//Note: strict means cookies only used by this site
 				}
+				
+				function localStorageRemoveItem(mykey) {
+    	 			document.cookie = mykey + '=; Max-Age=-99999999;';  
+				}
+    
+				function localStorageClear() {
+					//Note: this won't remove different paths
+					var c = document.cookie.split("; ");
+			 		for (i in c) {
+			  			document.cookie =/^[^=]+/.exec(c[i])[0]+"=;expires=Thu, 01 Jan 1970 00:00:00 GMT"; 
+			  		}  
+
+				}
     	
     	
 			   function checkLocalStorageEnabled() {
@@ -358,7 +371,7 @@
 					</ons-list-item>
 					<ons-list-item>
 						<div class="right">
-								<a class="small-text" target="_blank" href="http://medimage.co.nz/guide/#professional">Version: 2.2.6<a/>
+								<a class="small-text" target="_blank" href="http://medimage.co.nz/guide/#professional">Version: 2.2.7<a/>
 						</div>
 					</ons-list-item>
 				  </ons-list>
