@@ -139,7 +139,8 @@
 						alert("In here 1"); //TESTING
 				 		localStorageSetItem("ce", "exists");
 				 		alert("In here 2"); //TESTING
-				 		//Wait for a fraction of a second
+				 		//TODO Wait for a fraction of a second
+				 		var item = localStorageGetItem("ce");
 				 		
 				 		if(!item) {
 							alert("In here 5"); //TESTING
@@ -199,7 +200,7 @@
 				//Check if local storage exists, and provide a warning if not TESTING LOCATION
 				setTimeout(function() {
 					checkLocalStorageEnabled();
-				}, 5000);
+				}, 500);
 				
 			
     	</script>
