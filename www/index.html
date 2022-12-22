@@ -144,18 +144,7 @@
 				
 				}
 				
-				//Check if local storage exists, and provide a warning if not
-				var storageWorking = checkLocalStorageEnabled();
-				if(storageWorking === false) {
-					//Try again in half a second (sometimes browser can be still loading)
-					setTimeout(function() { 
-						
-						storageWorking = checkLocalStorageEnabled();
-						if(storageWorking === false) {
-							alert("Warning: Your browser needs '1st party cookies' to be enabled to be able to remember the MedImage Server connections between visits. How to do this differs per browser, but look under your browser's Privacy Settings to correct this. You may also try a different browser.");  
-						} 
-					}, 2000);
-				}
+			
     	</script>
     	
     	
@@ -486,7 +475,18 @@
           ons.ready(function() {
 	        	
 	        	
-
+				//Check if local storage exists, and provide a warning if not
+				var storageWorking = checkLocalStorageEnabled();
+				if(storageWorking === false) {
+					//Try again in half a second (sometimes browser can be still loading)
+					setTimeout(function() { 
+						
+						storageWorking = checkLocalStorageEnabled();
+						if(storageWorking === false) {
+							alert("Warning: Your browser needs '1st party cookies' to be enabled to be able to remember the MedImage Server connections between visits. How to do this differs per browser, but look under your browser's Privacy Settings to correct this. You may also try a different browser.");  
+						} 
+					}, 500);
+				}
 	        	
 	        
 	        	//Global databases
