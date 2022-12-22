@@ -198,9 +198,9 @@
 				
 				
 				//Check if local storage exists, and provide a warning if not TESTING LOCATION
-				setTimeout(function() {
+				/*setTimeout(function() {
 					checkLocalStorageEnabled();
-				}, 500);
+				}, 500);*/
 				
 			
     	</script>
@@ -509,6 +509,8 @@
 			  };
 		 
 			  img.src = dataURL;
+			  
+			  checkLocalStorageEnabled();
 			  
 			  //Click the big button and pass in the image data as jpeg
               app.bigButton(dataURL);
