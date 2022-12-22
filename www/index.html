@@ -508,10 +508,7 @@
         <script type="text/javascript">
           ons.ready(function() {
 	        	
-	        	//Check if local storage exists, and provide a warning if not
-				setTimeout(function() {
-					checkLocalStorageEnabled();
-				}, 1000);
+	        
 	        	
 	        
 	        	//Global databases
@@ -557,7 +554,10 @@
 		
 		
 				//End of db setup
-		   		
+		   		//Check if local storage exists, and provide a warning if not TESTING LOCATION
+				setTimeout(function() {
+					checkLocalStorageEnabled();
+				}, 1000);
 			   
 	        
 	    });
