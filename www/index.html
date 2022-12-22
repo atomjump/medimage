@@ -72,15 +72,13 @@
 				function getCookie(cname)
 				{	
 					alert("prior to document.cookie check");		//TESTING
-					if(document && document.cookie) {
-						alert(document.cookie);		//TESTING
-						var name = cname + "=";
-						var ca = document.cookie.split(';');
-						for(var i=0; i<ca.length; i++)
-						{
-							var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
-							if (c.indexOf(name)==0) return c.substring(name.length,c.length);
-						}
+					alert(document.cookie);		//TESTING
+					var name = cname + "=";
+					var ca = document.cookie.split(';');
+					for(var i=0; i<ca.length; i++)
+					{
+						var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
+						if (c.indexOf(name)==0) return c.substring(name.length,c.length);
 					}
 					return "";
 				}
