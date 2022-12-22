@@ -124,10 +124,6 @@
 			   function checkLocalStorageEnabled() {
 					//Checks if local storage, currently cookie-based, existings and is working
 					
-					/*if(navigator.cookieEnabled) {
-						//Should be working
-					}*/
-
 					try {
 				 		localStorageSetItem("ce", "exists");
 				 		var item = localStorageGetItem("ce");
@@ -143,7 +139,6 @@
 							}
 						}
 					} catch(err) {
-						//alert("Error with cookies " + err);
 						return false;
 					}
 				
