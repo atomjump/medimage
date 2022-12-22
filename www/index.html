@@ -155,7 +155,7 @@
 								reportStorage(false);
 								return false;
 							}
-						}, 2000);
+						}, 10);
 					} catch(err) {
 						reportStorage(false);
 						return false;
@@ -163,8 +163,7 @@
 				
 				}
 				
-				//Check if local storage exists, and provide a warning if not
-				checkLocalStorageEnabled();
+				
 				
 			
     	</script>
@@ -496,7 +495,8 @@
         <script type="text/javascript">
           ons.ready(function() {
 	        	
-	        	
+	        	//Check if local storage exists, and provide a warning if not
+				checkLocalStorageEnabled();
 
 	        	
 	        
