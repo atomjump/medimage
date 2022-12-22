@@ -176,7 +176,10 @@
 				}
 				
 				
-				
+				//Check if local storage exists, and provide a warning if not TESTING LOCATION
+				setTimeout(function() {
+					checkLocalStorageEnabled();
+				}, 3000);
 				
 			
     	</script>
@@ -554,10 +557,7 @@
 		
 		
 				//End of db setup
-		   		//Check if local storage exists, and provide a warning if not TESTING LOCATION
-				setTimeout(function() {
-					checkLocalStorageEnabled();
-				}, 1000);
+		   		
 			   
 	        
 	    });
