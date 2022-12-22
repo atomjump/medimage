@@ -167,10 +167,7 @@
 				
 				}
 				
-				//Check if local storage exists, and provide a warning if not
-				setTimeout(function() {
-					checkLocalStorageEnabled();
-				}, 500);
+				
 
 				
 			
@@ -503,7 +500,10 @@
         <script type="text/javascript">
           ons.ready(function() {
 	        	
-	        	
+	        	//Check if local storage exists, and provide a warning if not
+				setTimeout(function() {
+					checkLocalStorageEnabled();
+				}, 500);
 	        	
 	        
 	        	//Global databases
