@@ -136,60 +136,32 @@
 					//Checks if local storage, currently cookie-based, existings and is working
 					
 					try {
-						alert("In here 1"); //TESTING
 				 		localStorageSetItem("ce", "exists");
-				 		alert("In here 2"); //TESTING
-				 		//TODO Wait for a fraction of a second
-				 		var item = localStorageGetItem("ce");
-				 		
-				 		if(!item) {
-							alert("In here 5"); //TESTING
-							reportStorage(false);
-							return false;
-						} else {
-							if(item === "exists") {
-								
-								reportStorage(true);
-								return true;
-							} else {
-								alert("In here 6"); //TESTING
-								//Stored connections not being held correctly
-								reportStorage(false);
-								return false;
-							}
-						}
-				 		
-				 		/*setTimeout(function() {
+				 		//Wait for a fraction of a second
+				 						 		
+				 		setTimeout(function() {
 				 			try {
-				 				alert("In here 3"); //TESTING
 						 		var item = localStorageGetItem("ce");
 								
-								alert("In here 4"); //TESTING
-							
 								if(!item) {
-									alert("In here 5"); //TESTING
 									reportStorage(false);
 									return false;
 								} else {
 									if(item === "exists") {
-										
 										reportStorage(true);
 										return true;
 									} else {
-										alert("In here 6"); //TESTING
 										//Stored connections not being held correctly
 										reportStorage(false);
 										return false;
 									}
 								}
 							} catch(err) {
-								alert("In here 7"); //TESTING
 								reportStorage(false);
 								return false;
 							}
-						}, 3000); */
+						}, 10);
 					} catch(err) {
-						alert("In here 8"); //TESTING
 						reportStorage(false);
 						return false;
 					}
@@ -198,9 +170,9 @@
 				
 				
 				//Check if local storage exists, and provide a warning if not TESTING LOCATION
-				/*setTimeout(function() {
+				setTimeout(function() {
 					checkLocalStorageEnabled();
-				}, 500);*/
+				}, 50);
 				
 			
     	</script>
@@ -510,7 +482,6 @@
 		 
 			  img.src = dataURL;
 			  
-			  checkLocalStorageEnabled();
 			  
 			  //Click the big button and pass in the image data as jpeg
               app.bigButton(dataURL);
