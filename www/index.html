@@ -148,11 +148,18 @@
 					}
 				
 				}
-			
+				
 				//Check if local storage exists, and provide a warning if not
 				var storageWorking = checkLocalStorageEnabled();
 				if(storageWorking === false) {
-					alert("Warning: Your browser needs '1st party cookies' to be enabled to be able to remember the MedImage Server connections between visits. How to do this differs per browser, but look under your browser's Privacy Settings to correct this. You may also try a different browser.");        
+					//Try again in half a second (sometimes browser can be still loading)
+					setTimeout(function() { 
+						
+						storageWorking = checkLocalStorageEnabled();
+						if(storageWorking === false) {
+							alert("Warning: Your browser needs '1st party cookies' to be enabled to be able to remember the MedImage Server connections between visits. How to do this differs per browser, but look under your browser's Privacy Settings to correct this. You may also try a different browser.");  
+						} 
+					}, 500);
 				}
     	</script>
     	
@@ -371,7 +378,7 @@
 					</ons-list-item>
 					<ons-list-item>
 						<div class="right">
-								<a class="small-text" target="_blank" href="http://medimage.co.nz/guide/#professional">Version: 2.2.7<a/>
+								<a class="small-text" target="_blank" href="http://medimage.co.nz/guide/#professional">Version: 2.2.8<a/>
 						</div>
 					</ons-list-item>
 				  </ons-list>
