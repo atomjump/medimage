@@ -71,14 +71,14 @@
 
 				function getCookie(cname)
 				{	
-					alert("prior to document.cookie check");		//TESTING
-					alert(document.cookie);		//TESTING
-					var name = cname + "=";
-					var ca = document.cookie.split(';');
-					for(var i=0; i<ca.length; i++)
-					{
-						var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
-						if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+					if(document && document.cookie) {
+						var name = cname + "=";
+						var ca = document.cookie.split(';');
+						for(var i=0; i<ca.length; i++)
+						{
+							var c = myTrim(decodeURIComponent(ca[i]));// ie8 didn't support .trim();
+							if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+						}
 					}
 					return "";
 				}
@@ -166,7 +166,7 @@
 								reportStorage(false);
 								return false;
 							}
-						}, 1000);
+						}, 3000);
 					} catch(err) {
 						alert("In here 8"); //TESTING
 						reportStorage(false);
@@ -179,7 +179,7 @@
 				//Check if local storage exists, and provide a warning if not TESTING LOCATION
 				setTimeout(function() {
 					checkLocalStorageEnabled();
-				}, 3000);
+				}, 5000);
 				
 			
     	</script>
