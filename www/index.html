@@ -128,17 +128,21 @@
 				 		localStorageSetItem("ce", "exists");
 				 		//Wait for a fraction of a second
 				 		setTimeout(function() {
-					 		var item = localStorageGetItem("ce");
-						
-							if(!item) {
-								return false;
-							} else {
-								if(item === "exists") {
-									return true;
-								} else {
-									//Stored connections not being held correctly
+				 			try {
+						 		var item = localStorageGetItem("ce");
+							
+								if(!item) {
 									return false;
+								} else {
+									if(item === "exists") {
+										return true;
+									} else {
+										//Stored connections not being held correctly
+										return false;
+									}
 								}
+							} catch(err) {
+								return false;
 							}
 						}, 1);
 					} catch(err) {
