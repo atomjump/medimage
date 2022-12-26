@@ -71,6 +71,8 @@ var app = {
         //Check if we are still transitioning any data over from localStorage to cookies
     	this.checkTransitioningData();	
     	
+    	//Check if we are doing an annual refresh of the cookies
+    	this.refreshCookies();
     	    
         //Set display name
         this.displayServerName();
@@ -2795,7 +2797,68 @@ var app = {
     
     
  
+    refreshCookies: function() {
+	
+		//Call this on app initialization. Checks and runs a refresh of the cookies every year.
+		//First check if we are beyond the date to refresh after
+    	var oldData = document.cookie;
+    	
+    	var refreshDate = localStorageGetItem("rf");	//But leave a note to say it has been transitioned
+     	if(refreshDate) {
+    		//Check if we are after the refresh date
+    		var dateToday = new Date();							
+			var dateRefreshDate = new Date(refreshDate);		//Text into date format
 
+    		if(dateToday > dateRefreshDate) {		//Should be >
+     			var replaceCookies = true;		//Yes, completely replace the existing ones
+				
+				localStorageClear();		//Clear off any existing data
+				
+				var ca = oldData.split(';');
+				for(var i=0; i<ca.length; i++)
+				{
+					var valuePair = ca[i].split('=');
+					var cName = myTrim(valuePair[0]);
+					var cValue = myTrim(valuePair[1]);
+					if(cName && cValue && cValue != "") {
+						if(cName !== "rf") {		//We don't want to use the exact same refresh date. This should not be included. A new date
+							//will be generated on the next run.
+							localStorageSetItem(cName, decodeURIComponent(cValue));
+						}
+					}
+				}
+				
+				//Refresh the page
+				location.reload();
+				return false;
+    		} else {
+    			//Just wait, do nothing for now.
+    			return true;
+    		}
+    	
+    	
+    	} else {
+    		//No refresh date set. Set a cookie with the next refresh date a year from now.
+    		var dateRefreshDate = new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+
+    		var refreshDate = dateRefreshDate.toString();	
+    		        
+    		var dd = dateRefreshDate.getDate();
+        	var mm = dateRefreshDate.getMonth() + 1;
+	        var yyyy = dateRefreshDate.getFullYear();
+	        if (dd < 10) {
+	            dd = '0' + dd;
+	        }
+	        if (mm < 10) {
+	            mm = '0' + mm;
+	        }
+       		var textDate = yyyy + '-' + mm + '-' + dd ;
+    		localStorageSetItem("rf", textDate);
+    	}
+    	
+		return true;
+    	
+    },
     
     
     checkTransitioningData: function() {
