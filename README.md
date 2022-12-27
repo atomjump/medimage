@@ -31,7 +31,7 @@ Required: You will need "npm" and "nodejs" to be installed, which should be ther
 
 Install in a command box with:
 ```
-git clone https://github.com/atomjump/medimage.git
+git clone https://git.atomjump.com/medimage.git
 cd medimage
 npm install -g cordova  
 cordova platform add browser
