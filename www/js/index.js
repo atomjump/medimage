@@ -867,7 +867,7 @@ var app = {
 		var idEnteredB = idEntered;
 	
 	
-		if((!usingServer)||(usingServer == null)) {
+		if((!usingServer)||(usingServer == null)||(usingServer == "")) {
 			//No remove server already connected to, find the server now. And then call upload again
 			_this.findServer(function(err) {
 				if(err) {
@@ -1645,7 +1645,7 @@ var app = {
 						var thisFile = repeatIfNeeded.options.fileName;
 						var usingServer = localStorageGetItem("usingServer");
 					
-						if(usingServer) {	//Note, we have had a case of a null server here. In this case
+						if((usingServer)&&(usingServer != "")) {	//Note, we have had a case of a null server here. In this case
 											//simply don't do any follow on checks.
 							var fullGet = usingServer + '/check=' + encodeURIComponent(thisFile);
 						
@@ -2210,7 +2210,7 @@ var app = {
        
        
        
-       if((usingServer)&&(usingServer != null)) {
+       if((usingServer)&&(usingServer != null)&&(usingServer != "")) {
        
        		cb(null);
        		return;
