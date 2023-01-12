@@ -110,7 +110,7 @@
 				}
 				
 				function localStorageRemoveItem(mykey) {
-    	 			document.cookie = mykey + '=; Max-Age=-99999999; SameSite=Strict;';  
+    	 			document.cookie = mykey + '=; SameSite=Strict; expires=Thu, 01 Jan 1970 00:00:00 GMT';  
 				}
     
 				function localStorageClear() {
