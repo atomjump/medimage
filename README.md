@@ -1,5 +1,7 @@
 <img src="http://medimage.co.nz/wp-content/uploads/2018/04/icon-60.png">
 
+__WARNING: this project has now moved to https://src.atomjump.com/atomjump/medimage.git__
+
 # MedImage App
 
 This app allows a medical doctor to take a photo with their iPhone or Android phone, and transfer the image
